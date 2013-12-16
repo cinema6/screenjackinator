@@ -163,5 +163,9 @@
             });
 
             $scope.AppCtrl = this;
+        }])
+
+        .service('ProjectService', [function() {
+
         }]);
 }(window));
