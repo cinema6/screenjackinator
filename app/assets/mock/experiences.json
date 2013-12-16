@@ -1,0 +1,21 @@
+[
+    {
+        "id": "e-877c4714f23537",
+        "uri": "notebook",
+        "appUriPrefix": "<%= settings.appUrl %>",
+        "appUri": "screenjackinator",
+        "title": "The Notebook",
+        "subtitle": "Fully-customizable true love",
+        "summary": "Need I say more?",
+        "img": {
+            "hero": "experiences/notebook/assets/notebook__hero.jpg",
+            "tag": null
+        },
+        "landingPageContent": {
+            "middle": "experiences/notebook/middle.html",
+            "right": "experiences/notebook/right.html",
+            "stylesheet": "experiences/notebook/assets/styles.css"
+        },
+        "data": {}
+    }
+]
