@@ -165,16 +165,32 @@
             $scope.AppCtrl = this;
         }])
 
-        .service('ProjectService', ['$cacheFactory',
-        function                   ( $cacheFactory ) {
+        .service('ProjectService', ['$cacheFactory', 'c6Sfx',
+        function                   ( $cacheFactory ,  c6Sfx ) {
             var _private = {};
 
+            /* PROPERTIES */
             _private.cache = $cacheFactory('project');
 
+            /* METHODS */
+            _private.get = function(type, data) {
+                var cache = _private.cache.get(type),
+                    model = cache && cache.get(data.id),
+                    constructorArgs = Array.prototype.slice.call(arguments, 1),
+                    Constructor;
+
+                constructorArgs.unshift(null);
+                Constructor = _private[type].bind.apply(_private[type], constructorArgs);
+                Constructor.prototype = _private[type].prototype;
+
+                return model || new Constructor().cache();
+            };
+
+            /* CONSTRUCTORS */
             _private.Model = function(config) {
                 this.id = config.id;
             };
-            _private.Model.prototype.name = 'Model';
+            _private.Model.prototype._type = 'Model';
             _private.Model.prototype.setupWith = function(config) {
                 var prop;
 
@@ -183,13 +199,13 @@
                 }
             };
             _private.Model.prototype.cache = function() {
-                var cache = _private.cache.get(this.name);
+                var cache = _private.cache.get(this._type);
 
                 if (!cache) {
-                    cache = _private.cache.put(this.name, $cacheFactory('project:' + this.constructor));
+                    cache = _private.cache.put(this._type, $cacheFactory('project:' + this.constructor));
                 }
 
-                cache.put(this.id, this);
+                return cache.put(this.id, this);
             };
 
             _private.Voice = function(config) {
@@ -197,9 +213,82 @@
             };
             _private.Voice.prototype = new _private.Model({});
             _private.Voice.prototype.constructor = _private.Voice;
+            _private.Voice.prototype._type = 'Voice';
 
-            _private.Project = function() {
+            _private.VoiceFx = function(config) {
+                this.setupWith(config);
+            };
+            _private.VoiceFx.prototype = new _private.Model({});
+            _private.VoiceFx.prototype.constructor = _private.VoiceFx;
+            _private.VoiceFx.prototype._type = 'VoiceFx';
 
+            _private.Style = function(config) {
+                this.setupWith(config);
+            };
+            _private.Style.prototype = new _private.Model({});
+            _private.Style.prototype.constructor = _private.Style;
+            _private.Style.prototype._type = 'Style';
+
+            _private.Sfx = function(config) {
+                var sfx;
+
+                c6Sfx.loadSounds([config]);
+                sfx = c6Sfx.getSoundByName(config.name);
+
+                sfx.cache = _private.Model.prototype.cache;
+                sfx._type = 'Sfx';
+
+                return sfx;
+            };
+
+            _private.Annotation = function(config, defaultPermissions, defaultStyle) {
+                this.permissions = defaultPermissions;
+
+                this.setupWith(config);
+
+                this.style = _private.get('Style', { id: (config.style || defaultStyle) });
+            };
+            _private.Annotation.prototype = new _private.Model({});
+            _private.Annotation.prototype.constructor = _private.Annotation;
+            _private.Annotation.prototype._type = 'Annotation';
+
+            _private.Project = function(appConfig, videoConfig) {
+                var styles = [],
+                    voices = [],
+                    voiceFx = [],
+                    sfx = [],
+                    annotations = [],
+                    defaultPermissions, defaultStyle;
+
+                angular.extend(this, appConfig, videoConfig);
+
+                defaultPermissions = this.defaults.permissions;
+                defaultStyle = this.defaults.style;
+
+                this.voices.forEach(function(voice) {
+                    voices.push(_private.get('Voice', voice));
+                });
+                this.voices = voices;
+
+                this.voiceFx.forEach(function(fx) {
+                    voiceFx.push(_private.get('VoiceFx', fx));
+                });
+                this.voiceFx = voiceFx;
+
+                this.styles.forEach(function(style) {
+                    styles.push(_private.get('Style', style));
+                });
+                this.styles = styles;
+
+                this.sfx.forEach(function(fx) {
+                    sfx.push(_private.get('Sfx', fx));
+                });
+                this.sfx = sfx;
+
+                this.annotations.forEach(function(annotation) {
+                    annotations.push(_private.get('Annotation', annotation, defaultPermissions, defaultStyle));
+                });
+                this.annotations = annotations;
             };
 
             this.new = function(appConfig, videoConfig) {
