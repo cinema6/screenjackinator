@@ -165,7 +165,47 @@
             $scope.AppCtrl = this;
         }])
 
-        .service('ProjectService', [function() {
+        .service('ProjectService', ['$cacheFactory',
+        function                   ( $cacheFactory ) {
+            var _private = {};
 
+            _private.cache = $cacheFactory('project');
+
+            _private.Model = function(config) {
+                this.id = config.id;
+            };
+            _private.Model.prototype.name = 'Model';
+            _private.Model.prototype.setupWith = function(config) {
+                var prop;
+
+                for (prop in config) {
+                    this[prop] = config[prop];
+                }
+            };
+            _private.Model.prototype.cache = function() {
+                var cache = _private.cache.get(this.name);
+
+                if (!cache) {
+                    cache = _private.cache.put(this.name, $cacheFactory('project:' + this.constructor));
+                }
+
+                cache.put(this.id, this);
+            };
+
+            _private.Voice = function(config) {
+                this.setupWith(config);
+            };
+            _private.Voice.prototype = new _private.Model({});
+            _private.Voice.prototype.constructor = _private.Voice;
+
+            _private.Project = function() {
+
+            };
+
+            this.new = function(appConfig, videoConfig) {
+                return new _private.Project(appConfig, videoConfig);
+            };
+
+            if (window.c6.kHasKarma) { this._private = _private; }
         }]);
 }(window));
