@@ -554,6 +554,10 @@
                                 var model;
 
                                 spyOn(_private, 'Model').andCallThrough();
+                                // Because the spy obliterates our prototype, we need to add back the all-important cache method
+                                _private.Model.prototype.cache = function() {
+                                    return this;
+                                };
 
                                 model = _private.get('Model', data, moreData, 'foo');
 
