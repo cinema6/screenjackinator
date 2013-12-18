@@ -176,13 +176,28 @@
             _private.get = function(type, data) {
                 var cache = _private.cache.get(type),
                     model = cache && cache.get(data.id),
+                    // Get all arguments after the first one
                     constructorArgs = Array.prototype.slice.call(arguments, 1),
                     Constructor;
 
+                // Because we're going to pass this array in when applying the "bind"
+                // function, the first argument will need to be the "this" that should be bound.
+                // It doesn't matter what "this" is bound as because when we invoke "new" on
+                // the constructor, "this" will become the object JS generates for the
+                // constructor. We could provide anything as "this" to the bind method, so we
+                // just pass in "null".
                 constructorArgs.unshift(null);
+                // Bind the constructor to be called with all arguments after the first one.
+                // This is the same as calling: _private[type].bind(null, arg2, arg3, arg4, etc...);
                 Constructor = _private[type].bind.apply(_private[type], constructorArgs);
-                Constructor.prototype = _private[type].prototype;
 
+                // If the model isn't cached, invoke the constructor. Because we've bound all arguments
+                // of this function after the first one, what's actually happening here is something
+                // more like this:
+                // return model || new Constructor(arg2, arg3, arg4, etc.).cache();
+                //
+                // To paraphrase a comment found in the $digest function for Angular Scopes,
+                // "This works, and we have the tests to prove it!"
                 return model || new Constructor().cache();
             };
 
