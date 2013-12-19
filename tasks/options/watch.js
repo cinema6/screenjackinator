@@ -12,9 +12,10 @@
             ],
             options: {
                 livereload: true
-            }
+            },
+            tasks: ['jshint:all']
         },
-        'e2e': {
+        e2e: {
             files: [
                 '<%= settings.appDir %>/*.html',
                 '<%= settings.appDir %>/assets/views/**/*.html',

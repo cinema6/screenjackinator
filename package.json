@@ -40,7 +40,8 @@
     "aws-sdk": "~2.0.0-rc3",
     "q": "~0.9.7",
     "prompt": "~0.2.12",
-    "escape-regexp": "0.0.1"
+    "escape-regexp": "0.0.1",
+    "underscore": "~1.5.2"
   },
   "engines": {
     "node": ">=0.8.0"

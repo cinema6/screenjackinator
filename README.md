@@ -6,40 +6,31 @@ Stub project for initializing a Cinema6 Angular project.  This will seed an Angu
 Steps for starting a new project using stub
 -------------------------------------------
 
-  1. On your dev machine, clone the stub repository
+  1. Make sure the following dependencies are installed: Node.js, git
+     and java (required for E2E tunneling sessions.)
+
+  2. Install "create-ng-app"
 
     ```bash
-    $> git clone git@github.com:cinema6/stub.git
+    $> sudo npm install -g git+ssh://git@bitbucket.org:cinema6/create-ng-app.git
     ```
 
-  2. Next, enter the cloned stub repo and delete the .git directory.
+  3. Run the create-ng-app tool.
 
     ```bash
-    $> cd stub
-    $> rm -rf .git
-    ```
-
-  3. Initialize a new git repo
-
-    ```bash
-    $> git init
+    $> create-ng-app desired/path/to/app
     ```
 
   4. Setup with Github
   
     ```bash
+    $> cd desired/path/to/app
     $> git remote add origin git@github.com:cinema6/myawesomeapp.git
     ```
     
-  5. Initialize your project
+  5. Add the files in the repo (make sure to include the .c6stubinit file)
   
-    ```bash
-    $> grunt init
-    ```
-    
-  6. Add the files in the repo (make sure to include the .c6stubinit file)
-  
-  7. Push to Github!
+  6. Push to Github!
   
     ```bash
     $> git push origin master -u
@@ -204,6 +195,14 @@ This task will watch your app and test files and run the E2E tests locally in th
 ex:
 ```bash
 $> grunt test:e2e:debug:iphone
+```
+
+##### test
+This task will execute all unit and E2E tests. E2E tests will run in all browsers in the derfault environment.
+
+ex:
+```bash
+$> grunt test
 ```
 
 ##### publish:collateral:('test' || 'production')

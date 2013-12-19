@@ -1,10 +1,10 @@
 module.exports = function(grunt) {
     'use strict';
 
-    var path = require('path');
+    var path = require('path'),
+        _ =require('underscore');
 
-    var _ = grunt.util._,
-        settings = grunt.file.readJSON('settings.json'),
+    var settings = grunt.file.readJSON('settings.json'),
         c6Settings = (function(settings) {
             function loadGlobalConfig(relPath) {
                 var configPath = path.join(process.env.HOME, relPath),
@@ -54,6 +54,11 @@ module.exports = function(grunt) {
      * TEST TASKS
      *
      *********************************************************************************************/
+
+    grunt.registerTask('test', 'run unit and E2E tests', [
+        'test:unit',
+        'test:e2e:all'
+    ]);
 
     grunt.registerTask('test:unit', 'run unit tests', [
         'jshint:all',
