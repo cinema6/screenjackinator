@@ -1,0 +1,38 @@
+{
+    "voices": [
+        {
+            "name": "Paul"
+        },
+        {
+            "name": "Susan"
+        },
+        {
+            "name": "Dave"
+        }
+    ],
+    "voiceFX": [
+        {
+            "id": "P"
+        },
+        {
+            "id": "R"
+        },
+        {
+            "id": "D"
+        }
+    ],
+    "styles": [
+        {
+            "id": "antique",
+            "name": "Antique",
+            "class": "antique",
+            "stylesheet": "antique.css"
+        }
+    ],
+    "sfx": [
+        {
+            "name": "pop",
+            "src": "pop.mp3"
+        }
+    ]
+}

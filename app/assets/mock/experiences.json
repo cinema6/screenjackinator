@@ -16,6 +16,58 @@
             "right": "experiences/notebook/right.html",
             "stylesheet": "experiences/notebook/assets/styles.css"
         },
-        "data": {}
+        "data": {
+            "styles": [
+                {
+                    "id": "antique",
+                    "name": "Antique",
+                    "class": "antique",
+                    "stylesheet": "antique.css"
+                }
+            ],
+            "sfx": [
+                {
+                    "name": "pop",
+                    "src": "pop.mp3"
+                }
+            ],
+            "length": 61,
+            "thumbs": ["notebook/thumbs/beginning.jpg", "notebook/thumbs/middle.png", "notebook/thumbs/end.jpg"],
+            "features": ["popup"],
+            "annotations": [
+                {
+                    "type": "popup",
+                    "timestamp": 5,
+                    "duration": 2,
+                    "text": "What's up?!",
+                    "maxChars": 15
+                },
+                {
+                    "type": "popup",
+                    "timestamp": 12,
+                    "duration": 2,
+                    "text": "How are you?!",
+                    "maxChars": 15
+                },
+                {
+                    "type": "popup",
+                    "timestamp": 33,
+                    "duration": 4,
+                    "text": "This is the final test.",
+                    "maxChars": 15
+                }
+            ],
+            "defaults": {
+                "style": "antique",
+                "permissions": {
+                    "add": false,
+                    "delete": false,
+                    "modifyTimestamp": false,
+                    "modifyDuration": false,
+                    "modifyText": true,
+                    "modifyStyle": false
+                }
+            }
+        }
     }
 ]

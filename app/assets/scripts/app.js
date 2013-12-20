@@ -163,5 +163,151 @@
             });
 
             $scope.AppCtrl = this;
+        }])
+
+        .service('ProjectService', ['$cacheFactory', 'c6Sfx',
+        function                   ( $cacheFactory ,  c6Sfx ) {
+            var _private = {};
+
+            /* PROPERTIES */
+            _private.cache = $cacheFactory('project');
+
+            /* METHODS */
+            _private.get = function(type, data) {
+                var cache = _private.cache.get(type),
+                    model = cache && cache.get(data.id),
+                    // Get all arguments after the first one
+                    constructorArgs = Array.prototype.slice.call(arguments, 1),
+                    Constructor;
+
+                // Because we're going to pass this array in when applying the "bind"
+                // function, the first argument will need to be the "this" that should be bound.
+                // It doesn't matter what "this" is bound as because when we invoke "new" on
+                // the constructor, "this" will become the object JS generates for the
+                // constructor. We could provide anything as "this" to the bind method, so we
+                // just pass in "null".
+                constructorArgs.unshift(null);
+                // Bind the constructor to be called with all arguments after the first one.
+                // This is the same as calling: _private[type].bind(null, arg2, arg3, arg4, etc...);
+                Constructor = _private[type].bind.apply(_private[type], constructorArgs);
+
+                // If the model isn't cached, invoke the constructor. Because we've bound all arguments
+                // of this function after the first one, what's actually happening here is something
+                // more like this:
+                // return model || new Constructor(arg2, arg3, arg4, etc.).cache();
+                //
+                // To paraphrase a comment found in the $digest function for Angular Scopes,
+                // "This works, and we have the tests to prove it!"
+                return model || new Constructor().cache();
+            };
+
+            /* CONSTRUCTORS */
+            _private.Model = function(config) {
+                this.id = config.id;
+            };
+            _private.Model.prototype._type = 'Model';
+            _private.Model.prototype.setupWith = function(config) {
+                var prop;
+
+                for (prop in config) {
+                    this[prop] = config[prop];
+                }
+            };
+            _private.Model.prototype.cache = function() {
+                var cache = _private.cache.get(this._type);
+
+                if (!cache) {
+                    cache = _private.cache.put(this._type, $cacheFactory('project:' + this.constructor));
+                }
+
+                return cache.put(this.id, this);
+            };
+
+            _private.Voice = function(config) {
+                this.setupWith(config);
+            };
+            _private.Voice.prototype = new _private.Model({});
+            _private.Voice.prototype.constructor = _private.Voice;
+            _private.Voice.prototype._type = 'Voice';
+
+            _private.VoiceFx = function(config) {
+                this.setupWith(config);
+            };
+            _private.VoiceFx.prototype = new _private.Model({});
+            _private.VoiceFx.prototype.constructor = _private.VoiceFx;
+            _private.VoiceFx.prototype._type = 'VoiceFx';
+
+            _private.Style = function(config) {
+                this.setupWith(config);
+            };
+            _private.Style.prototype = new _private.Model({});
+            _private.Style.prototype.constructor = _private.Style;
+            _private.Style.prototype._type = 'Style';
+
+            _private.Sfx = function(config) {
+                var sfx;
+
+                c6Sfx.loadSounds([config]);
+                sfx = c6Sfx.getSoundByName(config.name);
+
+                sfx.cache = _private.Model.prototype.cache;
+                sfx._type = 'Sfx';
+
+                return sfx;
+            };
+
+            _private.Annotation = function(config, defaultPermissions, defaultStyle) {
+                this.permissions = defaultPermissions;
+
+                this.setupWith(config);
+
+                this.style = _private.get('Style', { id: (config.style || defaultStyle) });
+            };
+            _private.Annotation.prototype = new _private.Model({});
+            _private.Annotation.prototype.constructor = _private.Annotation;
+            _private.Annotation.prototype._type = 'Annotation';
+
+            _private.Project = function(appConfig, videoConfig) {
+                var hasMany = {
+                    voices: {
+                        type: 'Voice'
+                    },
+                    voiceFx: {
+                        type: 'VoiceFx'
+                    },
+                    styles: {
+                        type: 'Style'
+                    },
+                    sfx: {
+                        type: 'Sfx'
+                    },
+                    annotations: {
+                        type: 'Annotation',
+                        args: []
+                    }
+                };
+
+                angular.extend(this, appConfig, videoConfig);
+
+                hasMany.annotations.args.push(this.defaults.permissions, this.defaults.style);
+
+                angular.forEach(hasMany, function(settings, prop) {
+                    var items = this[prop];
+
+                    this[prop] = items.map(function(item) {
+                        var args = [settings.type, item];
+
+                        args.push.apply(args, settings.args || []);
+
+                        return _private.get.apply(_private, args);
+                    });
+                }.bind(this));
+            };
+
+            this.new = function(appConfig, videoConfig) {
+                return new _private.Project(appConfig, videoConfig);
+            };
+
+            if (window.c6.kHasKarma) { this._private = _private; }
         }]);
 }(window));
