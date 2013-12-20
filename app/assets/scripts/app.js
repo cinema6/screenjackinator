@@ -63,10 +63,20 @@
         }])
         .config(['c6UrlMakerProvider', 'c6Defines',
         function( c6UrlMakerProvider ,  c6Defines ) {
+            var assetLocation = (function() {
+                switch(c6Defines.kEnv) {
+                case 'dev':
+                    return 'local';
+                case 'staging':
+                    return 'dev';
+                case 'release':
+                    return 'cdn';
+                }
+            }());
+
             c6UrlMakerProvider.location(c6Defines.kBaseUrl,'default');
-            c6UrlMakerProvider.location(c6Defines.kVideoUrls[(function() {
-                return 'local';
-            }())] ,'video');
+            c6UrlMakerProvider.location(c6Defines.kVideoUrls[assetLocation] ,'video');
+            c6UrlMakerProvider.location(c6Defines.kCollateralUrls[assetLocation], 'collateral');
         }])
         .config(['$stateProvider', '$urlRouterProvider', 'c6UrlMakerProvider',
         function( $stateProvider ,  $urlRouterProvider ,  c6UrlMakerProvider ) {
@@ -81,10 +91,15 @@
                     url: '/experience'
                 });
         }])
-        .controller('AppController', ['$scope','$state','$log', 'site', 'c6ImagePreloader', 'gsap', '$timeout', 'googleAnalytics',
-        function                     ( $scope , $state , $log ,  site ,  c6ImagePreloader ,  gsap ,  $timeout ,  googleAnalytics ) {
+        .controller('AppController', ['$scope','$state','$log', 'site', 'c6ImagePreloader', 'gsap', '$timeout', 'googleAnalytics', '$http', 'c6UrlMaker', 'ProjectService', '$q',
+        function                     ( $scope , $state , $log ,  site ,  c6ImagePreloader ,  gsap ,  $timeout ,  googleAnalytics ,  $http ,  c6UrlMaker ,  ProjectService ,  $q ) {
             var self = this,
                 canChangeState = false;
+
+            function handleError(error) {
+                googleAnalytics('send', 'event', 'error', 'thrown', error);
+                $log.error(error);
+            }
 
             $log.info('AppCtlr loaded.');
 
@@ -116,6 +131,20 @@
             this.goto = function(state) {
                 $state.go(state);
             };
+
+            function createProject(results) {
+                var appConfig = results.appConfigResponse.data,
+                    videoConfig = results.appData.experience.data;
+
+                self.project = ProjectService.new(appConfig, videoConfig);
+            }
+
+            $q.all({
+                appConfigResponse: $http.get(c6UrlMaker('app.config.json', 'collateral')),
+                appData: site.getAppData()
+            })
+                .then(createProject)
+                .then(null, handleError);
 
             site.init({
                 setup: function(appData) {
@@ -165,14 +194,14 @@
             $scope.AppCtrl = this;
         }])
 
-        .service('ProjectService', ['$cacheFactory', 'c6Sfx',
-        function                   ( $cacheFactory ,  c6Sfx ) {
+        .service('ProjectService', ['$cacheFactory', 'c6Sfx', 'c6UrlMaker', 'c6VideoService',
+        function                   ( $cacheFactory ,  c6Sfx ,  c6UrlMaker ,  c6VideoService ) {
             var _private = {};
 
-            /* PROPERTIES */
+            /* @private PROPERTIES */
             _private.cache = $cacheFactory('project');
 
-            /* METHODS */
+            /* @private METHODS */
             _private.get = function(type, data) {
                 var cache = _private.cache.get(type),
                     model = cache && cache.get(data.id),
@@ -201,7 +230,11 @@
                 return model || new Constructor().cache();
             };
 
-            /* CONSTRUCTORS */
+            /* @private CONSTRUCTORS */
+
+            /***************************************
+             * Model(config)
+             **************************************/
             _private.Model = function(config) {
                 this.id = config.id;
             };
@@ -223,6 +256,9 @@
                 return cache.put(this.id, this);
             };
 
+            /***************************************
+             * Voice(config)
+             **************************************/
             _private.Voice = function(config) {
                 this.setupWith(config);
             };
@@ -230,6 +266,9 @@
             _private.Voice.prototype.constructor = _private.Voice;
             _private.Voice.prototype._type = 'Voice';
 
+            /***************************************
+             * VoiceFx(config)
+             **************************************/
             _private.VoiceFx = function(config) {
                 this.setupWith(config);
             };
@@ -237,25 +276,39 @@
             _private.VoiceFx.prototype.constructor = _private.VoiceFx;
             _private.VoiceFx.prototype._type = 'VoiceFx';
 
+            /***************************************
+             * Style(config)
+             **************************************/
             _private.Style = function(config) {
                 this.setupWith(config);
+
+                this.stylesheet = c6UrlMaker(config.stylesheet, 'collateral');
             };
             _private.Style.prototype = new _private.Model({});
             _private.Style.prototype.constructor = _private.Style;
             _private.Style.prototype._type = 'Style';
 
+            /***************************************
+             * Sfx(config)
+             **************************************/
             _private.Sfx = function(config) {
                 var sfx;
+
+                config.src = c6UrlMaker(config.src, 'collateral');
 
                 c6Sfx.loadSounds([config]);
                 sfx = c6Sfx.getSoundByName(config.name);
 
                 sfx.cache = _private.Model.prototype.cache;
+                sfx.id = config.id;
                 sfx._type = 'Sfx';
 
                 return sfx;
             };
 
+            /***************************************
+             * Annotation(config, defaultPermissions, defaultStyle)
+             **************************************/
             _private.Annotation = function(config, defaultPermissions, defaultStyle) {
                 this.permissions = defaultPermissions;
 
@@ -267,45 +320,60 @@
             _private.Annotation.prototype.constructor = _private.Annotation;
             _private.Annotation.prototype._type = 'Annotation';
 
+            /***************************************
+             * Project(appConfig, videoConfig)
+             **************************************/
             _private.Project = function(appConfig, videoConfig) {
-                var styles = [],
-                    voices = [],
-                    voiceFx = [],
-                    sfx = [],
-                    annotations = [],
-                    defaultPermissions, defaultStyle;
+                var hasMany = {
+                    voices: {
+                        type: 'Voice'
+                    },
+                    voiceFx: {
+                        type: 'VoiceFx'
+                    },
+                    styles: {
+                        type: 'Style'
+                    },
+                    sfx: {
+                        type: 'Sfx'
+                    },
+                    annotations: {
+                        type: 'Annotation',
+                        args: []
+                    }
+                };
 
+                // Inherit from appConfig, then videoConfig;
                 angular.extend(this, appConfig, videoConfig);
 
-                defaultPermissions = this.defaults.permissions;
-                defaultStyle = this.defaults.style;
+                // Give the src an extension
+                this.src += ('.' + c6VideoService.extensionForFormat(c6VideoService.bestFormat()));
 
-                this.voices.forEach(function(voice) {
-                    voices.push(_private.get('Voice', voice));
-                });
-                this.voices = voices;
+                // Expand thumb urls to be in collateral dir
+                angular.forEach(this.thumbs, function(thumb, index) {
+                    this.thumbs[index] = c6UrlMaker(thumb, 'collateral');
+                }.bind(this));
 
-                this.voiceFx.forEach(function(fx) {
-                    voiceFx.push(_private.get('VoiceFx', fx));
-                });
-                this.voiceFx = voiceFx;
+                hasMany.annotations.args.push(this.defaults.permissions, this.defaults.style);
 
-                this.styles.forEach(function(style) {
-                    styles.push(_private.get('Style', style));
-                });
-                this.styles = styles;
+                // Convert POJOs to one of the useful above types
+                angular.forEach(hasMany, function(settings, prop) {
+                    var items = this[prop];
 
-                this.sfx.forEach(function(fx) {
-                    sfx.push(_private.get('Sfx', fx));
-                });
-                this.sfx = sfx;
+                    this[prop] = items.map(function(item, index) {
+                        var args;
 
-                this.annotations.forEach(function(annotation) {
-                    annotations.push(_private.get('Annotation', annotation, defaultPermissions, defaultStyle));
-                });
-                this.annotations = annotations;
+                        item.id = item.id || index;
+
+                        args = [settings.type, item];
+                        args.push.apply(args, settings.args || []);
+
+                        return _private.get.apply(_private, args);
+                    });
+                }.bind(this));
             };
 
+            /* @public METHODS */
             this.new = function(appConfig, videoConfig) {
                 return new _private.Project(appConfig, videoConfig);
             };

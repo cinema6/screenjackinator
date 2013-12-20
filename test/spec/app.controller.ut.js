@@ -5,6 +5,7 @@
         describe('AppController', function() {
             var $rootScope,
                 $scope,
+                $httpBackend,
                 $q,
                 $timeout,
                 AppCtrl;
@@ -15,8 +16,11 @@
                 googleAnalytics,
                 $stateProvider,
                 $state,
+                $log,
+                ProjectService,
                 appData,
-                siteSession;
+                siteSession,
+                appConfig;
 
             beforeEach(function() {
                 c6ImagePreloader = {
@@ -38,6 +42,15 @@
 
                 googleAnalytics = jasmine.createSpy('googleAnalytics');
 
+                ProjectService = {
+                    new: jasmine.createSpy('ProjectService.new(appConfig, videoConfig)').andCallFake(function() {
+                        return ProjectService._.newResult;
+                    }),
+                    _: {
+                        newResult: {}
+                    }
+                };
+
                 $stateProvider = {
                     state: jasmine.createSpy('$stateProvider.state()').andCallFake(function() {
                         return $stateProvider;
@@ -51,14 +64,23 @@
                     go: jasmine.createSpy('$state.go()')
                 };
 
+                $log = {
+                    error: jasmine.createSpy('$log.error(err)'),
+                    info: jasmine.createSpy('$log.info(msg)')
+                };
+
                 appData = {
                     experience: {
-                        img: {}
+                        img: {},
+                        data: {}
                     },
                     profile: {
                         raf: {}
                     }
                 };
+
+                appConfig = {};
+
                 module('ui.router', function($provide) {
                     $provide.provider('$state', $stateProvider);
                 });
@@ -73,9 +95,13 @@
                             requestTransitionState: jasmine.createSpy('site.requestTransitionState()').andCallFake(function() {
                                 return site._.requestTransitionStateResult.promise;
                             }),
+                            getAppData: jasmine.createSpy('site.getAppData()').andCallFake(function() {
+                                return site._.getAppDataResult.promise;
+                            }),
                             _: {
                                 getSessionResult: $q.defer(),
-                                requestTransitionStateResult: $q.defer()
+                                requestTransitionStateResult: $q.defer(),
+                                getAppDataResult: $q.defer()
                             }
                         };
 
@@ -87,13 +113,19 @@
                 module('c6.screenjackinator', function($provide) {
                     $provide.value('gsap', gsap);
                     $provide.value('googleAnalytics', googleAnalytics);
+                    $provide.value('ProjectService', ProjectService);
+                    $provide.value('$log', $log);
                 });
 
-                inject(function(_$rootScope_, _$q_, _$timeout_, $controller, c6EventEmitter) {
+                inject(function(_$rootScope_, _$q_, _$timeout_, $controller, _$httpBackend_, c6EventEmitter) {
                     $rootScope = _$rootScope_;
                     $q = _$q_;
                     $timeout = _$timeout_;
+                    $httpBackend = _$httpBackend_;
                     $scope = _$rootScope_.$new();
+
+                    $httpBackend.expectGET('assets/collateral/app.config.json')
+                        .respond(200, appConfig);
 
                     AppCtrl = $controller('AppController', {
                         $scope: $scope
@@ -109,6 +141,34 @@
 
             it('should publish itself to the $scope', function() {
                 expect($scope.AppCtrl).toBe(AppCtrl);
+            });
+
+            describe('getting a project', function() {
+                it('should get the appConfig', function() {
+                    $httpBackend.flush();
+                });
+
+                it('then should request app data from the site', function() {
+                    expect(site.getAppData).toHaveBeenCalled();
+                });
+
+                it('then should then set the project property', function() {
+                    $httpBackend.flush();
+                    $rootScope.$apply(function() { site._.getAppDataResult.resolve(appData); });
+
+                    expect(ProjectService.new).toHaveBeenCalledWith(appConfig, appData.experience.data);
+                    expect(AppCtrl.project).toBe(ProjectService._.newResult);
+                });
+
+                it('should log an error to the console and send an event to GA if there is failure.', function() {
+                    var error = 'blah blah error error blah';
+
+                    $httpBackend.flush();
+                    $rootScope.$apply(function() { site._.getAppDataResult.reject(error); });
+
+                    expect($log.error).toHaveBeenCalledWith(error);
+                    expect(googleAnalytics).toHaveBeenCalledWith('send', 'event', 'error', 'thrown', error);
+                });
             });
 
             describe('site integration', function() {

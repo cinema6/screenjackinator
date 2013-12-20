@@ -17,6 +17,7 @@
             "stylesheet": "experiences/notebook/assets/styles.css"
         },
         "data": {
+            "src": "not_over",
             "styles": [
                 {
                     "id": "antique",
@@ -27,8 +28,9 @@
             ],
             "sfx": [
                 {
+                    "id": "pop",
                     "name": "pop",
-                    "src": "pop.mp3"
+                    "src": "sounds/pop"
                 }
             ],
             "length": 61,

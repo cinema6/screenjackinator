@@ -8,6 +8,7 @@
                 _private;
 
             var c6Sfx,
+                c6VideoService,
                 soundFx;
 
             var appConfig,
@@ -26,6 +27,11 @@
             beforeEach(function() {
                 spyOn(angular, 'copy').andCallThrough();
                 spyOn(angular, 'extend').andCallThrough();
+
+                c6VideoService = {
+                    bestFormat: jasmine.createSpy('c6VideoService.bestFormat(formats)').andReturn('video/mp4'),
+                    extensionForFormat: jasmine.createSpy('c6VideoService.extensionForFormat(format)').andReturn('mp4')
+                };
 
                 appConfig = {
                     voices: [
@@ -77,6 +83,7 @@
                 };
 
                 videoConfig = {
+                    src: 'not_over',
                     styles: [
                         {
                             id: 'antique',
@@ -87,7 +94,7 @@
                     ],
                     sfx: [
                         {
-                            name: 'pop',
+                            id: 'pop',
                             src: 'pop.mp3'
                         }
                     ],
@@ -135,6 +142,8 @@
                 };
 
                 module('c6.ui', function($provide) {
+                    $provide.value('c6VideoService', c6VideoService);
+
                     $provide.provider('c6Sfx', function() {
                         this.$get = function($q) {
                             var service = {
@@ -313,7 +322,8 @@
 
                         beforeEach(function() {
                             config = {
-                                id: 'testStyle'
+                                id: 'testStyle',
+                                stylesheet: 'themes/antique/styles.css'
                             };
 
                             spyOn(_private.Style.prototype, 'setupWith').andCallThrough();
@@ -329,6 +339,10 @@
                         it('should set itself up with the passed config', function() {
                             expect(style.setupWith).toHaveBeenCalledWith(config);
                         });
+
+                        it('should expand the stylesheet to a collateral href', function() {
+                            expect(style.stylesheet).toBe('assets/collateral/themes/antique/styles.css');
+                        });
                     });
 
                     describe('Sfx', function() {
@@ -338,10 +352,15 @@
                         beforeEach(function() {
                             config = {
                                 id: 'sfx',
-                                name: 'sfx'
+                                name: 'sfx',
+                                src: 'sounds/my_sfx'
                             };
 
                             sfx = new _private.Sfx(config);
+                        });
+
+                        it('should expand the src to a collateral src', function() {
+                            expect(config.src).toBe('assets/collateral/sounds/my_sfx');
                         });
 
                         it('return a sfx created by c6Sfx', function() {
@@ -353,6 +372,10 @@
 
                         it('should have a _type property of Sfx', function() {
                             expect(sfx._type).toBe('Sfx');
+                        });
+
+                        it('should have an id property', function() {
+                            expect(sfx.id).toBe(config.id);
                         });
 
                         it('should give the sfx the model\'s cache method', function() {
@@ -440,7 +463,8 @@
                         });
 
                         it('should convert the voices to Voices by getting them', function() {
-                            appConfig.voices.forEach(function(voice) {
+                            appConfig.voices.forEach(function(voice, index) {
+                                expect(voice.id).not.toBe(index);
                                 expect(_private.get).toHaveBeenCalledWith('Voice', voice);
                             });
 
@@ -450,7 +474,8 @@
                         });
 
                         it('should convert the voiceFx to VoiceFx by getting them', function() {
-                            appConfig.voiceFx.forEach(function(voiceFx) {
+                            appConfig.voiceFx.forEach(function(voiceFx, index) {
+                                expect(voiceFx.id).not.toBe(index);
                                 expect(_private.get).toHaveBeenCalledWith('VoiceFx', voiceFx);
                             });
 
@@ -460,7 +485,8 @@
                         });
 
                         it('should convert the styles to Styles by getting them', function() {
-                            videoConfig.styles.forEach(function(style) {
+                            videoConfig.styles.forEach(function(style, index) {
+                                expect(style.id).not.toBe(index);
                                 expect(_private.get).toHaveBeenCalledWith('Style', style);
                             });
 
@@ -470,7 +496,8 @@
                         });
 
                         it('should convert the sfx to Sfx by getting them', function() {
-                            videoConfig.sfx.forEach(function(fx) {
+                            videoConfig.sfx.forEach(function(fx, index) {
+                                expect(fx.id).not.toBe(index);
                                 expect(_private.get).toHaveBeenCalledWith('Sfx', fx);
                             });
 
@@ -480,13 +507,26 @@
                         });
 
                         it('should convert the annotations into Annotations by getting them', function() {
-                            videoConfig.annotations.forEach(function(annotation) {
+                            videoConfig.annotations.forEach(function(annotation, index) {
+                                expect(annotation.id).toBe(index);
                                 expect(_private.get).toHaveBeenCalledWith('Annotation', annotation, project.defaults.permissions, project.defaults.style);
                             });
 
                             project.annotations.forEach(function(annotation) {
                                 expect(annotation).toBe(getResult);
                             });
+                        });
+
+                        it('should convert the thumbs to collateral urls', function() {
+                            project.thumbs.forEach(function(thumb) {
+                                expect(!!thumb.match(/^assets\/collateral\//)).toBe(true);
+                            });
+                        });
+
+                        it('should get an extension for the src', function() {
+                            expect(project.src).toBe('not_over.mp4');
+                            expect(c6VideoService.bestFormat).toHaveBeenCalled();
+                            expect(c6VideoService.extensionForFormat).toHaveBeenCalledWith('video/mp4');
                         });
                     });
                 });

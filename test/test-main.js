@@ -14,6 +14,7 @@
     $window.ga = function() {};
 
     c6.kBaseUrl = 'assets';
+    c6.kEnv = 'dev';
     c6.kLocal = true;
     c6.kDebug = true;
     c6.kHasKarma = true;
@@ -21,6 +22,10 @@
     c6.kVideoUrls = {
         local: 'assets/media',
         cdn: 'http://foo.cinema6.com/media/app'
+    };
+    c6.kCollateralUrls = {
+        local: c6.kBaseUrl + '/collateral',
+        dev: 'http://s3.amazonaws.com/c6.dev/collateral/screenjackinator'
     };
     c6.kModDeps = ['ui.router', 'c6.ui', 'c6.log'];
 
