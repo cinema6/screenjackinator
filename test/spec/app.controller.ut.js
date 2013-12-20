@@ -18,6 +18,7 @@
                 $state,
                 $log,
                 ProjectService,
+                VideoService,
                 appData,
                 siteSession,
                 appConfig;
@@ -49,6 +50,10 @@
                     _: {
                         newResult: {}
                     }
+                };
+
+                VideoService = {
+                    listenOn: jasmine.createSpy('VideoService.listenOn(scope)')
                 };
 
                 $stateProvider = {
@@ -114,6 +119,7 @@
                     $provide.value('gsap', gsap);
                     $provide.value('googleAnalytics', googleAnalytics);
                     $provide.value('ProjectService', ProjectService);
+                    $provide.value('VideoService', VideoService);
                     $provide.value('$log', $log);
                 });
 
@@ -141,6 +147,10 @@
 
             it('should publish itself to the $scope', function() {
                 expect($scope.AppCtrl).toBe(AppCtrl);
+            });
+
+            it('should tell the VideoService to listen on its scope', function() {
+                expect(VideoService.listenOn).toHaveBeenCalledWith($scope);
             });
 
             describe('getting a project', function() {
