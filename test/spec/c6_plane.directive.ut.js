@@ -133,20 +133,26 @@
                 });
 
                 it('should end up so the plane with highest priority get the contents', function() {
-                    var childScope = $rootScope.$new(),
+                    var plane2,
+                        plane3,
+                        plane4,
+                        plane5,
+                        childScope = $scope.$new(),
                         grandchildScope = childScope.$new(),
-                        plane2 = $compile('<div c6-plane="test" priority="10"></div>')(childScope),
-                        plane3 = $compile('<div c6-plane="test" priority="0"><span>Hello!</span></div>')(grandchildScope);
+                        greatGrandchildScope = grandchildScope.$new();
 
-                    plane = $compile('<div c6-plane="test" priority="5"></div>')($rootScope);
+                    plane = $compile('<div c6-plane="test" priority="15"></div>')($rootScope);
+                    plane2 = $compile('<div c6-plane="test" priority="10"></div>')($scope);
+                    plane3 = $compile('<div c6-plane="test" priority="5"></div>')(childScope);
+                    plane4 = $compile('<div c6-plane="test" priority="20"></div>')(grandchildScope);
+                    plane5 = $compile('<div c6-plane="test" priority="0">Foo</div>')(greatGrandchildScope);
 
-                    expect(plane3[0].innerHTML).toBe('<span>Hello!</span>');
+                    expect(plane5[0].innerHTML).toBe('Foo');
 
-                    grandchildScope.$destroy();
+                    greatGrandchildScope.$destroy();
                     $timeout.flush();
 
-                    expect(plane2[0].innerHTML).toBe('');
-                    expect(plane[0].innerHTML).toBe('<span>Hello!</span>');
+                    expect(plane3[0].innerHTML).toBe('Foo');
                 });
 
                 it('should give planes without priority the lowest priority', function() {
