@@ -91,14 +91,18 @@
                     url: '/experience'
                 });
         }])
-        .controller('AppController', ['$scope','$state','$log', 'site', 'c6ImagePreloader', 'gsap', '$timeout', 'googleAnalytics', '$http', 'c6UrlMaker', 'ProjectService', 'VideoService', '$q', 'fail',
-        function                     ( $scope , $state , $log ,  site ,  c6ImagePreloader ,  gsap ,  $timeout ,  googleAnalytics ,  $http ,  c6UrlMaker ,  ProjectService ,  VideoService ,  $q ,  fail ) {
+        .controller('AppController', ['$scope','$state','$log', 'site', 'c6ImagePreloader', 'gsap', '$timeout', 'googleAnalytics', '$http', 'c6UrlMaker', 'ProjectService', 'VideoService', '$q', 'fail', 'c6Computed',
+        function                     ( $scope , $state , $log ,  site ,  c6ImagePreloader ,  gsap ,  $timeout ,  googleAnalytics ,  $http ,  c6UrlMaker ,  ProjectService ,  VideoService ,  $q ,  fail ,  c          ) {
             var self = this,
                 canChangeState = false;
 
             $log.info('AppCtlr loaded.');
 
             VideoService.listenOn($scope);
+
+            this.videoSrc = c($scope, function(src) {
+                return src && c6UrlMaker(src, 'video');
+            }, ['AppCtrl.project.src']);
 
             this.src = function(src) {
                 var profile = self.profile,

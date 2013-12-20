@@ -323,6 +323,26 @@
             });
 
             describe('@public', function() {
+                describe('properties', function() {
+                    describe('videoSrc()', function() {
+                        beforeEach(function() {
+                            AppCtrl.project = {
+                                src: null
+                            };
+                        });
+
+                        it('should be the full video url', function() {
+                            expect(AppCtrl.videoSrc()).toBe(null);
+
+                            $scope.$apply(function() { AppCtrl.project.src = 'foo.mp4'; });
+                            expect(AppCtrl.videoSrc()).toBe('assets/media/foo.mp4');
+
+                            $scope.$apply(function() { AppCtrl.project.src = 'not_over.mp4'; });
+                            expect(AppCtrl.videoSrc()).toBe('assets/media/not_over.mp4');
+                        });
+                    });
+                });
+
                 describe('methods', function() {
                     describe('goto(state)', function() {
                         it('should proxy to $state.go(state)', function() {
