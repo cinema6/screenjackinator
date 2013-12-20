@@ -13,10 +13,10 @@
             var site,
                 c6ImagePreloader,
                 gsap,
+                fail,
                 googleAnalytics,
                 $stateProvider,
                 $state,
-                $log,
                 ProjectService,
                 VideoService,
                 appData,
@@ -40,6 +40,8 @@
                         }
                     }
                 };
+
+                fail = jasmine.createSpy('fail(error)');
 
                 googleAnalytics = jasmine.createSpy('googleAnalytics');
 
@@ -67,11 +69,6 @@
 
                 $state = {
                     go: jasmine.createSpy('$state.go()')
-                };
-
-                $log = {
-                    error: jasmine.createSpy('$log.error(err)'),
-                    info: jasmine.createSpy('$log.info(msg)')
                 };
 
                 appData = {
@@ -117,10 +114,10 @@
 
                 module('c6.screenjackinator', function($provide) {
                     $provide.value('gsap', gsap);
+                    $provide.value('fail', fail);
                     $provide.value('googleAnalytics', googleAnalytics);
                     $provide.value('ProjectService', ProjectService);
                     $provide.value('VideoService', VideoService);
-                    $provide.value('$log', $log);
                 });
 
                 inject(function(_$rootScope_, _$q_, _$timeout_, $controller, _$httpBackend_, c6EventEmitter) {
@@ -170,14 +167,13 @@
                     expect(AppCtrl.project).toBe(ProjectService._.newResult);
                 });
 
-                it('should log an error to the console and send an event to GA if there is failure.', function() {
+                it('should "fail" if there is failure.', function() {
                     var error = 'blah blah error error blah';
 
                     $httpBackend.flush();
                     $rootScope.$apply(function() { site._.getAppDataResult.reject(error); });
 
-                    expect($log.error).toHaveBeenCalledWith(error);
-                    expect(googleAnalytics).toHaveBeenCalledWith('send', 'event', 'error', 'thrown', error);
+                    expect(fail).toHaveBeenCalledWith(error);
                 });
             });
 

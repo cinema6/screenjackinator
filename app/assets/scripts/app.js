@@ -91,15 +91,10 @@
                     url: '/experience'
                 });
         }])
-        .controller('AppController', ['$scope','$state','$log', 'site', 'c6ImagePreloader', 'gsap', '$timeout', 'googleAnalytics', '$http', 'c6UrlMaker', 'ProjectService', 'VideoService', '$q',
-        function                     ( $scope , $state , $log ,  site ,  c6ImagePreloader ,  gsap ,  $timeout ,  googleAnalytics ,  $http ,  c6UrlMaker ,  ProjectService ,  VideoService ,  $q ) {
+        .controller('AppController', ['$scope','$state','$log', 'site', 'c6ImagePreloader', 'gsap', '$timeout', 'googleAnalytics', '$http', 'c6UrlMaker', 'ProjectService', 'VideoService', '$q', 'fail',
+        function                     ( $scope , $state , $log ,  site ,  c6ImagePreloader ,  gsap ,  $timeout ,  googleAnalytics ,  $http ,  c6UrlMaker ,  ProjectService ,  VideoService ,  $q ,  fail ) {
             var self = this,
                 canChangeState = false;
-
-            function handleError(error) {
-                googleAnalytics('send', 'event', 'error', 'thrown', error);
-                $log.error(error);
-            }
 
             $log.info('AppCtlr loaded.');
 
@@ -146,7 +141,7 @@
                 appData: site.getAppData()
             })
                 .then(createProject)
-                .then(null, handleError);
+                .then(null, fail);
 
             site.init({
                 setup: function(appData) {
@@ -194,6 +189,14 @@
             });
 
             $scope.AppCtrl = this;
+        }])
+
+        .factory('fail', ['$log', 'googleAnalytics',
+        function         ( $log ,  googleAnalytics ) {
+            return function(error) {
+                googleAnalytics('send', 'event', 'error', 'thrown', error);
+                $log.error(error);
+            };
         }])
 
         .service('ProjectService', ['$cacheFactory', 'c6Sfx', 'c6UrlMaker', 'c6VideoService',
@@ -414,5 +417,54 @@
             };
 
             if (window.c6.kHasKarma) { this._private = _private; }
+        }])
+        .directive('c6Plane', ['fail', '$rootScope', '$timeout',
+        function              ( fail ,  $rootScope ,  $timeout ) {
+            return {
+                restrict: 'A',
+                link: function(scope, element, attrs) {
+                    var name = attrs.c6Plane,
+                        priority = parseInt(attrs.priority, 10);
+
+                    function eventName(event) {
+                        return 'c6Plane[' + name + ']:' + event;
+                    }
+
+                    if (!name) {
+                        fail('A plane was created with no name! Reality collapse imminent!');
+                    }
+
+                    // Let everybody know we're here! Needs to happen on $rootScope so
+                    // EVERYBODY knows!
+                    $rootScope.$broadcast(eventName('appeared'), element, priority);
+
+                    // Handle other planes with our name appearing
+                    scope.$on(eventName('appeared'), function(event, newPlane, newPlanePriority) {
+                        if (newPlanePriority < priority) {
+                            newPlane.append(element.contents());
+                        }
+                    });
+
+                    scope.$on('$destroy', function() {
+                        scope.$emit(eventName('destroying'), element, priority);
+                    });
+
+                    scope.$on(eventName('adopted'), function(event, thatPlane, theirPriority) {
+                        if (priority > theirPriority || element[0] === thatPlane[0]) {
+                            return;
+                        }
+
+                        element.append(thatPlane.contents());
+                        $rootScope.$broadcast(eventName('adopted'), element, priority);
+                    });
+
+                    scope.$on(eventName('destroying'), function(event, destroyingPlane) {
+                        element.append(destroyingPlane.contents());
+                        $timeout(function() {
+                            $rootScope.$broadcast(eventName('adopted'), element, priority);
+                        });
+                    });
+                }
+            };
         }]);
 }(window));
