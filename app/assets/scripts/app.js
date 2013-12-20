@@ -250,7 +250,7 @@
                 var cache = _private.cache.get(this._type);
 
                 if (!cache) {
-                    cache = _private.cache.put(this._type, $cacheFactory('project:' + this.constructor));
+                    cache = _private.cache.put(this._type, $cacheFactory('project:' + this._type));
                 }
 
                 return cache.put(this.id, this);
@@ -376,6 +376,39 @@
             /* @public METHODS */
             this.new = function(appConfig, videoConfig) {
                 return new _private.Project(appConfig, videoConfig);
+            };
+
+            if (window.c6.kHasKarma) { this._private = _private; }
+        }])
+        .service('VideoService', ['$q',
+        function                 ( $q ) {
+            var _private = {};
+
+            _private.antilisteners = [];
+            _private.videoDeferreds = {};
+
+            _private.handleVideoReady = function(event, video) {
+                // Get existing deferred or create new one. Resolve it.
+                (_private.videoDeferreds[video.id] = (_private.videoDeferreds[video.id] || $q.defer()))
+                    .resolve(video);
+            };
+
+            this.listenOn = function(scope) {
+                _private.antilisteners.push(scope.$on('c6video-ready', _private.handleVideoReady));
+            };
+
+            this.ignore = function() {
+                angular.forEach(_private.antilisteners, function(deregister) {
+                    deregister();
+                });
+
+                _private.antilisteners.length = 0;
+            };
+
+            this.getVideo = function(id) {
+                // Get existing deferred or create new one. Return promise.
+                return (_private.videoDeferreds[id] = (_private.videoDeferreds[id] || $q.defer()))
+                    .promise;
             };
 
             if (window.c6.kHasKarma) { this._private = _private; }
