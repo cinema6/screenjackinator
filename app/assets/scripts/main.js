@@ -34,7 +34,8 @@
                 ];
             } else {
                 return [
-                    'scripts/app'
+                    'scripts/app',
+                    'scripts/video'
                 ];
             }
         }()),

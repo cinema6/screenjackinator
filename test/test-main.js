@@ -82,6 +82,9 @@
                 },
                 app: {
                     deps: ['angular', 'angularMocks', 'modernizr', 'timelinemax', 'uirouter', 'c6ui', 'c6log']
+                },
+                video: {
+                    deps: ['templates']
                 }
             },
 

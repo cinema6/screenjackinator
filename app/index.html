@@ -18,6 +18,9 @@
     </head>
     <body>
         <ui-view ng-animate="'view'"></ui-view>
+        <div c6-plane="video" priority="2">
+            <video c6-video id="video" c6-src="AppCtrl.videoSrc()" c6-controls="'true'"></video>
+        </div>
 
         <script>
             (function() {

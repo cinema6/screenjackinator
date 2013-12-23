@@ -8,14 +8,10 @@ module.exports = function(ptor) {
         this.playBtn = $('.exp-hero-slides__link');
 
         this.get = function() {
-            // Load the sandbox app
-            browser.driver.get('http://localhost:9000/');
-            // Switch to the experience app
+            var IndexPage = require('./IndexPage.js'),
+                indexPage = new IndexPage(ptor);
 
-            browser.wait(function() {
-                return ptor.isElementPresent(by.name('experience'));
-            });
-            ptor.switchTo().frame(ptor.findElement(by.name('experience')));
+            indexPage.get();
             // Under normal circumstance, protractor will wait for $http, $digest, and $timeout to
             // be idle before starting the tests. This doesn't work when we're working with Angular
             // inside of an iframe. Because of this, we "ignoreSynchronization" and use good, old-
