@@ -110,7 +110,7 @@
                 }
 
                 return styles.map(function(style) {
-                    return c6UrlMaker(style.stylesheet, 'collateral');
+                    return style.stylesheet;
                 });
             }, ['AppCtrl.project.styles']);
 

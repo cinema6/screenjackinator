@@ -2,6 +2,7 @@ module.exports = function(ptor) {
     'use strict';
 
     this.video = $('#video');
+    this.customStylesheet = $('link.custom-styles');
 
     this.get = function() {
         // Load the sandbox app

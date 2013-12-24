@@ -357,13 +357,13 @@
                                 AppCtrl.project = {
                                     styles: [
                                         {
-                                            stylesheet: 'test/foo/style.css'
+                                            stylesheet: 'assets/collateral/test/foo/style.css'
                                         },
                                         {
-                                            stylesheet: 'test.css'
+                                            stylesheet: 'assets/collateral/test.css'
                                         },
                                         {
-                                            stylesheet: 'test/styles.css'
+                                            stylesheet: 'assets/collateral/test/styles.css'
                                         }
                                     ]
                                 };
