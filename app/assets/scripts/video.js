@@ -52,17 +52,51 @@
         function               ( c6UrlMaker ) {
             return {
                 restrict: 'E',
-                transclude: true,
                 templateUrl: c6UrlMaker('views/directives/c6_bubble.html'),
                 scope: {
-                    show: '='
+                    show: '=',
+                    annotation: '='
                 },
                 link: function(scope, element) {
+                    var preEditText = null;
+
+                    scope.discardChanges = function() {
+                        scope.annotation.text = preEditText;
+                        scope.editing = false;
+                    };
+
+                    element.addClass('annotations__group');
+
+                    element.bind('click', function() {
+                        scope.editing = true;
+                        scope.$digest();
+                    });
+
+                    scope.$watch('editing', function(editing) {
+                        var text = scope.annotation && scope.annotation.text;
+
+                        preEditText = editing ? text : null;
+                    });
+
                     scope.$watch('show', function(show) {
                         var display = show ? '' : 'none';
 
                         element.css('display', display);
                     });
+
+                    scope.$watch('annotation.style.modifier', function(modifier, oldModifier) {
+                        element.removeClass('annotations__group--' + oldModifier);
+
+                        if (modifier) {
+                            element.addClass('annotations__group--' + modifier);
+                        }
+                    });
+
+                    scope.$watch('annotation.position', function(position) {
+                        if (!position) { return; }
+
+                        element.css(position);
+                    }, true);
                 }
             };
         }]);

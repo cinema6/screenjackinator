@@ -60,13 +60,13 @@
                         {
                             id: 'antique',
                             name: 'Antique',
-                            class: 'antique',
+                            modifier: 'antique',
                             stylesheet: 'antique.css'
                         },
                         {
                             id: 'karate',
                             name: 'Karate',
-                            class: 'karate',
+                            modifier: 'karate',
                             stylesheet: 'karate.css'
                         }
                     ],
@@ -88,7 +88,7 @@
                         {
                             id: 'antique',
                             name: 'Antique',
-                            class: 'antique',
+                            modifier: 'antique',
                             stylesheet: 'antique.css'
                         }
                     ],

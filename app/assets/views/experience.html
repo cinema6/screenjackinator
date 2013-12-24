@@ -3,7 +3,7 @@
             <div c6-plane="video" priority="0"></div>
             <ul>
                 <li ng-repeat="annotation in VideoCtrl.bubbles()">
-                    <c6-bubble show="VideoCtrl.annotationIsActive(annotation)">{{annotation.text}}</c6-bubble>
+                    <c6-bubble annotation="annotation" show="VideoCtrl.annotationIsActive(annotation)">{{annotation.text}}</c6-bubble>
                 </li>
             </ul>
         </div>

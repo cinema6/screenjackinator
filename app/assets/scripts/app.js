@@ -104,6 +104,16 @@
                 return src && c6UrlMaker(src, 'video');
             }, ['AppCtrl.project.src']);
 
+            this.stylesheets = c($scope, function(styles) {
+                if (!styles) {
+                    return [];
+                }
+
+                return styles.map(function(style) {
+                    return c6UrlMaker(style.stylesheet, 'collateral');
+                });
+            }, ['AppCtrl.project.styles']);
+
             this.src = function(src) {
                 var profile = self.profile,
                     modifiers = {

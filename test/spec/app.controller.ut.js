@@ -341,6 +341,41 @@
                             expect(AppCtrl.videoSrc()).toBe('assets/media/not_over.mp4');
                         });
                     });
+
+                    describe('stylesheets()', function() {
+                        it('should be an empty array if there is no project/styles', function() {
+                            var stylesheets = AppCtrl.stylesheets();
+
+                            expect(angular.isArray(stylesheets)).toBe(true);
+                            expect(stylesheets.length).toBe(0);
+                        });
+
+                        it('should be an array of resolved stylesheets if there is a project/styles', function() {
+                            var stylesheets;
+
+                            $scope.$apply(function() {
+                                AppCtrl.project = {
+                                    styles: [
+                                        {
+                                            stylesheet: 'test/foo/style.css'
+                                        },
+                                        {
+                                            stylesheet: 'test.css'
+                                        },
+                                        {
+                                            stylesheet: 'test/styles.css'
+                                        }
+                                    ]
+                                };
+                            });
+                            stylesheets = AppCtrl.stylesheets();
+
+                            expect(stylesheets.length).toBe(3);
+                            expect(stylesheets[0]).toBe('assets/collateral/test/foo/style.css');
+                            expect(stylesheets[1]).toBe('assets/collateral/test.css');
+                            expect(stylesheets[2]).toBe('assets/collateral/test/styles.css');
+                        });
+                    });
                 });
 
                 describe('methods', function() {

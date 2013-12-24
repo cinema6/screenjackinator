@@ -22,8 +22,8 @@
                 {
                     "id": "antique",
                     "name": "Antique",
-                    "class": "antique",
-                    "stylesheet": "antique.css"
+                    "modifier": "antique",
+                    "stylesheet": "styles/antique/antique.css"
                 }
             ],
             "sfx": [

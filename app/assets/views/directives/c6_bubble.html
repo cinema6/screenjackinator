@@ -1,9 +1,14 @@
 <div class="annotations__style">
     <div class="annotations__text">
+        <span ng-hide="editing">{{annotation.text}}</span>
+        <form ng-show="editing">
+            <input type="text" ng-model="annotation.text">
+            <button name="cancel" ng-click="$event.stopPropagation(); discardChanges();">X</button>
+            <button name="save" ng-click="$event.stopPropagation(); editing = false;">Save</button>
+        </form>
         <div class="annotations__frame"></div>
         <div class="annotations__corner annotations__corner--right"></div>
         <div class="annotations__corner annotations__corner--left"></div>
         <div class="annotations__tail"></div>
-        <span class="annotations__txt" ng-transclude></span>
     </div>
 </div>
