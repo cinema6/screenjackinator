@@ -12,8 +12,7 @@
             ],
             options: {
                 livereload: true
-            },
-            tasks: ['jshint:all']
+            }
         },
         e2e: {
             files: [

@@ -1,0 +1,89 @@
+/* The Notebook Video Experience specific styles */
+
+.annotation__group--antique {
+    min-width: 20%; max-width: 28%;
+}
+    .annotation__group--antique .annotations__style {
+        position: relative; border-radius: 16px; 
+        background: url(img/annotation-body.png);
+    }
+        .annotation__group--antique .annotations__text {
+            padding: 0.75em 1em; text-align: center;
+            font-size: 1.75em; /* 28px */ line-height: 1; color: #352e2e;
+            font-family: 'LadylikeBB', georgia, serif;
+        }
+            @font-face {
+                font-family: LadylikeBB;
+                src: url(fonts/ladylikebb-webfont.ttf) format('truetype'),
+                    url(fonts/ladylikebb-webfont.woff) format('woff'), 
+                    url(fonts/ladylikebb-webfont.eot) format('embedded-opentype'), 
+                    url(fonts/ladylikebb-webfont.svg#ladylike_bbregular) format('svg'); 
+                font-weight: normal; font-style: normal;
+            }
+
+        .annotation__group--antique .annotations__frame, .annotation__group--antique .annotations__corner { 
+            position: absolute; width: 105%; height: 110%; left: -2.5%; top: -5%; 
+        }
+
+            .annotation__group--antique .annotations__frame {
+                border-radius: 46px;
+                background: url(img/annotation-right.png) repeat-y right, 
+                            url(img/annotation-left.png) repeat-y left, 
+                            url(img/annotation-top.png) repeat-x top, 
+                            url(img/annotation-bottom.png) repeat-x bottom;
+            }
+
+            .annotation__group--antique .annotations__corner {
+                background: url(img/annotation-bottomRight.png) no-repeat bottom right,
+                            url(img/annotation-topRight.png) no-repeat top right,
+                            url(img/annotation-bottomLeft.png) no-repeat bottom left,
+                            url(img/annotation-topLeft.png) no-repeat top left;
+            }
+
+        .annotation__group--antique .annotations__tail {
+            position: absolute; width: 100%; left: 0;
+        }
+
+            .annotation__group--antique .annotations__tail--bottomLeft-speech {
+                background: url(img/bottomLeft-speech.png) no-repeat 15% 0%; 
+                height: 22px; bottom: -15px;
+            }
+
+            .annotation__group--antique .annotations__tail--bottomRight-speech {
+                background: url(img/bottomRight-speech.png) no-repeat 80% 0%; 
+                height: 22px; bottom: -15px;
+            }
+
+            .annotation__group--antique .annotations__tail--topLeft-speech {
+                background: url(img/topLeft-speech.png) no-repeat 15% 0%; 
+                height: 22px; top: -15px;
+            }
+
+            .annotation__group--antique .annotations__tail--topRight-speech {
+                background: url(img/topRight-speech.png) no-repeat 80% 0%; 
+                height: 22px; top: -15px;
+            }
+
+            .annotation__group--antique .annotations__tail--bottomLeft-thought {
+                background: url(img/bottomLeft-thought.png) no-repeat 15% 0%; 
+                background-size: contain;
+                height: 30%;  bottom: -30%;
+            }
+
+            .annotation__group--antique .annotations__tail--bottomRight-thought {
+                background: url(img/bottomRight-thought.png) no-repeat 80% 0%; 
+                background-size: contain;
+                height: 30%; bottom: -30%;
+            }
+
+            .annotation__group--antique .annotations__tail--topLeft-thought {
+                background: url(img/topLeft-thought.png) no-repeat 15% 0%; 
+                background-size: contain;
+                height: 30%; top: -30%;
+            }
+
+            .annotation__group--antique .annotations__tail--topRight-thought {
+                background: url(img/topRight-thought.png) no-repeat 80% 0%; 
+                background-size: contain;
+                height: 30%; top: -30%;
+            }

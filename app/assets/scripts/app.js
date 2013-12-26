@@ -88,6 +88,7 @@
                 })
                 .state('experience', {
                     templateUrl: c6UrlMakerProvider.makeUrl('views/experience.html'),
+                    controller: 'ExperienceController',
                     url: '/experience'
                 });
         }])
@@ -399,8 +400,8 @@
 
             if (window.c6.kHasKarma) { this._private = _private; }
         }])
-        .service('VideoService', ['$q',
-        function                 ( $q ) {
+        .service('VideoService', ['$q', '$timeout',
+        function                 ( $q ,  $timeout ) {
             var _private = {};
 
             _private.antilisteners = [];
@@ -410,6 +411,18 @@
                 // Get existing deferred or create new one. Resolve it.
                 (_private.videoDeferreds[video.id] = (_private.videoDeferreds[video.id] || $q.defer()))
                     .resolve(video);
+            };
+
+            _private.waitForController = function(scope, expression) {
+                var deferred = $q.defer();
+
+                scope.$watch(expression, function(result) {
+                    if (result) {
+                        deferred.resolve(true);
+                    }
+                });
+
+                return deferred.promise;
             };
 
             this.listenOn = function(scope) {
@@ -428,6 +441,70 @@
                 // Get existing deferred or create new one. Return promise.
                 return (_private.videoDeferreds[id] = (_private.videoDeferreds[id] || $q.defer()))
                     .promise;
+            };
+
+            this.bindTo = function(id, delegate, controller, scope, expression) {
+                this.getVideo(id)
+                    .then(function(video) {
+                        return $q.all({
+                            video: video,
+                            waiting: _private.waitForController(scope, expression)
+                        });
+                    })
+                    .then(function(results) {
+                        var video = results.video,
+                            wasPlaying;
+
+                        controller.buffer(video.bufferedPercent() * 100);
+
+                        video
+                            .on('play', function() {
+                                controller.play();
+                            })
+                            .on('pause', function() {
+                                controller.pause();
+                            })
+                            .on('timeupdate', function(event, video) {
+                                var currentTime = video.player.currentTime,
+                                    duration = video.player.duration;
+
+                                controller.progress((currentTime / duration) * 100);
+                            })
+                            .on('progress', function(event, video) {
+                                controller.buffer(video.bufferedPercent() * 100);
+                            })
+                            .on('volumechange', function(event, video) {
+                                controller.muteChange(video.player.muted);
+                                controller.volumeChange(video.player.volume * 100);
+                            })
+                            .on('seeked', function(event, video) {
+                                if (wasPlaying) {
+                                    video.player.play();
+                                }
+                            });
+
+                        delegate.play = video.player.play.bind(video.player);
+                        delegate.pause = video.player.pause.bind(video.player);
+                        delegate.seekStart = function() {
+                            wasPlaying = !video.player.paused;
+                            video.player.pause();
+                        };
+                        delegate.seek = function(event) {
+                            $timeout(function() { controller.progress(event.percent); });
+                        };
+                        delegate.seekStop = function(event) {
+                            video.player.currentTime = (event.percent * video.player.duration) / 100;
+                        };
+                        delegate.volumeSeek = function(percent) {
+                            video.player.volume = percent / 100;
+                        };
+                        delegate.mute = function() {
+                            video.player.muted = true;
+                        };
+                        delegate.unmute = function() {
+                            video.player.muted = false;
+                        };
+                    });
             };
 
             if (window.c6.kHasKarma) { this._private = _private; }
@@ -478,6 +555,36 @@
                             $rootScope.$broadcast(eventName('adopted'), element, priority);
                         });
                     });
+                }
+            };
+        }])
+        .directive('c6VerticalCenter', ['$window',
+        function                       ( $window ) {
+            return {
+                link: function(scope, element, attrs) {
+                    var window$ = angular.element($window),
+                        topProp = attrs.c6VerticalCenter || 'margin-top',
+                        element_ = element[0],
+                        height = function() { return element_.offsetHeight; },
+                        offsetParent_ = element_.offsetParent,
+                        parentHeight = function() { return offsetParent_.offsetHeight; },
+                        top = function() { return (parentHeight() / 2) - (height() / 2); };
+
+                    function set() {
+                        element.css(topProp, (top() + 'px'));
+                    }
+
+                    scope.$on('c6VerticalCenter:recalculate', set);
+
+                    if (!angular.isUndefined(attrs.resize)) {
+                        window$.bind('resize', set);
+
+                        scope.$on('$destroy', function() {
+                            window$.unbind('resize', set);
+                        });
+                    }
+
+                    set();
                 }
             };
         }]);

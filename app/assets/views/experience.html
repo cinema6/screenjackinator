@@ -1,9 +1,17 @@
-<section id="experience">
-        <div ng-controller="VideoController">
-            <div c6-plane="video" priority="0"></div>
+<section class="experience__group" id="experience">
+        <div class="sidebar__group">
             <ul>
-                <li ng-repeat="annotation in VideoCtrl.bubbles()">
-                    <c6-bubble annotation="annotation" show="VideoCtrl.annotationIsActive(annotation)">{{annotation.text}}</c6-bubble>
+                <li ng-repeat="annotation in ExperienceCtrl.annotations()">
+                    <a href="" ng-click="ExperienceCtrl.jumpTo(annotation)">{{annotation.text}}</a>
+                </li>
+            </ul>
+        </div>
+        <div class="video__group" c6-vertical-center="top" resize ng-controller="VideoController">
+            <!-- The video will move to this plane as soon as the experience is started -->
+            <div class="video__player--active" c6-plane="video" priority="0"></div>
+            <ul class="video__annotations">
+                <li ng-repeat="annotation in ExperienceCtrl.bubbles()">
+                    <c6-bubble annotation="annotation" show="VideoCtrl.annotationIsActive(annotation)"></c6-bubble>
                 </li>
             </ul>
         </div>

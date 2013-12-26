@@ -4,52 +4,31 @@
     define(['video'], function() {
         describe('VideoController', function() {
             var VideoCtrl,
+                ExperienceCtrl,
                 AppCtrl,
                 $rootScope,
                 appCtrlScope,
+                expCtrlScope,
                 $scope,
                 $controller;
 
-            var VideoService,
-                video;
-
             beforeEach(function() {
-                video = {
-                    player: {
-                        currentTime: 0
-                    },
-                    on: jasmine.createSpy('video.on()')
-                };
-
-                module('c6.screenjackinator', function($provide) {
-                    $provide.factory('VideoService', function($q) {
-                        VideoService = {
-                            getVideo: jasmine.createSpy('VideoService.getVideo(id)')
-                                .andCallFake(function() {
-                                    return VideoService._.getVideoDeferred.promise;
-                                }),
-                            _: {
-                                getVideoDeferred: $q.defer()
-                            }
-                        };
-
-                        return VideoService;
-                    });
-                });
+                module('c6.screenjackinator');
 
                 inject(function($injector) {
                     $controller = $injector.get('$controller');
                     $rootScope = $injector.get('$rootScope');
 
                     appCtrlScope = $rootScope.$new();
-                    $scope = appCtrlScope.$new();
-                    VideoCtrl = $controller('VideoController', { $scope: $scope });
-                });
-
-                $scope.$apply(function() {
                     AppCtrl = appCtrlScope.AppCtrl = {
                         project: undefined
                     };
+
+                    expCtrlScope = appCtrlScope.$new();
+                    ExperienceCtrl = expCtrlScope.ExperienceCtrl = {};
+
+                    $scope = expCtrlScope.$new();
+                    VideoCtrl = $controller('VideoController', { $scope: $scope });
                 });
             });
 
@@ -59,14 +38,6 @@
 
             it('should put itself on the scope', function() {
                 expect($scope.VideoCtrl).toBe(VideoCtrl);
-            });
-
-            it('should cause a $digest when the timeupdate event fires', function() {
-                $scope.$apply(function() {
-                    VideoService._.getVideoDeferred.resolve(video);
-                });
-
-                expect(video.on).toHaveBeenCalledWith('timeupdate', angular.noop);
             });
 
             describe('methods', function() {
@@ -99,10 +70,14 @@
                     });
 
                     describe('if there is a video', function() {
+                        var video;
+
                         beforeEach(function() {
-                            $rootScope.$apply(function() {
-                                VideoService._.getVideoDeferred.resolve(video);
-                            });
+                            video = ExperienceCtrl.video = {
+                                player: {
+                                    currentTime: 0
+                                }
+                            };
                         });
 
                         it('should return true when the currentTime is in-between an annotation\'s timestamp and timestamp + duration', function() {
@@ -135,73 +110,6 @@
                             video.player.currentTime = 61;
                             expectShown([annotations[2]]);
                         });
-                    });
-                });
-            });
-
-            describe('properties', function() {
-                describe('annotations()', function() {
-                    it('should be null if the AppCtrl has no project', function() {
-                        expect(VideoCtrl.annotations()).toBe(null);
-                    });
-
-                    it('should be a reference to the annotations if there is a project', function() {
-                        $scope.$apply(function() {
-                            AppCtrl.project = {
-                                annotations: []
-                            };
-                        });
-
-                        expect(VideoCtrl.annotations()).toBe(AppCtrl.project.annotations);
-                    });
-                });
-
-                describe('bubbles()', function() {
-                    var annotations;
-
-                    beforeEach(function() {
-                        $scope.$apply(function() {
-                            AppCtrl.project = {
-                                annotations: [
-                                    {
-                                        type: 'popup'
-                                    },
-                                    {
-                                        type: 'tts'
-                                    },
-                                    {
-                                        type: 'tts'
-                                    },
-                                    {
-                                        type: 'popup'
-                                    },
-                                    {
-                                        type: 'popup'
-                                    }
-                                ]
-                            };
-
-                            annotations = AppCtrl.project.annotations;
-                        });
-                    });
-
-                    it('should be an array of just the popup annotations', function() {
-                        var bubbles = VideoCtrl.bubbles();
-
-                        expect(bubbles[0]).toBe(annotations[0]);
-                        expect(bubbles[1]).toBe(annotations[3]);
-                        expect(bubbles[2]).toBe(annotations[4]);
-                        expect(bubbles.length).toBe(3);
-                    });
-
-                    it('should be an empty array if annotations is undefined', function() {
-                        $scope.$apply(function() {
-                            AppCtrl.project.annotations = undefined;
-                        });
-
-                        expect(function() { VideoCtrl.bubbles(); }).not.toThrow();
-                        expect(VideoCtrl.bubbles().length).toBe(0);
-                        expect(angular.isArray(VideoCtrl.bubbles())).toBe(true);
                     });
                 });
             });

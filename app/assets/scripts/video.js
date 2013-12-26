@@ -2,37 +2,11 @@
     'use strict';
 
     angular.module('c6.screenjackinator')
-        .controller('VideoController', ['$scope', 'c6Computed', 'VideoService',
-        function                       ( $scope ,  c          ,  VideoService ) {
-            var video;
-
-            function saveVideo(c6Video) {
-                video = c6Video;
-
-                return video;
-            }
-
-            function handleVideoEvents(c6Video) {
-                // Trigger a $digest on timeupdate
-                c6Video.on('timeupdate', angular.noop);
-            }
-
-            VideoService.getVideo('video')
-                .then(saveVideo)
-                .then(handleVideoEvents);
-
-            this.annotations = c($scope, function(annotations) {
-                return annotations || null;
-            }, ['AppCtrl.project.annotations']);
-
-            this.bubbles = c($scope, function(annotations) {
-                return (annotations || []).filter(function(annotation) {
-                    return annotation.type === 'popup';
-                });
-            }, ['VideoCtrl.annotations()']);
-
+        .controller('VideoController', ['$scope',
+        function                       ( $scope ) {
             this.annotationIsActive = function(annotation) {
-                var start = annotation.timestamp,
+                var video = $scope.ExperienceCtrl.video,
+                    start = annotation.timestamp,
                     end = annotation.timestamp + annotation.duration,
                     currentTime;
 
@@ -65,7 +39,7 @@
                         scope.editing = false;
                     };
 
-                    element.addClass('annotations__group');
+                    element.addClass('annotation__group');
 
                     element.bind('click', function() {
                         scope.editing = true;
@@ -85,10 +59,10 @@
                     });
 
                     scope.$watch('annotation.style.modifier', function(modifier, oldModifier) {
-                        element.removeClass('annotations__group--' + oldModifier);
+                        element.removeClass('annotation__group--' + oldModifier);
 
                         if (modifier) {
-                            element.addClass('annotations__group--' + modifier);
+                            element.addClass('annotation__group--' + modifier);
                         }
                     });
 

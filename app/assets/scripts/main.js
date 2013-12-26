@@ -35,6 +35,7 @@
             } else {
                 return [
                     'scripts/app',
+                    'scripts/experience',
                     'scripts/video'
                 ];
             }

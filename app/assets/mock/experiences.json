@@ -42,7 +42,11 @@
                     "timestamp": 5,
                     "duration": 2,
                     "text": "What's up?!",
-                    "maxChars": 15
+                    "maxChars": 15,
+                    "position": {
+                        "top": "10%",
+                        "left": "40%"
+                    }
                 },
                 {
                     "type": "popup",

@@ -85,6 +85,9 @@
                 },
                 video: {
                     deps: ['templates']
+                },
+                experience: {
+                    deps: ['app']
                 }
             },
 

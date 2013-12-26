@@ -18,14 +18,14 @@
                 });
             });
 
-            it('should give the bubble the "annotations__group" class', function() {
+            it('should give the bubble the "annotation__group" class', function() {
                 var bubble;
 
                 $scope.$apply(function() {
                     bubble = $compile('<c6-bubble></c6-bubble>')($scope);
                 });
 
-                expect(bubble.hasClass('annotations__group')).toBe(true);
+                expect(bubble.hasClass('annotation__group')).toBe(true);
             });
 
             it('should enter editing mode when clicked', function() {
@@ -80,7 +80,7 @@
                     });
 
                     it('should show the text span', function() {
-                        expect(bubble.find('span').css('display')).toBe('');
+                        expect(bubble.find('span').css('visibility')).toBe('visible');
                     });
                 });
 
@@ -101,7 +101,7 @@
                     });
 
                     it('should hide the text span', function() {
-                        expect(bubble.find('span').css('display')).toBe('none');
+                        expect(bubble.find('span').css('visibility')).toBe('hidden');
                     });
                 });
 
@@ -195,15 +195,15 @@
                         expect(bubble.find('form input[type=text]').val()).toBe('Foo!');
                     });
 
-                    it('should bind the annotations__group--{{style.modifier}} class to the bubble', function() {
-                        expect(bubble.hasClass('annotations__group--antique')).toBe(true);
+                    it('should bind the annotation__group--{{style.modifier}} class to the bubble', function() {
+                        expect(bubble.hasClass('annotation__group--antique')).toBe(true);
 
                         $scope.$apply(function() {
                             $scope.annotation.style.modifier = 'karate';
                         });
 
-                        expect(bubble.hasClass('annotations__group--antique')).toBe(false);
-                        expect(bubble.hasClass('annotations__group--karate')).toBe(true);
+                        expect(bubble.hasClass('annotation__group--antique')).toBe(false);
+                        expect(bubble.hasClass('annotation__group--karate')).toBe(true);
                     });
 
                     it('should add no modifier class if there is no modifier', function() {
@@ -211,7 +211,7 @@
                             delete $scope.annotation.style;
                         });
 
-                        expect(bubble.attr('class').match(/annotations__group--[A-Za-z]*/)).toBe(null);
+                        expect(bubble.attr('class').match(/annotation__group--[A-Za-z]*/)).toBe(null);
                     });
 
                     it('should bind the position of the annotation to the proper CSS properties', function() {
