@@ -45,9 +45,12 @@
                 describe('show', function() {
                     var bubble,
                         showSpy,
-                        hideSpy;
+                        hideSpy,
+                        boundingBox;
 
                     beforeEach(function() {
+                        boundingBox = {};
+
                         showSpy = jasmine.createSpy('bubble show');
                         hideSpy = jasmine.createSpy('bubble hide');
 
@@ -59,6 +62,7 @@
 
                         $scope.$apply(function() {
                             bubble = $compile('<c6-bubble show="showBubble" annotation="annotation">Foo</c6-bubble>')($scope);
+                            spyOn(bubble[0], 'getBoundingClientRect').andReturn(boundingBox);
                         });
                     });
 
@@ -78,6 +82,7 @@
                         expect(showSpy).toHaveBeenCalled();
 
                         expect(showSpy.mostRecentCall.args[1]).toBe($scope.annotation);
+                        expect(showSpy.mostRecentCall.args[2]).toBe(boundingBox);
                     });
 
                     it('should $emit c6Bubble:hide when false', function() {
@@ -88,18 +93,25 @@
                         expect(hideSpy).toHaveBeenCalled();
 
                         expect(hideSpy.mostRecentCall.args[1]).toBe($scope.annotation);
+                        expect(hideSpy.mostRecentCall.args[2]).toBe(boundingBox);
                     });
                 });
 
                 describe('when not editing', function() {
-                    var bubble;
+                    var bubble,
+                        editDoneSpy;
 
                     beforeEach(function() {
+                        editDoneSpy = jasmine.createSpy('edit done');
+
                         $scope.editing = false;
+                        $scope.annotation = {};
 
                         $scope.$apply(function() {
-                            bubble = $compile('<c6-bubble></c6-bubble>')($scope);
+                            bubble = $compile('<c6-bubble annotation="annotation"></c6-bubble>')($scope);
                         });
+
+                        $scope.$on('c6Bubble:editdone', editDoneSpy);
                     });
 
                     it('should hide the form', function() {
@@ -109,15 +121,35 @@
                     it('should show the text span', function() {
                         expect(bubble.find('span').css('visibility')).toBe('visible');
                     });
+
+                    it('should $emit c6Bubble:editdone when leaving edit mode', function() {
+                        expect(editDoneSpy).not.toHaveBeenCalled();
+
+                        $scope.$apply(function() {
+                            bubble.scope().editing = true;
+                        });
+                        $scope.$apply(function() {
+                            bubble.scope().editing = false;
+                        });
+
+                        expect(editDoneSpy).toHaveBeenCalled();
+                        expect(editDoneSpy.mostRecentCall.args[1]).toBe($scope.annotation);
+                    });
                 });
 
                 describe('when editing', function() {
-                    var bubble;
+                    var bubble,
+                        editStartSpy;
 
                     beforeEach(function() {
+                        editStartSpy = jasmine.createSpy('edit start');
+
+                        $scope.annotation = {};
+
                         $scope.$apply(function() {
-                            bubble = $compile('<c6-bubble></c6-bubble>')($scope);
+                            bubble = $compile('<c6-bubble annotation="annotation"></c6-bubble>')($scope);
                         });
+                        $scope.$on('c6Bubble:editstart', editStartSpy);
                         $scope.$apply(function() {
                             bubble.scope().editing = true;
                         });
@@ -129,6 +161,12 @@
 
                     it('should hide the text span', function() {
                         expect(bubble.find('span').css('visibility')).toBe('hidden');
+                    });
+
+                    it('should $emit c6Bubble:editstart', function() {
+                        expect(editStartSpy).toHaveBeenCalled();
+
+                        expect(editStartSpy.mostRecentCall.args[1]).toBe($scope.annotation);
                     });
                 });
 

@@ -71,9 +71,12 @@
                     });
 
                     scope.$watch('editing', function(editing) {
-                        var text = scope.annotation && scope.annotation.text;
+                        var text = scope.annotation && scope.annotation.text,
+                            eventName = 'c6Bubble:' + (editing ? 'editstart' : 'editdone');
 
                         preEditText = editing ? text : null;
+
+                        scope.$emit(eventName, scope.annotation);
                     });
 
                     scope.$watch('show', function(show) {
@@ -81,7 +84,7 @@
                             event = 'c6Bubble:' + (show ? 'show' : 'hide');
 
                         element.css('display', display);
-                        scope.$emit(event, scope.annotation);
+                        scope.$emit(event, scope.annotation, element[0].getBoundingClientRect());
                     });
 
                     scope.$watch('annotation.style.modifier', function(modifier, oldModifier) {

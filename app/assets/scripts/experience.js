@@ -19,6 +19,9 @@
                 .then(publishVideo)
                 .then(handleVideoEvents);
 
+            this.showWelcome = true;
+            this.showWizard = false;
+
             this.annotations = c($scope, function(annotations) {
                 return annotations || null;
             }, ['AppCtrl.project.annotations']);
@@ -36,6 +39,28 @@
 
                 video.player.currentTime = annotation.timestamp;
             };
+
+            this.skipWizard = function() {
+                this.showWelcome = false;
+            };
+
+            this.startWizard = function() {
+                this.showWelcome = false;
+                this.showWizard = true;
+
+                this.video.player.currentTime = 0;
+                this.video.player.play();
+            };
+
+            $scope.$on('c6Bubble:show', function(event, annotation, boundingBox) {
+                if (event.targetScope === event.currentScope) { return; }
+
+                $scope.$broadcast('c6Bubble:show', annotation, boundingBox);
+            });
+
+            $scope.$on('c6Bubble:editdone', function() {
+                this.showWizard = false;
+            }.bind(this));
 
             $scope.ExperienceCtrl = this;
         }]);

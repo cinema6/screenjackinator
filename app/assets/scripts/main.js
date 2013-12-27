@@ -36,6 +36,7 @@
                 return [
                     'scripts/app',
                     'scripts/experience',
+                    'scripts/wizard',
                     'scripts/video'
                 ];
             }
