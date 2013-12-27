@@ -23,7 +23,7 @@ html { height: 100%; width: 100%;}
 }
 
 .video__annotations {
-    position: absolute; top: 0; bottom: 20px; left: 0; right: 0;
+    position: absolute; top: 0; bottom: 40px; left: 0; right: 0;
     list-style-type: none;
     margin: 0; padding: 0;
 }
@@ -35,4 +35,8 @@ html { height: 100%; width: 100%;}
 
 .annotations__form {
     position: absolute; z-index: 100; top: 0.8em;
+}
+
+.controls__container {
+    height: 40px; position: relative;
 }

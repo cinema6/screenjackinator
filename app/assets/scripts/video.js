@@ -2,8 +2,32 @@
     'use strict';
 
     angular.module('c6.screenjackinator')
-        .controller('VideoController', ['$scope',
-        function                       ( $scope ) {
+        .controller('VideoController', ['$scope', 'VideoService',
+        function                       ( $scope ,  VideoService ) {
+            var controlsController = {},
+                controlsDelegate = {};
+
+            VideoService.bindTo(
+                'video',
+                controlsDelegate,
+                controlsController,
+                $scope,
+                'VideoCtrl.controlsController.ready'
+            );
+
+            $scope.$on('c6Bubble:show', function(event, annotation) {
+                var video = $scope.ExperienceCtrl.video;
+
+                if (!video || !annotation.sfx) { return; }
+
+                if (!video.player.paused) {
+                    annotation.sfx.play();
+                }
+            });
+
+            this.controlsController = controlsController;
+            this.controlsDelegate = controlsDelegate;
+
             this.annotationIsActive = function(annotation) {
                 var video = $scope.ExperienceCtrl.video,
                     start = annotation.timestamp,
@@ -53,9 +77,11 @@
                     });
 
                     scope.$watch('show', function(show) {
-                        var display = show ? '' : 'none';
+                        var display = show ? '' : 'none',
+                            event = 'c6Bubble:' + (show ? 'show' : 'hide');
 
                         element.css('display', display);
+                        scope.$emit(event, scope.annotation);
                     });
 
                     scope.$watch('annotation.style.modifier', function(modifier, oldModifier) {

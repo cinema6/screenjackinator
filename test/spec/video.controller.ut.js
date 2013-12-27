@@ -12,8 +12,16 @@
                 $scope,
                 $controller;
 
+            var VideoService;
+
             beforeEach(function() {
-                module('c6.screenjackinator');
+                VideoService = {
+                    bindTo: jasmine.createSpy('VideoService.bindTo()')
+                };
+
+                module('c6.screenjackinator', function($provide) {
+                    $provide.value('VideoService', VideoService);
+                });
 
                 inject(function($injector) {
                     $controller = $injector.get('$controller');
@@ -38,6 +46,79 @@
 
             it('should put itself on the scope', function() {
                 expect($scope.VideoCtrl).toBe(VideoCtrl);
+            });
+
+            it('should bind the controls to the video', function() {
+                expect(VideoService.bindTo).toHaveBeenCalledWith('video', VideoCtrl.controlsDelegate, VideoCtrl.controlsController, $scope, 'VideoCtrl.controlsController.ready');
+            });
+
+            describe('when c6Bubble:show is $emitted', function() {
+                describe('if the video doesn\'t exist', function() {
+                    it('should do nothing', function() {
+                        expect(function() {
+                            $scope.$emit('c6Bubble:show', {});
+                        }).not.toThrow();
+                    });
+                });
+
+                describe('when the video does exist', function() {
+                    var annotation;
+
+                    beforeEach(function() {
+                        annotation = {
+                            sfx: {
+                                play: jasmine.createSpy('annotation.sfx.play()')
+                            }
+                        };
+
+                        ExperienceCtrl.video = {
+                            player: {
+                                paused: true
+                            }
+                        };
+                    });
+
+                    describe('if the video player is paused', function() {
+                        beforeEach(function() {
+                            $scope.$emit('c6Bubble:show', annotation);
+                        });
+
+                        it('should not play the sound', function() {
+                            expect(annotation.sfx.play).not.toHaveBeenCalled();
+                        });
+                    });
+
+                    describe('if the video player is playing', function() {
+                        beforeEach(function() {
+                            ExperienceCtrl.video.player.paused = false;
+                            $scope.$emit('c6Bubble:show', annotation);
+                        });
+
+                        it('should play the sfx if there is one', function() {
+                            expect(annotation.sfx.play).toHaveBeenCalled();
+
+                            annotation.sfx = null;
+
+                            expect(function() {
+                                $scope.$emit('c6Bubble:show', annotation);
+                            }).not.toThrow();
+                        });
+                    });
+                });
+            });
+
+            describe('properties', function() {
+                describe('controlsDelegate', function() {
+                    it('should be an empty object', function() {
+                        expect(angular.equals(VideoCtrl.controlsDelegate, {})).toBe(true);
+                    });
+                });
+
+                describe('controlsController', function() {
+                    it('should be an empty object', function() {
+                        expect(angular.equals(VideoCtrl.controlsController, {})).toBe(true);
+                    });
+                });
             });
 
             describe('methods', function() {

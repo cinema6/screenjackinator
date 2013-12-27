@@ -329,12 +329,30 @@
             /***************************************
              * Annotation(config, defaultPermissions, defaultStyle)
              **************************************/
-            _private.Annotation = function(config, defaultPermissions, defaultStyle) {
-                this.permissions = defaultPermissions;
+            _private.Annotation = function(config, defaults) {
+                function isRelationship(key) {
+                    var relationships = ['style', 'sfx', 'voice'];
+
+                    return relationships.indexOf(key) > -1;
+                }
+
+                function capitalize(string) {
+                    return string.charAt(0).toUpperCase() + string.slice(1);
+                }
 
                 this.setupWith(config);
 
-                this.style = _private.get('Style', { id: (config.style || defaultStyle) });
+                angular.forEach(defaults, function(value, key) {
+                    if (angular.isUndefined(this[key])) {
+                        this[key] = value;
+                    }
+                }.bind(this));
+
+                angular.forEach(this, function(value, key) {
+                    if (isRelationship(key) && value) {
+                        this[key] = _private.get(capitalize(key), { id: value });
+                    }
+                }.bind(this));
             };
             _private.Annotation.prototype = new _private.Model({});
             _private.Annotation.prototype.constructor = _private.Annotation;
@@ -374,7 +392,7 @@
                     this.thumbs[index] = c6UrlMaker(thumb, 'collateral');
                 }.bind(this));
 
-                hasMany.annotations.args.push(this.defaults.permissions, this.defaults.style);
+                hasMany.annotations.args.push(this.defaults);
 
                 // Convert POJOs to one of the useful above types
                 angular.forEach(hasMany, function(settings, prop) {

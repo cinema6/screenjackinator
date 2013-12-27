@@ -65,6 +65,7 @@
             ],
             "defaults": {
                 "style": "antique",
+                "sfx": "pop",
                 "permissions": {
                     "add": false,
                     "delete": false,

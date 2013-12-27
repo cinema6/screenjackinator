@@ -43,12 +43,23 @@
 
             describe('attributes', function() {
                 describe('show', function() {
-                    var bubble;
+                    var bubble,
+                        showSpy,
+                        hideSpy;
 
                     beforeEach(function() {
-                        $scope.showBubble = true;
+                        showSpy = jasmine.createSpy('bubble show');
+                        hideSpy = jasmine.createSpy('bubble hide');
 
-                        bubble = $compile('<c6-bubble show="showBubble">Foo</c6-bubble>')($scope);
+                        $scope.$on('c6Bubble:show', showSpy);
+                        $scope.$on('c6Bubble:hide', hideSpy);
+
+                        $scope.showBubble = true;
+                        $scope.annotation = {};
+
+                        $scope.$apply(function() {
+                            bubble = $compile('<c6-bubble show="showBubble" annotation="annotation">Foo</c6-bubble>')($scope);
+                        });
                     });
 
                     it('should be shown when true', function() {
@@ -61,6 +72,22 @@
                         });
 
                         expect(bubble.css('display')).toBe('none');
+                    });
+
+                    it('should $emit c6Bubble:show when true', function() {
+                        expect(showSpy).toHaveBeenCalled();
+
+                        expect(showSpy.mostRecentCall.args[1]).toBe($scope.annotation);
+                    });
+
+                    it('should $emit c6Bubble:hide when false', function() {
+                        $scope.$apply(function() {
+                            $scope.showBubble = false;
+                        });
+
+                        expect(hideSpy).toHaveBeenCalled();
+
+                        expect(hideSpy.mostRecentCall.args[1]).toBe($scope.annotation);
                     });
                 });
 

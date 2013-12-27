@@ -125,6 +125,7 @@
                         }
                     ],
                     defaults: {
+                        sfx: 'pop',
                         style: 'antique',
                         permissions: {
                             add: false,
@@ -387,7 +388,9 @@
                         var annotation,
                             config,
                             mockStyle,
-                            anotherStyle;
+                            anotherStyle,
+                            mockSfx,
+                            mockVoice;
 
                         beforeEach(function() {
                             config = {
@@ -400,17 +403,33 @@
                             anotherStyle = {
                                 id: 'karate'
                             };
+                            mockSfx = {
+                                id: 'pop'
+                            };
+                            mockVoice = {
+                                id: 'dave'
+                            };
 
                             spyOn(_private, 'get').andCallFake(function(type, config) {
-                                if (config.id === 'antique') {
-                                    return mockStyle;
-                                } else if (config.id === 'karate') {
-                                    return anotherStyle;
+                                if (type === 'Style') {
+                                    if (config.id === 'antique') {
+                                        return mockStyle;
+                                    } else if (config.id === 'karate') {
+                                        return anotherStyle;
+                                    }
+                                } else if (type === 'Sfx') {
+                                    if (config.id === 'pop') {
+                                        return mockSfx;
+                                    }
+                                } else if (type === 'Voice') {
+                                    if (config.id === 'dave') {
+                                        return mockVoice;
+                                    }
                                 }
                             });
 
                             spyOn(_private.Annotation.prototype, 'setupWith').andCallThrough();
-                            annotation = new _private.Annotation(config, videoConfig.defaults.permissions, videoConfig.defaults.style);
+                            annotation = new _private.Annotation(config, videoConfig.defaults);
                         });
 
                         it('should inherit from the model', function() {
@@ -423,26 +442,26 @@
                             expect(annotation.setupWith).toHaveBeenCalledWith(config);
                         });
 
-                        it('should use the default permissions if none are specified in config', function() {
-                            var customPermissions = {};
+                        it('should resolve relationships', function() {
+                            var newAnnotation = new _private.Annotation({
+                                id: 'another',
+                                style: 'karate',
+                                sfx: 'pop',
+                                voice: 'dave'
+                            }, {});
 
-                            expect(annotation.permissions).toBe(videoConfig.defaults.permissions);
-
-                            expect(new _private.Annotation({ id: 'anotherTest', permissions: customPermissions }).permissions)
-                                .toBe(customPermissions);
+                            expect(newAnnotation.style).toBe(anotherStyle);
+                            expect(newAnnotation.sfx).toBe(mockSfx);
+                            expect(newAnnotation.voice).toBe(mockVoice);
                         });
 
-                        it('should lookup its specified style or the default style', function() {
-                            var anotherAnnotation;
+                        it('should overide any undefined properties with properties on the defaults object', function() {
+                            var newConfig = { id: 'another', sfx: null },
+                                newAnnotation = new _private.Annotation(newConfig, videoConfig.defaults);
 
-                            expect(_private.get.mostRecentCall.args[0]).toBe('Style');
-                            expect(_private.get.mostRecentCall.args[1].id).toBe('antique');
-                            expect(annotation.style).toBe(mockStyle);
-
-                            anotherAnnotation = new _private.Annotation({ id: 'foo', style: 'karate' }, videoConfig.defaults.permissions, videoConfig.defaults.style);
-                            expect(_private.get.mostRecentCall.args[0]).toBe('Style');
-                            expect(_private.get.mostRecentCall.args[1].id).toBe('karate');
-                            expect(anotherAnnotation.style).toBe(anotherStyle);
+                            expect(newAnnotation.permissions).toBe(videoConfig.defaults.permissions);
+                            expect(newAnnotation.style).toBe(mockStyle);
+                            expect(newAnnotation.sfx).toBe(null);
                         });
                     });
 
@@ -509,7 +528,7 @@
                         it('should convert the annotations into Annotations by getting them', function() {
                             videoConfig.annotations.forEach(function(annotation, index) {
                                 expect(annotation.id).toBe(index);
-                                expect(_private.get).toHaveBeenCalledWith('Annotation', annotation, project.defaults.permissions, project.defaults.style);
+                                expect(_private.get).toHaveBeenCalledWith('Annotation', annotation, project.defaults);
                             });
 
                             project.annotations.forEach(function(annotation) {
