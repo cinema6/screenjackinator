@@ -5,14 +5,16 @@
         <ul>
             <li ng-repeat="annotation in ExperienceCtrl.annotations()">
                 <a href="" ng-click="ExperienceCtrl.jumpTo(annotation)">{{annotation.text}}</a>
+                <button ng-click="ExperienceCtrl.preview(annotation)">Preview</button>
             </li>
         </ul>
+        <button ng-click="ExperienceCtrl.startWizard()">Help</button>
     </nav>
     <div class="video__group" c6-vertical-center="top" resize ng-controller="VideoController">
         <!-- The video will move to this plane as soon as the experience is started -->
         <div class="video__player--active" c6-plane="video" priority="0"></div>
         <div class="controls__container">
-            <c6-controls controller="VideoCtrl.controlsController" delegate="VideoCtrl.controlsDelegate"></c6-controls>
+            <c6-controls controller="VideoCtrl.controlsController" delegate="VideoCtrl.controlsDelegate" nodes="VideoCtrl.controlsNodes()"></c6-controls>
         </div>
         <ul class="video__annotations">
             <li ng-repeat="annotation in ExperienceCtrl.bubbles()">

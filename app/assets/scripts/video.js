@@ -2,10 +2,14 @@
     'use strict';
 
     angular.module('c6.screenjackinator')
-        .controller('VideoController', ['$scope', 'VideoService',
-        function                       ( $scope ,  VideoService ) {
+        .controller('VideoController', ['$scope', 'VideoService', 'c6Computed',
+        function                       ( $scope ,  VideoService ,  c          ) {
             var controlsController = {},
-                controlsDelegate = {};
+                controlsDelegate = {
+                    nodeClicked: function(node) {
+                        $scope.ExperienceCtrl.jumpTo(node.annotation);
+                    }
+                };
 
             VideoService.bindTo(
                 'video',
@@ -27,6 +31,25 @@
 
             this.controlsController = controlsController;
             this.controlsDelegate = controlsDelegate;
+            this.controlsNodes = c($scope, function(annotations) {
+                var video = $scope.ExperienceCtrl.video,
+                    nodes = [];
+
+                if (!annotations || !video) {
+                    return nodes;
+                }
+
+                angular.forEach(annotations, function(annotation, index) {
+                    nodes.push({
+                        style: 'scene',
+                        position: (annotation.timestamp / video.player.duration) * 100,
+                        text: (index + 1).toString(),
+                        annotation: annotation
+                    });
+                });
+
+                return  nodes;
+            }, ['ExperienceCtrl.annotations()']);
 
             this.annotationIsActive = function(annotation) {
                 var video = $scope.ExperienceCtrl.video,
@@ -70,13 +93,15 @@
                         scope.$digest();
                     });
 
-                    scope.$watch('editing', function(editing) {
+                    scope.$watch('editing', function(editing, wasEditing) {
                         var text = scope.annotation && scope.annotation.text,
                             eventName = 'c6Bubble:' + (editing ? 'editstart' : 'editdone');
 
                         preEditText = editing ? text : null;
 
-                        scope.$emit(eventName, scope.annotation);
+                        if (editing !== wasEditing) {
+                            scope.$emit(eventName, scope.annotation);
+                        }
                     });
 
                     scope.$watch('show', function(show) {

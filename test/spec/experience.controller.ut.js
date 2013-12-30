@@ -97,17 +97,131 @@
 
             describe('when c6Bubble:editdone is $emitted', function() {
                 beforeEach(function() {
-                    ExperienceCtrl.showWizard = true;
-
-                    $scope.$emit('c6Bubble:editdone', {});
+                    spyOn(ExperienceCtrl, 'endWizard');
                 });
 
-                it('should stop the wizard', function() {
-                    expect(ExperienceCtrl.showWizard).toBe(false);
+                describe('if the wizard is running', function() {
+                    beforeEach(function() {
+                        ExperienceCtrl.showWizard = true;
+
+                        $scope.$emit('c6Bubble:editdone', {});
+                    });
+
+                    it('should stop the wizard', function() {
+                        expect(ExperienceCtrl.endWizard).toHaveBeenCalled();
+                    });
+                });
+
+                describe('if the wizard isn\'t running', function() {
+                    beforeEach(function() {
+                        ExperienceCtrl.showWizard = false;
+
+                        $scope.$emit('c6Bubble:editdone', {});
+                    });
+
+                    it('should do nothing', function() {
+                        expect(ExperienceCtrl.endWizard).not.toHaveBeenCalled();
+                    });
+                });
+            });
+
+            describe('when c6Bubble:editstart is $emitted', function() {
+                beforeEach(function() {
+                    ExperienceCtrl.video = {
+                        player: {
+                            pause: jasmine.createSpy('player.pause()')
+                        }
+                    };
+
+                    $scope.$emit('c6Bubble:editstart', {}, {});
+                });
+
+                it('should pause the player', function() {
+                    expect(ExperienceCtrl.video.player.pause).toHaveBeenCalled();
                 });
             });
 
             describe('methods', function() {
+                describe('preview(annotation)', function() {
+                    var handler;
+
+                    function timeupdate(time) {
+                        ExperienceCtrl.video.player.currentTime = time;
+                        handler({ target: ExperienceCtrl.video.player });
+                    }
+
+                    beforeEach(function() {
+                        ExperienceCtrl.video = {
+                            on: jasmine.createSpy('video.on()')
+                                .andCallFake(function(event, handlerFn) {
+                                    if (event === 'timeupdate') {
+                                        handler = handlerFn;
+                                    }
+                                }),
+                            off: jasmine.createSpy('video.off()')
+                                .andCallFake(function(event, handlerFn) {
+                                    if (event === 'timeupdate' && handler === handlerFn) {
+                                        handler = undefined;
+                                    }
+                                }),
+                            player: {
+                                currentTime: 0,
+                                play: jasmine.createSpy('player.play()'),
+                                pause: jasmine.createSpy('player.pause()')
+                            }
+                        };
+
+                        ExperienceCtrl.preview({
+                            timestamp: 10,
+                            duration: 4
+                        });
+                    });
+
+                    it('should rewind the video 2 seconds before the annotation', function() {
+                        expect(ExperienceCtrl.video.player.currentTime).toBe(8);
+                    });
+
+                    it('should play the video', function() {
+                        expect(ExperienceCtrl.video.player.play).toHaveBeenCalled();
+                    });
+
+                    describe('after playing the video', function() {
+                        it('should pause the video one second after the annotation ends', function() {
+                            function updateAndExpect(time, showExpect) {
+                                timeupdate(time);
+
+                                if (showExpect) {
+                                    expect(ExperienceCtrl.video.player.pause).toHaveBeenCalled();
+                                } else {
+                                    expect(ExperienceCtrl.video.player.pause).not.toHaveBeenCalled();
+                                }
+                            }
+
+                            updateAndExpect(8);
+                            updateAndExpect(9);
+                            updateAndExpect(10);
+                            updateAndExpect(12);
+                            updateAndExpect(14);
+                            updateAndExpect(16, true);
+                            expect(handler).toBeUndefined();
+                        });
+                    });
+
+                    describe('if the annotation\'s timestamp is less than 2', function() {
+                        beforeEach(function() {
+                            ExperienceCtrl.preview({
+                                timestamp: 1.5,
+                                duration: 3
+                            });
+                        });
+
+                        it('should rewind the video to 0', function() {
+                            expect(ExperienceCtrl.video.player.currentTime).not.toBeLessThan(0);
+                            expect(ExperienceCtrl.video.player.currentTime).toBe(0);
+                        });
+                    });
+                });
+
                 describe('skipWizard()', function() {
                     it('should close the welcome message', function() {
                         expect(ExperienceCtrl.showWelcome).toBe(true);
@@ -145,6 +259,28 @@
                     });
 
                     it('should start the video', function() {
+                        expect(ExperienceCtrl.video.player.play).toHaveBeenCalled();
+                    });
+                });
+
+                describe('endWizard()', function() {
+                    beforeEach(function() {
+                        ExperienceCtrl.video = {
+                            player: {
+                                play: jasmine.createSpy('player.play()')
+                            }
+                        };
+
+                        ExperienceCtrl.showWizard = true;
+
+                        ExperienceCtrl.endWizard();
+                    });
+
+                    it('should hide the wizard', function() {
+                        expect(ExperienceCtrl.showWizard).toBe(false);
+                    });
+
+                    it('should play the video', function() {
                         expect(ExperienceCtrl.video.player.play).toHaveBeenCalled();
                     });
                 });

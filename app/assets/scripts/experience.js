@@ -32,6 +32,24 @@
                 });
             }, ['ExperienceCtrl.annotations()']);
 
+            this.preview = function(annotation) {
+                var video = this.video;
+
+                function stopOnTime(event) {
+                    var player = event.target,
+                        targetEnd = (annotation.timestamp + annotation.duration + 1);
+
+                    if (player.currentTime >= targetEnd) {
+                        player.pause();
+                        video.off('timeupdate', stopOnTime);
+                    }
+                }
+
+                video.player.currentTime = Math.max((annotation.timestamp - 2), 0);
+                video.player.play();
+                video.on('timeupdate', stopOnTime);
+            };
+
             this.jumpTo = function(annotation) {
                 var video = self.video;
 
@@ -45,10 +63,17 @@
             };
 
             this.startWizard = function() {
+                var player = this.video.player;
+
                 this.showWelcome = false;
                 this.showWizard = true;
 
-                this.video.player.currentTime = 0;
+                player.currentTime = 0;
+                player.play();
+            };
+
+            this.endWizard = function() {
+                this.showWizard = false;
                 this.video.player.play();
             };
 
@@ -58,8 +83,14 @@
                 $scope.$broadcast('c6Bubble:show', annotation, boundingBox);
             });
 
+            $scope.$on('c6Bubble:editstart', function() {
+                this.video.player.pause();
+            }.bind(this));
+
             $scope.$on('c6Bubble:editdone', function() {
-                this.showWizard = false;
+                if (this.showWizard) {
+                    this.endWizard();
+                }
             }.bind(this));
 
             $scope.ExperienceCtrl = this;

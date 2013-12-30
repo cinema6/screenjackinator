@@ -41,6 +41,17 @@
                 expect(scope.editing).toBe(true);
             });
 
+            it('should not $emit c6Bubble:editdone on initialization', function() {
+                var spy = jasmine.createSpy('c6Bubble:editdone');
+
+                $scope.$on('c6Bubble:editdone', spy);
+                $scope.$apply(function() {
+                    $compile('<c6-bubble></c6-bubble>')($scope);
+                });
+
+                expect(spy).not.toHaveBeenCalled();
+            });
+
             describe('attributes', function() {
                 describe('show', function() {
                     var bubble,

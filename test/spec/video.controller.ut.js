@@ -112,11 +112,112 @@
                     it('should be an empty object', function() {
                         expect(angular.equals(VideoCtrl.controlsDelegate, {})).toBe(true);
                     });
+
+                    describe('when nodeClicked(node) is called', function() {
+                        var nodes,
+                            delegate;
+
+                        beforeEach(function() {
+                            delegate = VideoCtrl.controlsDelegate;
+
+                            nodes = [
+                                { annotation: {} },
+                                { annotation: {} }
+                            ];
+
+                            ExperienceCtrl.jumpTo = jasmine.createSpy('ExperienceCtrl.jumpTo()');
+                        });
+
+                        it('should call jumpTo(annotation) on the ExperienceCtrl with the annotation', function() {
+                            nodes.forEach(function(node) {
+                                delegate.nodeClicked(node);
+                                expect(ExperienceCtrl.jumpTo).toHaveBeenCalledWith(node.annotation);
+                            });
+                        });
+                    });
                 });
 
                 describe('controlsController', function() {
                     it('should be an empty object', function() {
                         expect(angular.equals(VideoCtrl.controlsController, {})).toBe(true);
+                    });
+                });
+
+                describe('controlsNodes()', function() {
+                    describe('if there is no video', function() {
+                        beforeEach(function() {
+                            ExperienceCtrl.video = undefined;
+                        });
+
+                        it('should be an empty array', function() {
+                            var nodes = VideoCtrl.controlsNodes();
+
+                            expect(angular.isArray(nodes)).toBe(true);
+                            expect(nodes.length).toBe(0);
+                        });
+                    });
+
+                    describe('if there are no annotations', function() {
+                        beforeEach(function() {
+                            ExperienceCtrl.annotations = function() { return null; };
+                        });
+
+                        it('should be an empty array', function() {
+                            var nodes = VideoCtrl.controlsNodes();
+
+                            expect(angular.isArray(nodes)).toBe(true);
+                            expect(nodes.length).toBe(0);
+                        });
+                    });
+
+                    describe('if there are annotations and a video', function() {
+                        beforeEach(function() {
+                            var annotations = [
+                                {
+                                    timestamp: 5
+                                },
+                                {
+                                    timestamp: 23
+                                },
+                                {
+                                    timestamp: 40
+                                },
+                                {
+                                    timestamp: 50
+                                }
+                            ];
+
+                            ExperienceCtrl.annotations = function() {
+                                return annotations;
+                            };
+
+                            ExperienceCtrl.video = {
+                                player: {
+                                    duration: 60
+                                }
+                            };
+                        });
+
+                        it('should generate a node for every annotation', function() {
+                            var nodes = VideoCtrl.controlsNodes(),
+                                node0 = nodes[0],
+                                node1 = nodes[1],
+                                node2 = nodes[2],
+                                node3 = nodes[3];
+
+                            expect(nodes.length).toBe(4);
+
+                            nodes.forEach(function(node, index) {
+                                expect(node.style).toBe('scene');
+                                expect(node.text).toBe((index + 1).toString());
+                                expect(node.annotation).toBe(ExperienceCtrl.annotations()[index]);
+                            });
+
+                            expect(node0.position).toBeCloseTo(8, 0);
+                            expect(node1.position).toBeCloseTo(38, 0);
+                            expect(node2.position).toBeCloseTo(66.6, 0);
+                            expect(node3.position).toBeCloseTo(83, 0);
+                        });
                     });
                 });
             });
