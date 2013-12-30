@@ -6,6 +6,11 @@ c6-tip {
     display: inline-block;
 }
 
+c6-screenjack-player {
+    position: relative;
+    display: inline-block;
+}
+
 .video__player--inactive {
     visibility: hidden;
 }
@@ -24,7 +29,6 @@ c6-tip {
 
 .video__group {
     position: absolute; left: 20em; right: 0;
-    display: inline-block;
 }
 
 .video__annotations {
@@ -67,4 +71,14 @@ c6-tip {
 .wizard__background {
     position: fixed; top: 0; bottom: 0; left: 0; right: 0; z-index: 200;
     background: black; opacity: 0.9;
+}
+
+.player__group {
+    position: absolute; top: 0; bottom: 0; left: 0; right: 0;
+    max-height: 100%;
+    background: black;
+}
+
+.player__player {
+    width: 100%;
 }

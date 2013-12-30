@@ -2,26 +2,29 @@
     'use strict';
 
     angular.module('c6.screenjackinator')
-        .controller('VideoController', ['$scope', 'VideoService', 'c6Computed',
-        function                       ( $scope ,  VideoService ,  c          ) {
-            var controlsController = {},
+        .controller('C6ScreenjackPlayerController', ['$scope', 'VideoService', 'c6Computed',
+        function                                    ( $scope ,  VideoService ,  c          ) {
+            var video,
+                controlsController = {},
                 controlsDelegate = {
                     nodeClicked: function(node) {
-                        $scope.ExperienceCtrl.jumpTo(node.annotation);
-                    }
+                        this.jumpTo(node.annotation);
+                    }.bind(this)
                 };
 
+            VideoService.listenOn($scope);
             VideoService.bindTo(
                 'video',
                 controlsDelegate,
                 controlsController,
                 $scope,
-                'VideoCtrl.controlsController.ready'
+                'Ctrl.controlsController.ready'
             );
+            VideoService.getVideo('video').then(function(c6Video) {
+                video = c6Video;
+            });
 
             $scope.$on('c6Bubble:show', function(event, annotation) {
-                var video = $scope.ExperienceCtrl.video;
-
                 if (!video || !annotation.sfx) { return; }
 
                 if (!video.player.paused) {
@@ -32,8 +35,7 @@
             this.controlsController = controlsController;
             this.controlsDelegate = controlsDelegate;
             this.controlsNodes = c($scope, function(annotations) {
-                var video = $scope.ExperienceCtrl.video,
-                    nodes = [];
+                var nodes = [];
 
                 if (!annotations || !video) {
                     return nodes;
@@ -49,11 +51,22 @@
                 });
 
                 return  nodes;
-            }, ['ExperienceCtrl.annotations()']);
+            }, ['annotations']);
+
+            this.bubbles = c($scope, function(annotations) {
+                return (annotations || []).filter(function(annotation) {
+                    return annotation.type === 'popup';
+                });
+            }, ['annotations']);
+
+            this.jumpTo = function(annotation) {
+                if (!video) { return; }
+
+                video.player.currentTime = annotation.timestamp;
+            };
 
             this.annotationIsActive = function(annotation) {
-                var video = $scope.ExperienceCtrl.video,
-                    start = annotation.timestamp,
+                var start = annotation.timestamp,
                     end = annotation.timestamp + annotation.duration,
                     currentTime;
 
@@ -66,7 +79,22 @@
                 return ((currentTime >= start) && (currentTime <= end));
             };
 
-            $scope.VideoCtrl = this;
+            $scope.Ctrl = this;
+        }])
+
+        .directive('c6ScreenjackPlayer', ['c6UrlMaker',
+        function                         ( c6UrlMaker ) {
+            return {
+                restrict: 'E',
+                templateUrl: c6UrlMaker('views/directives/c6_screenjack_player.html'),
+                scope: {
+                    annotations: '='
+                },
+                controller: 'C6ScreenjackPlayerController',
+                link: function(scope, element, attrs) {
+                    scope.readOnly = angular.isDefined(attrs.readonly);
+                }
+            };
         }])
 
         .directive('c6Bubble', ['c6UrlMaker',
@@ -76,7 +104,8 @@
                 templateUrl: c6UrlMaker('views/directives/c6_bubble.html'),
                 scope: {
                     show: '=',
-                    annotation: '='
+                    annotation: '=',
+                    editable: '='
                 },
                 link: function(scope, element) {
                     var preEditText = null;
@@ -86,10 +115,16 @@
                         scope.editing = false;
                     };
 
+                    scope.enterEdit = function() {
+                        scope.editing = true;
+                    };
+
                     element.addClass('annotation__group');
 
                     element.bind('click', function() {
-                        scope.editing = true;
+                        if (!scope.editable) { return; }
+
+                        scope.enterEdit();
                         scope.$digest();
                     });
 

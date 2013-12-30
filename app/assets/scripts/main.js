@@ -35,9 +35,11 @@
             } else {
                 return [
                     'scripts/app',
+                    'scripts/landing',
                     'scripts/experience',
+                    'scripts/player',
                     'scripts/wizard',
-                    'scripts/video'
+                    'scripts/screenjack_player'
                 ];
             }
         }()),

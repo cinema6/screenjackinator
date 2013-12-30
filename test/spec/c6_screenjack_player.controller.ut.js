@@ -1,10 +1,9 @@
 (function() {
     'use strict';
 
-    define(['video'], function() {
-        describe('VideoController', function() {
-            var VideoCtrl,
-                ExperienceCtrl,
+    define(['screenjack_player'], function() {
+        describe('C6ScreenjackPlayerController', function() {
+            var C6ScreenjackPlayerCtrl,
                 AppCtrl,
                 $rootScope,
                 appCtrlScope,
@@ -15,12 +14,22 @@
             var VideoService;
 
             beforeEach(function() {
-                VideoService = {
-                    bindTo: jasmine.createSpy('VideoService.bindTo()')
-                };
-
                 module('c6.screenjackinator', function($provide) {
-                    $provide.value('VideoService', VideoService);
+                    $provide.factory('VideoService', function($q) {
+                        VideoService = {
+                            bindTo: jasmine.createSpy('VideoService.bindTo()'),
+                            listenOn: jasmine.createSpy('VideoService.listenOn()'),
+                            getVideo: jasmine.createSpy('VideoService.getVideo()')
+                                .andCallFake(function() {
+                                    return VideoService._.getVideoDeferred.promise;
+                                }),
+                            _: {
+                                getVideoDeferred: $q.defer()
+                            }
+                        };
+
+                        return VideoService;
+                    });
                 });
 
                 inject(function($injector) {
@@ -33,23 +42,30 @@
                     };
 
                     expCtrlScope = appCtrlScope.$new();
-                    ExperienceCtrl = expCtrlScope.ExperienceCtrl = {};
 
                     $scope = expCtrlScope.$new();
-                    VideoCtrl = $controller('VideoController', { $scope: $scope });
+                    C6ScreenjackPlayerCtrl = $controller('C6ScreenjackPlayerController', { $scope: $scope });
                 });
             });
 
             it('should exist', function() {
-                expect(VideoCtrl).toBeDefined();
+                expect(C6ScreenjackPlayerCtrl).toBeDefined();
             });
 
             it('should put itself on the scope', function() {
-                expect($scope.VideoCtrl).toBe(VideoCtrl);
+                expect($scope.Ctrl).toBe(C6ScreenjackPlayerCtrl);
+            });
+
+            it('should have the video service listen on its scope', function() {
+                expect(VideoService.listenOn).toHaveBeenCalledWith($scope);
+            });
+
+            it('should get the video', function() {
+                expect(VideoService.getVideo).toHaveBeenCalledWith('video');
             });
 
             it('should bind the controls to the video', function() {
-                expect(VideoService.bindTo).toHaveBeenCalledWith('video', VideoCtrl.controlsDelegate, VideoCtrl.controlsController, $scope, 'VideoCtrl.controlsController.ready');
+                expect(VideoService.bindTo).toHaveBeenCalledWith('video', C6ScreenjackPlayerCtrl.controlsDelegate, C6ScreenjackPlayerCtrl.controlsController, $scope, 'Ctrl.controlsController.ready');
             });
 
             describe('when c6Bubble:show is $emitted', function() {
@@ -62,7 +78,8 @@
                 });
 
                 describe('when the video does exist', function() {
-                    var annotation;
+                    var annotation,
+                        video;
 
                     beforeEach(function() {
                         annotation = {
@@ -71,11 +88,15 @@
                             }
                         };
 
-                        ExperienceCtrl.video = {
+                        video = {
                             player: {
                                 paused: true
                             }
                         };
+
+                        $scope.$apply(function() {
+                            VideoService._.getVideoDeferred.resolve(video);
+                        });
                     });
 
                     describe('if the video player is paused', function() {
@@ -90,7 +111,7 @@
 
                     describe('if the video player is playing', function() {
                         beforeEach(function() {
-                            ExperienceCtrl.video.player.paused = false;
+                            video.player.paused = false;
                             $scope.$emit('c6Bubble:show', annotation);
                         });
 
@@ -108,9 +129,54 @@
             });
 
             describe('properties', function() {
+                describe('bubbles()', function() {
+                    var annotations;
+
+                    beforeEach(function() {
+                        $scope.$apply(function() {
+                            annotations = $scope.annotations = [
+                                {
+                                    type: 'popup'
+                                },
+                                {
+                                    type: 'tts'
+                                },
+                                {
+                                    type: 'tts'
+                                },
+                                {
+                                    type: 'popup'
+                                },
+                                {
+                                    type: 'popup'
+                                }
+                            ];
+                        });
+                    });
+
+                    it('should be an array of just the popup annotations', function() {
+                        var bubbles = C6ScreenjackPlayerCtrl.bubbles();
+
+                        expect(bubbles[0]).toBe(annotations[0]);
+                        expect(bubbles[1]).toBe(annotations[3]);
+                        expect(bubbles[2]).toBe(annotations[4]);
+                        expect(bubbles.length).toBe(3);
+                    });
+
+                    it('should be an empty array if annotations is undefined', function() {
+                        $scope.$apply(function() {
+                            $scope.annotations = undefined;
+                        });
+
+                        expect(function() { C6ScreenjackPlayerCtrl.bubbles(); }).not.toThrow();
+                        expect(C6ScreenjackPlayerCtrl.bubbles().length).toBe(0);
+                        expect(angular.isArray(C6ScreenjackPlayerCtrl.bubbles())).toBe(true);
+                    });
+                });
+
                 describe('controlsDelegate', function() {
                     it('should be an empty object', function() {
-                        expect(angular.equals(VideoCtrl.controlsDelegate, {})).toBe(true);
+                        expect(angular.equals(C6ScreenjackPlayerCtrl.controlsDelegate, {})).toBe(true);
                     });
 
                     describe('when nodeClicked(node) is called', function() {
@@ -118,20 +184,20 @@
                             delegate;
 
                         beforeEach(function() {
-                            delegate = VideoCtrl.controlsDelegate;
+                            delegate = C6ScreenjackPlayerCtrl.controlsDelegate;
 
                             nodes = [
                                 { annotation: {} },
                                 { annotation: {} }
                             ];
 
-                            ExperienceCtrl.jumpTo = jasmine.createSpy('ExperienceCtrl.jumpTo()');
+                            spyOn(C6ScreenjackPlayerCtrl, 'jumpTo');
                         });
 
                         it('should call jumpTo(annotation) on the ExperienceCtrl with the annotation', function() {
                             nodes.forEach(function(node) {
                                 delegate.nodeClicked(node);
-                                expect(ExperienceCtrl.jumpTo).toHaveBeenCalledWith(node.annotation);
+                                expect(C6ScreenjackPlayerCtrl.jumpTo).toHaveBeenCalledWith(node.annotation);
                             });
                         });
                     });
@@ -139,18 +205,14 @@
 
                 describe('controlsController', function() {
                     it('should be an empty object', function() {
-                        expect(angular.equals(VideoCtrl.controlsController, {})).toBe(true);
+                        expect(angular.equals(C6ScreenjackPlayerCtrl.controlsController, {})).toBe(true);
                     });
                 });
 
                 describe('controlsNodes()', function() {
                     describe('if there is no video', function() {
-                        beforeEach(function() {
-                            ExperienceCtrl.video = undefined;
-                        });
-
                         it('should be an empty array', function() {
-                            var nodes = VideoCtrl.controlsNodes();
+                            var nodes = C6ScreenjackPlayerCtrl.controlsNodes();
 
                             expect(angular.isArray(nodes)).toBe(true);
                             expect(nodes.length).toBe(0);
@@ -159,11 +221,11 @@
 
                     describe('if there are no annotations', function() {
                         beforeEach(function() {
-                            ExperienceCtrl.annotations = function() { return null; };
+                            $scope.annotations = null;
                         });
 
                         it('should be an empty array', function() {
-                            var nodes = VideoCtrl.controlsNodes();
+                            var nodes = C6ScreenjackPlayerCtrl.controlsNodes();
 
                             expect(angular.isArray(nodes)).toBe(true);
                             expect(nodes.length).toBe(0);
@@ -187,19 +249,19 @@
                                 }
                             ];
 
-                            ExperienceCtrl.annotations = function() {
-                                return annotations;
-                            };
+                            $scope.annotations = annotations;
 
-                            ExperienceCtrl.video = {
-                                player: {
-                                    duration: 60
-                                }
-                            };
+                            $scope.$apply(function() {
+                                VideoService._.getVideoDeferred.resolve({
+                                    player: {
+                                        duration: 60
+                                    }
+                                });
+                            });
                         });
 
                         it('should generate a node for every annotation', function() {
-                            var nodes = VideoCtrl.controlsNodes(),
+                            var nodes = C6ScreenjackPlayerCtrl.controlsNodes(),
                                 node0 = nodes[0],
                                 node1 = nodes[1],
                                 node2 = nodes[2],
@@ -210,7 +272,7 @@
                             nodes.forEach(function(node, index) {
                                 expect(node.style).toBe('scene');
                                 expect(node.text).toBe((index + 1).toString());
-                                expect(node.annotation).toBe(ExperienceCtrl.annotations()[index]);
+                                expect(node.annotation).toBe($scope.annotations[index]);
                             });
 
                             expect(node0.position).toBeCloseTo(8, 0);
@@ -223,6 +285,43 @@
             });
 
             describe('methods', function() {
+                describe('jumpTo(annotation)', function() {
+                    describe('if there is no video', function() {
+                        it('should do nothing', function() {
+                            expect(function() {
+                                C6ScreenjackPlayerCtrl.jumpTo({ timestamp: 5 });
+                            }).not.toThrow();
+                        });
+                    });
+
+                    describe('if there is a video', function() {
+                        var video;
+
+                        beforeEach(function() {
+                            video = {
+                                player: {
+                                    currentTime: 0
+                                }
+                            };
+
+                            $scope.$apply(function() {
+                                VideoService._.getVideoDeferred.resolve(video);
+                            });
+                        });
+
+                        it('should set the video\'s currentTime to the timestamp of the annotation', function() {
+                            C6ScreenjackPlayerCtrl.jumpTo({ timestamp: 10 });
+                            expect(video.player.currentTime).toBe(10);
+
+                            C6ScreenjackPlayerCtrl.jumpTo({ timestamp: 20 });
+                            expect(video.player.currentTime).toBe(20);
+
+                            C6ScreenjackPlayerCtrl.jumpTo({ timestamp: 53 });
+                            expect(video.player.currentTime).toBe(53);
+                        });
+                    });
+                });
+
                 describe('annotationIsActive(annotation)', function() {
                     var annotations;
 
@@ -246,7 +345,7 @@
                     describe('if there is no video yet', function() {
                         it('should be false', function() {
                             annotations.forEach(function(annotation) {
-                                expect(VideoCtrl.annotationIsActive(annotation)).toBe(false);
+                                expect(C6ScreenjackPlayerCtrl.annotationIsActive(annotation)).toBe(false);
                             });
                         });
                     });
@@ -255,11 +354,15 @@
                         var video;
 
                         beforeEach(function() {
-                            video = ExperienceCtrl.video = {
+                            video = {
                                 player: {
                                     currentTime: 0
                                 }
                             };
+
+                            $scope.$apply(function() {
+                                VideoService._.getVideoDeferred.resolve(video);
+                            });
                         });
 
                         it('should return true when the currentTime is in-between an annotation\'s timestamp and timestamp + duration', function() {
@@ -267,7 +370,7 @@
                                 annotations.forEach(function(annotation) {
                                     var desiredResult = (desiredAnnotations.indexOf(annotation) > -1);
 
-                                    expect(VideoCtrl.annotationIsActive(annotation)).toBe(desiredResult);
+                                    expect(C6ScreenjackPlayerCtrl.annotationIsActive(annotation)).toBe(desiredResult);
                                 });
                             }
 

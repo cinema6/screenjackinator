@@ -343,55 +343,6 @@
                         expect(ExperienceCtrl.annotations()).toBe(AppCtrl.project.annotations);
                     });
                 });
-
-                describe('bubbles()', function() {
-                    var annotations;
-
-                    beforeEach(function() {
-                        $scope.$apply(function() {
-                            AppCtrl.project = {
-                                annotations: [
-                                    {
-                                        type: 'popup'
-                                    },
-                                    {
-                                        type: 'tts'
-                                    },
-                                    {
-                                        type: 'tts'
-                                    },
-                                    {
-                                        type: 'popup'
-                                    },
-                                    {
-                                        type: 'popup'
-                                    }
-                                ]
-                            };
-
-                            annotations = AppCtrl.project.annotations;
-                        });
-                    });
-
-                    it('should be an array of just the popup annotations', function() {
-                        var bubbles = ExperienceCtrl.bubbles();
-
-                        expect(bubbles[0]).toBe(annotations[0]);
-                        expect(bubbles[1]).toBe(annotations[3]);
-                        expect(bubbles[2]).toBe(annotations[4]);
-                        expect(bubbles.length).toBe(3);
-                    });
-
-                    it('should be an empty array if annotations is undefined', function() {
-                        $scope.$apply(function() {
-                            AppCtrl.project.annotations = undefined;
-                        });
-
-                        expect(function() { ExperienceCtrl.bubbles(); }).not.toThrow();
-                        expect(ExperienceCtrl.bubbles().length).toBe(0);
-                        expect(angular.isArray(ExperienceCtrl.bubbles())).toBe(true);
-                    });
-                });
             });
         });
     });

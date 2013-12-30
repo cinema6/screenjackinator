@@ -84,12 +84,18 @@
             $stateProvider
                 .state('landing', {
                     templateUrl: c6UrlMakerProvider.makeUrl('views/landing.html'),
-                    url: '/'
+                    controller: 'LandingController',
+                    url: '/?playback'
                 })
                 .state('experience', {
                     templateUrl: c6UrlMakerProvider.makeUrl('views/experience.html'),
                     controller: 'ExperienceController',
                     url: '/experience'
+                })
+                .state('player', {
+                    templateUrl: c6UrlMakerProvider.makeUrl('views/player.html'),
+                    controller: 'PlayerController',
+                    url: '/player'
                 });
         }])
         .controller('AppController', ['$scope','$state','$log', 'site', 'c6ImagePreloader', 'gsap', '$timeout', 'googleAnalytics', '$http', 'c6UrlMaker', 'ProjectService', 'VideoService', '$q', 'fail', 'c6Computed',
@@ -140,8 +146,8 @@
                 }
             };
 
-            this.goto = function(state) {
-                $state.go(state);
+            this.goto = function(state, toParams) {
+                $state.go(state, toParams);
             };
 
             function createProject(results) {
@@ -184,15 +190,19 @@
 
                 event.preventDefault();
 
-                site.requestTransitionState(true).then(function() {
-                    canChangeState = true;
+                site.requestTransitionState(true)
+                    .then(function() {
+                        canChangeState = true;
 
-                    self.goto(toState.name);
+                        self.goto(toState.name, toParams);
 
-                    site.requestTransitionState(false);
+                        $timeout(function() { canChangeState = false; });
 
-                    $timeout(function() { canChangeState = false; });
-                });
+                        return site.requestTransitionState(false);
+                    })
+                    .then(function() {
+                        $scope.$broadcast('siteTransitionComplete');
+                    });
             });
 
             $scope.$on('$stateChangeSuccess',

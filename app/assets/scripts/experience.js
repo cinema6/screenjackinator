@@ -26,12 +26,6 @@
                 return annotations || null;
             }, ['AppCtrl.project.annotations']);
 
-            this.bubbles = c($scope, function(annotations) {
-                return (annotations || []).filter(function(annotation) {
-                    return annotation.type === 'popup';
-                });
-            }, ['ExperienceCtrl.annotations()']);
-
             this.preview = function(annotation) {
                 var video = this.video;
 

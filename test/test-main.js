@@ -83,13 +83,19 @@
                 app: {
                     deps: ['angular', 'angularMocks', 'modernizr', 'timelinemax', 'uirouter', 'c6ui', 'c6log']
                 },
+                landing: {
+                    deps: ['app']
+                },
                 wizard: {
                     deps: ['app']
                 },
-                video: {
+                screenjack_player: {
                     deps: ['templates']
                 },
                 experience: {
+                    deps: ['app']
+                },
+                player: {
                     deps: ['app']
                 }
             },

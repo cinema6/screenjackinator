@@ -256,6 +256,7 @@
 
                 describe('on first transition to experience', function() {
                     var event,
+                        toParams,
                         unregister;
 
                     beforeEach(function() {
@@ -263,10 +264,12 @@
                             preventDefault: jasmine.createSpy('event.preventDefault()')
                         };
 
+                        toParams = {};
+
                         unregister = $scope.$new().$on('$stateChangeStart', function(event) {
                             expect(event.defaultPrevented).toBe(true);
                         });
-                        $rootScope.$broadcast('$stateChangeStart', { name: 'experience' }, {}, { name: 'landing' });
+                        $rootScope.$broadcast('$stateChangeStart', { name: 'experience' }, toParams, { name: 'landing' });
                     });
 
                     it('should requestTransitionState(true) from the site', function() {
@@ -281,15 +284,34 @@
                                 expect(event.defaultPrevented).toBe(false);
                             });
                             fromState = 'landing';
-                            $rootScope.$apply(function() { site._.requestTransitionStateResult.resolve(); });
+                            $rootScope.$apply(function() {
+                                var deferred = site._.requestTransitionStateResult;
+
+                                site._.requestTransitionStateResult = $q.defer();
+
+                                deferred.resolve();
+                            });
                         });
 
                         it('should transition to the state', function() {
-                            expect(AppCtrl.goto).toHaveBeenCalledWith('experience');
+                            expect(AppCtrl.goto).toHaveBeenCalledWith('experience', toParams);
                         });
 
                         it('should requestTransitionState(false) from the site', function() {
                             expect(site.requestTransitionState).toHaveBeenCalledWith(false);
+                        });
+
+                        describe('when the panels come up', function() {
+                            beforeEach(function() {
+                                spyOn($scope, '$broadcast');
+                                $scope.$apply(function() {
+                                    site._.requestTransitionStateResult.resolve();
+                                });
+                            });
+
+                            it('should $broadcast the "siteTransitionComplete" event', function() {
+                                expect($scope.$broadcast).toHaveBeenCalledWith('siteTransitionComplete');
+                            });
                         });
 
                         it('should rerun this whole procedure during the next transisition', function() {
@@ -381,9 +403,9 @@
                 describe('methods', function() {
                     describe('goto(state)', function() {
                         it('should proxy to $state.go(state)', function() {
-                            AppCtrl.goto('experience');
+                            AppCtrl.goto('experience', {});
 
-                            expect($state.go).toHaveBeenCalledWith('experience');
+                            expect($state.go).toHaveBeenCalledWith('experience', jasmine.any(Object));
                         });
                     });
 

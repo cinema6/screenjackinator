@@ -10,16 +10,10 @@
         </ul>
         <button ng-click="ExperienceCtrl.startWizard()">Help</button>
     </nav>
-    <div class="video__group" c6-vertical-center="top" resize ng-controller="VideoController">
-        <!-- The video will move to this plane as soon as the experience is started -->
-        <div class="video__player--active" c6-plane="video" priority="0"></div>
-        <div class="controls__container">
-            <c6-controls controller="VideoCtrl.controlsController" delegate="VideoCtrl.controlsDelegate" nodes="VideoCtrl.controlsNodes()"></c6-controls>
-        </div>
-        <ul class="video__annotations">
-            <li ng-repeat="annotation in ExperienceCtrl.bubbles()">
-                <c6-bubble annotation="annotation" show="VideoCtrl.annotationIsActive(annotation)"></c6-bubble>
-            </li>
-        </ul>
-    </div>
+    <c6-screenjack-player
+        class="video__group"
+        c6-vertical-center="top"
+        resize
+        annotations="ExperienceCtrl.annotations()">
+    </c6-screenjack-player>
 </section>

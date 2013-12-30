@@ -1,7 +1,7 @@
 (function() {
     'use strict';
 
-    define(['video'], function() {
+    define(['screenjack_player'], function() {
         describe('<c6-bubble></c6-bubble>', function() {
             var $compile,
                 $rootScope,
@@ -28,17 +28,42 @@
                 expect(bubble.hasClass('annotation__group')).toBe(true);
             });
 
-            it('should enter editing mode when clicked', function() {
+            describe('clicking', function() {
                 var bubble,
                     scope;
 
-                $scope.$apply(function() {
-                    bubble = $compile('<c6-bubble></c6-bubble>')($scope);
+                beforeEach(function() {
+                    $scope.$apply(function() {
+                        bubble = $compile('<c6-bubble editable="editable"></c6-bubble>')($scope);
+                    });
+                    scope = bubble.scope();
                 });
-                scope = bubble.scope();
 
-                bubble.click();
-                expect(scope.editing).toBe(true);
+                describe('if editable is true', function() {
+                    beforeEach(function() {
+                        $scope.$apply(function() {
+                            $scope.editable = true;
+                        });
+                    });
+
+                    it('should enter editing mode when clicked', function() {
+                        bubble.click();
+                        expect(scope.editing).toBe(true);
+                    });
+                });
+
+                describe('if editable is false', function() {
+                    beforeEach(function() {
+                        $scope.$apply(function() {
+                            $scope.editable = false;
+                        });
+                    });
+
+                    it('should not enter editing mode when clicked', function() {
+                        bubble.click();
+                        expect(scope.editing).not.toBe(true);
+                    });
+                });
             });
 
             it('should not $emit c6Bubble:editdone on initialization', function() {
