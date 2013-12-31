@@ -89,66 +89,72 @@
                 expect($scope.PlayerCtrl).toBe(PlayerCtrl);
             });
 
-            describe('before siteTransitionComplete is $broadcasted', function() {
-                it('should not get the video', function() {
-                    expect(VideoService.getVideo).not.toHaveBeenCalled();
+            it('should get the video', function() {
+                expect(VideoService.getVideo).toHaveBeenCalledWith('video');
+            });
+
+            describe('if getting the video fails', function() {
+                beforeEach(function() {
+                    $scope.$apply(function() {
+                        VideoService._.getVideoDeferred.reject('error');
+                    });
+                });
+
+                it('should fail', function() {
+                    expect(fail).toHaveBeenCalledWith('error');
                 });
             });
 
-            describe('after siteTransitionComplete is $broadcasted', function() {
+            describe('after the video is fetched', function() {
                 beforeEach(function() {
-                    $rootScope.$broadcast('siteTransitionComplete');
+                    spyOn($scope, '$on').andCallThrough();
+                    spyOn(PlayerCtrl, 'replay');
+                    resolveVideo();
                 });
 
-                it('should get the video', function() {
-                    expect(VideoService.getVideo).toHaveBeenCalledWith('video');
+                it('should listen for the "siteTransitionComplete" event', function() {
+                    expect($scope.$on).toHaveBeenCalledWith('siteTransitionComplete', jasmine.any(Function));
                 });
 
-                describe('if getting the video fails', function() {
+                it('should listen for the "ended" event', function() {
+                    expect(video.on).toHaveBeenCalledWith('ended', jasmine.any(Function));
+                });
+
+                describe('after "siteTransitionComplete" fires', function() {
                     beforeEach(function() {
-                        $scope.$apply(function() {
-                            VideoService._.getVideoDeferred.reject('error');
-                        });
+                        $scope.$broadcast('siteTransitionComplete');
                     });
 
-                    it('should fail', function() {
-                        expect(fail).toHaveBeenCalledWith('error');
+                    it('should play the video', function() {
+                        expect(PlayerCtrl.replay).toHaveBeenCalled();
                     });
                 });
 
-                describe('after the video is fetched', function() {
-                    beforeEach(resolveVideo);
-
-                    it('should listen for the "ended" event', function() {
-                        expect(video.on).toHaveBeenCalledWith('ended', jasmine.any(Function));
+                describe('after the "ended" event fires', function() {
+                    beforeEach(function() {
+                        video.trigger('ended');
                     });
 
-                    describe('after the "ended" event fires', function() {
+                    it('should show the end options', function() {
+                        expect(PlayerCtrl.showEnd).toBe(true);
+                    });
+
+                    it('should attach a listener for the timeupdate event', function() {
+                        expect(video.on).toHaveBeenCalledWith('timeupdate', jasmine.any(Function));
+                    });
+
+                    describe('when timeupdate fires', function() {
                         beforeEach(function() {
-                            video.trigger('ended');
+                            video.trigger('timeupdate');
                         });
 
-                        it('should show the end options', function() {
-                            expect(PlayerCtrl.showEnd).toBe(true);
+                        it('should hide the end options', function() {
+                            expect(PlayerCtrl.showEnd).toBe(false);
                         });
 
-                        it('should attach a listener for the timeupdate event', function() {
-                            expect(video.on).toHaveBeenCalledWith('timeupdate', jasmine.any(Function));
-                        });
-
-                        describe('when timeupdate fires', function() {
-                            beforeEach(function() {
-                                video.trigger('timeupdate');
-                            });
-
-                            it('should hide the end options', function() {
-                                expect(PlayerCtrl.showEnd).toBe(false);
-                            });
-
-                            it('should remove the listener for the "timeupdate" event', function() {
-                                expect(video.off).toHaveBeenCalledWith('timeupdate', jasmine.any(Function));
-                                expect(videoEvents.timeupdate.length).toBe(0);
-                            });
+                        it('should remove the listener for the "timeupdate" event', function() {
+                            expect(video.off).toHaveBeenCalledWith('timeupdate', jasmine.any(Function));
+                            expect(videoEvents.timeupdate.length).toBe(0);
                         });
                     });
                 });
@@ -158,6 +164,25 @@
                 describe('showEnd', function() {
                     it('should be false', function() {
                         expect(PlayerCtrl.showEnd).toBe(false);
+                    });
+                });
+            });
+
+            describe('methods', function() {
+                describe('replay()', function() {
+                    beforeEach(function() {
+                        video.player.currentTime = 10;
+                        resolveVideo();
+
+                        PlayerCtrl.replay();
+                    });
+
+                    it('should set the currentTime to 0', function() {
+                        expect(video.player.currentTime).toBe(0);
+                    });
+
+                    it('should play the video', function() {
+                        expect(video.player.play).toHaveBeenCalled();
                     });
                 });
             });

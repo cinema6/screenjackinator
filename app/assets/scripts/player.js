@@ -4,37 +4,46 @@
     angular.module('c6.screenjackinator')
         .controller('PlayerController', ['$scope', 'VideoService', 'fail',
         function                        ( $scope ,  VideoService ,  fail ) {
-            var self = this;
+            var self = this,
+                video = null;
 
-            function resetVideo(event, video) {
+            function resetVideo(event, c6Video) {
                 self.showEnd = false;
-                video.off('timeupdate', resetVideo);
+                c6Video.off('timeupdate', resetVideo);
             }
 
-            function handleVideoEnd(event, video) {
+            function handleVideoEnd(event, c6Video) {
                 self.showEnd = true;
-                video.on('timeupdate', resetVideo);
+                c6Video.on('timeupdate', resetVideo);
             }
 
-            function playVideo(video) {
-                video.player.currentTime = 0;
-                video.player.play();
-
-                return video;
+            function saveVideo(c6Video) {
+                video = c6Video;
+                return c6Video;
             }
 
-            function attachVideoListeners(video) {
-                return video.on('ended', handleVideoEnd);
+            function waitForTransition() {
+                $scope.$on('siteTransitionComplete', function() {
+                    self.replay();
+                });
             }
 
-            $scope.$on('siteTransitionComplete', function() {
-                VideoService.getVideo('video')
-                    .then(playVideo)
-                    .then(attachVideoListeners)
-                    .then(null, fail);
-            });
+            function attachVideoListeners(c6Video) {
+                return c6Video.on('ended', handleVideoEnd);
+            }
+
+            VideoService.getVideo('video')
+                .then(saveVideo)
+                .then(attachVideoListeners)
+                .then(waitForTransition)
+                .then(null, fail);
 
             this.showEnd = false;
+
+            this.replay = function() {
+                video.player.currentTime = 0;
+                video.player.play();
+            };
 
             $scope.PlayerCtrl = this;
         }]);

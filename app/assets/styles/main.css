@@ -82,3 +82,9 @@ c6-screenjack-player {
 .player__player {
     width: 100%;
 }
+
+.player__end {
+    position: absolute; z-index: 1000;
+    width: 100%;
+    text-align: center;
+}

@@ -35,6 +35,7 @@
             } else {
                 return [
                     'scripts/app',
+                    'scripts/services',
                     'scripts/landing',
                     'scripts/experience',
                     'scripts/player',
@@ -99,7 +100,7 @@
         local: c6.kBaseUrl + '/collateral',
         dev: 'http://s3.amazonaws.com/c6.dev/collateral/screenjackinator'
     };
-    c6.kModDeps = ['ui.router', 'c6.ui'];
+    c6.kModDeps = ['ui.router', 'c6.ui', 'c6.screenjackinator.services'];
 
     loadScriptsInOrder(libScripts, function() {
         var Modernizr = window.Modernizr;

@@ -1,7 +1,7 @@
 (function() {
     'use strict';
 
-    define(['app'], function() {
+    define(['services'], function() {
         describe('VideoService', function() {
             var VideoService,
                 $rootScope,
@@ -12,7 +12,7 @@
             var _private;
 
             beforeEach(function() {
-                module('c6.screenjackinator');
+                module('c6.screenjackinator.services');
 
                 inject(function($injector) {
                     VideoService = $injector.get('VideoService');

@@ -276,6 +276,15 @@
                         expect(site.requestTransitionState).toHaveBeenCalledWith(true);
                     });
 
+                    it('should not interfere if the state change does not involve the landing page at all', function() {
+                        unregister();
+                        $scope.$new().$on('$stateChangeStart', function(event) {
+                            expect(event.defaultPrevented).toBe(false);
+                        });
+                        $rootScope.$broadcast('$stateChangeStart', { name: 'experience' }, toParams, { name: 'player' });
+                        expect(site.requestTransitionState.callCount).toBe(1);
+                    });
+
                     describe('after the transition state is entered', function() {
                         beforeEach(function() {
                             unregister();

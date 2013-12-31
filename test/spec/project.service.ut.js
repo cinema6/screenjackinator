@@ -1,7 +1,7 @@
 (function() {
     'use strict';
 
-    define(['app'], function() {
+    define(['services'], function() {
         describe('ProjectService', function() {
             var ProjectService,
                 $cacheFactory,

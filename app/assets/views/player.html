@@ -6,4 +6,10 @@
         readonly>
         &nbsp;
     </c6-screenjack-player>
+    <section class="player__end" c6-vertical-center="top" resize ng-show="PlayerCtrl.showEnd" class="player__end">
+        <form>
+            <button ng-click="PlayerCtrl.replay()">Play Again</button>
+            <button ng-click="AppCtrl.goto('experience')">Create Your Own Version</button>
+        </form>
+    </section>
 </div>
