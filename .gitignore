@@ -10,6 +10,8 @@ pids
 logs
 results
 
+app/assets/media
+
 npm-debug.log
 protractor.conf.json
 node_modules/

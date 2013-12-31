@@ -166,5 +166,71 @@
                 }
             }
         }
+    },
+    {
+        "id": "e-47da4c2245f6cf",
+        "uri": "2001",
+        "appUriPrefix": "<%= settings.appUrl %>",
+        "appUri": "screenjackinator",
+        "title": "2001",
+        "subtitle": "With voices!",
+        "summary": "Nothing.",
+        "img": {
+            "hero": "experiences/2001/assets/2001__hero.jpg",
+            "tag": null
+        },
+        "landingPageContent": {
+            "middle": "experiences/2001/middle.html",
+            "right": "experiences/2001/right.html",
+            "stylesheet": "experiences/2001/assets/styles.css"
+        },
+        "data": {
+            "src": "2001",
+            "length": 61,
+            "thumbs": [
+                "notebook/thumbs/beginning.jpg",
+                "notebook/thumbs/middle.png",
+                "notebook/thumbs/end.jpg"
+            ],
+            "features": [
+                "tts"
+            ],
+            "styles": [],
+            "sfx": [],
+            "annotations": [
+                {
+                    "type": "tts",
+                    "timestamp": 5,
+                    "duration": 2,
+                    "text": "What's up?!",
+                    "maxChars": 15
+                },
+                {
+                    "type": "tts",
+                    "timestamp": 12,
+                    "duration": 2,
+                    "text": "How are you?!",
+                    "maxChars": 15
+                },
+                {
+                    "type": "tts",
+                    "timestamp": 33,
+                    "duration": 4,
+                    "text": "This is the final test.",
+                    "maxChars": 15
+                }
+            ],
+            "defaults": {
+                "voice": "Dave",
+                "permissions": {
+                    "add": false,
+                    "delete": false,
+                    "modifyTimestamp": false,
+                    "modifyDuration": false,
+                    "modifyText": true,
+                    "modifyStyle": false
+                }
+            }
+        }
     }
 ]

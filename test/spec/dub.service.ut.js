@@ -208,9 +208,7 @@
 
                                 spyOn(DubService._private, 'handleDubResponse');
 
-                                expectPOST = $httpBackend.expectPOST('http://cinema6.com/dub/track/create', {
-                                    data: { tts: options, line: 'Hello, TTS!'}
-                                });
+                                expectPOST = $httpBackend.expectPOST('http://cinema6.com/dub/track/create', { tts: options, line: 'Hello, TTS!'});
                                 expectPOST.respond(201, responseData);
 
                                 result = DubService.getMP3('Hello, TTS!', options);

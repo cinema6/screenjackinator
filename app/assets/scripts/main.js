@@ -100,6 +100,7 @@
         local: c6.kBaseUrl + '/collateral',
         dev: 'http://s3.amazonaws.com/c6.dev/collateral/screenjackinator'
     };
+    c6.kDubUrl = 'http://dv-api1.cinema6.com/dub';
     c6.kModDeps = ['ui.router', 'c6.ui', 'c6.screenjackinator.services'];
 
     loadScriptsInOrder(libScripts, function() {

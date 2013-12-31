@@ -1,13 +1,13 @@
 {
     "voices": [
         {
-            "name": "Paul"
+            "id": "Paul"
         },
         {
-            "name": "Susan"
+            "id": "Susan"
         },
         {
-            "name": "Dave"
+            "id": "Dave"
         }
     ],
     "voiceFx": [

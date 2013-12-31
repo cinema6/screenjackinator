@@ -98,8 +98,13 @@
                     url: '/player'
                 });
         }])
-        .controller('AppController', ['$scope','$state','$log', 'site', 'c6ImagePreloader', 'gsap', '$timeout', 'googleAnalytics', '$http', 'c6UrlMaker', 'ProjectService', 'VideoService', '$q', 'fail', 'c6Computed',
-        function                     ( $scope , $state , $log ,  site ,  c6ImagePreloader ,  gsap ,  $timeout ,  googleAnalytics ,  $http ,  c6UrlMaker ,  ProjectService ,  VideoService ,  $q ,  fail ,  c          ) {
+        .config(['DubServiceProvider', 'c6Defines',
+        function( DubServiceProvider ,  c6Defines ) {
+            DubServiceProvider
+                .useDubAt(c6Defines.kDubUrl);
+        }])
+        .controller('AppController', ['$scope','$state','$log', 'site', 'c6ImagePreloader', 'gsap', '$timeout', 'googleAnalytics', '$http', 'c6UrlMaker', 'ProjectService', 'VideoService', '$q', 'fail', 'c6Computed', 'VoiceTrackService',
+        function                     ( $scope , $state , $log ,  site ,  c6ImagePreloader ,  gsap ,  $timeout ,  googleAnalytics ,  $http ,  c6UrlMaker ,  ProjectService ,  VideoService ,  $q ,  fail ,  c          ,  VoiceTrackService ) {
             var self = this,
                 canChangeState = false;
 
@@ -155,6 +160,16 @@
                     videoConfig = results.appData.experience.data;
 
                 self.project = ProjectService.new(appConfig, videoConfig);
+
+                return self.project;
+            }
+
+            function initializeVoiceTrack(project) {
+                var annotations = project.annotations;
+
+                return VoiceTrackService.init(annotations.filter(function(annotation) {
+                    return (annotation.type === 'tts');
+                }));
             }
 
             $q.all({
@@ -162,6 +177,7 @@
                 appData: site.getAppData()
             })
                 .then(createProject)
+                .then(initializeVoiceTrack)
                 .then(null, fail);
 
             site.init({

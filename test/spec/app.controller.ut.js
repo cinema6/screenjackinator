@@ -19,6 +19,7 @@
                 $state,
                 ProjectService,
                 VideoService,
+                VoiceTrackService,
                 appData,
                 siteSession,
                 appConfig;
@@ -50,12 +51,28 @@
                         return ProjectService._.newResult;
                     }),
                     _: {
-                        newResult: {}
+                        newResult: {
+                            annotations: [
+                                {
+                                    type: 'tts'
+                                },
+                                {
+                                    type: 'popup'
+                                },
+                                {
+                                    type: 'tts'
+                                }
+                            ]
+                        }
                     }
                 };
 
                 VideoService = {
                     listenOn: jasmine.createSpy('VideoService.listenOn(scope)')
+                };
+
+                VoiceTrackService = {
+                    init: jasmine.createSpy('VoiceTrackService.init()')
                 };
 
                 $stateProvider = {
@@ -118,6 +135,7 @@
                     $provide.value('googleAnalytics', googleAnalytics);
                     $provide.value('ProjectService', ProjectService);
                     $provide.value('VideoService', VideoService);
+                    $provide.value('VoiceTrackService', VoiceTrackService);
                 });
 
                 inject(function(_$rootScope_, _$q_, _$timeout_, $controller, _$httpBackend_, c6EventEmitter) {
@@ -165,6 +183,17 @@
 
                     expect(ProjectService.new).toHaveBeenCalledWith(appConfig, appData.experience.data);
                     expect(AppCtrl.project).toBe(ProjectService._.newResult);
+                });
+
+                it('should initialize the VoiceTrackService', function() {
+                    var annotations;
+
+                    $httpBackend.flush();
+                    $rootScope.$apply(function() { site._.getAppDataResult.resolve(appData); });
+                    annotations = ProjectService._.newResult.annotations;
+
+                    expect(VoiceTrackService.init).toHaveBeenCalled();
+                    expect(VoiceTrackService.init.mostRecentCall.args[0]).toEqual([annotations[0], annotations[2]]);
                 });
 
                 it('should "fail" if there is failure.', function() {

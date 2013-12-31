@@ -2,8 +2,8 @@
     'use strict';
 
     angular.module('c6.screenjackinator')
-        .controller('C6ScreenjackPlayerController', ['$scope', 'VideoService', 'c6Computed',
-        function                                    ( $scope ,  VideoService ,  c          ) {
+        .controller('C6ScreenjackPlayerController', ['$scope', 'VideoService', 'VoiceTrackService', 'c6Computed',
+        function                                    ( $scope ,  VideoService ,  VoiceTrackService ,  c          ) {
             var video,
                 controlsController = {},
                 controlsDelegate = {
@@ -11,6 +11,25 @@
                         this.jumpTo(node.annotation);
                     }.bind(this)
                 };
+
+            function playVoices() {
+                VoiceTrackService.play();
+            }
+
+            function pauseVoices() {
+                VoiceTrackService.pause();
+            }
+
+            function tickVoices(event, video) {
+                VoiceTrackService.tick(video.player.currentTime);
+            }
+
+            function syncVoiceTrackService(video) {
+                video
+                    .on('play', playVoices)
+                    .on('pause', pauseVoices)
+                    .on('timeupdate', tickVoices);
+            }
 
             VideoService.listenOn($scope);
             VideoService.bindTo(
@@ -22,6 +41,8 @@
             );
             VideoService.getVideo('video').then(function(c6Video) {
                 video = c6Video;
+
+                syncVoiceTrackService(c6Video);
             });
 
             $scope.$on('c6Bubble:show', function(event, annotation) {
@@ -30,6 +51,13 @@
                 if (!video.player.paused) {
                     annotation.sfx.play();
                 }
+            });
+
+            $scope.$on('$destroy', function() {
+                video
+                    .off('play', playVoices)
+                    .off('pause', pauseVoices)
+                    .off('timeupdate', tickVoices);
             });
 
             this.controlsController = controlsController;
@@ -56,6 +84,12 @@
             this.bubbles = c($scope, function(annotations) {
                 return (annotations || []).filter(function(annotation) {
                     return annotation.type === 'popup';
+                });
+            }, ['annotations']);
+
+            this.lines = c($scope, function(annotations) {
+                return (annotations || []).filter(function(annotation) {
+                    return (annotation.type === 'tts');
                 });
             }, ['annotations']);
 

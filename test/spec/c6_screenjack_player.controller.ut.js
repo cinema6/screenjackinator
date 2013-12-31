@@ -11,10 +11,50 @@
                 $scope,
                 $controller;
 
-            var VideoService;
+            var VideoService,
+                VoiceTrackService,
+                video;
 
             beforeEach(function() {
-                module('c6.screenjackinator', function($provide) {
+                video = {
+                    eventHandlers: {
+                        play: [],
+                        pause: [],
+                        timeupdate: []
+                    },
+                    on: jasmine.createSpy('video.on()')
+                        .andCallFake(function(event, handler) {
+                            video.eventHandlers[event].push(handler);
+                            return video;
+                        }),
+                    off: jasmine.createSpy('video.off()')
+                        .andCallFake(function(event, handler) {
+                            var handlers = video.eventHandlers[event];
+
+                            handlers.splice(handlers.indexOf(handler), 1);
+                            return video;
+                        }),
+                    trigger: function(event) {
+                        $scope.$apply(function() {
+                            video.eventHandlers[event].forEach(function(handler) {
+                                handler({ target: video.player }, video);
+                            });
+                        });
+                    },
+                    player: {
+                        paused: true,
+                        currentTime: 0,
+                        duration: 60
+                    }
+                };
+
+                VoiceTrackService = {
+                    play: jasmine.createSpy('VoiceTrackService.play()'),
+                    pause: jasmine.createSpy('VoiceTrackService.pause()'),
+                    tick: jasmine.createSpy('VoiceTrackService.tick()')
+                };
+
+                module('c6.screenjackinator.services', function($provide) {
                     $provide.factory('VideoService', function($q) {
                         VideoService = {
                             bindTo: jasmine.createSpy('VideoService.bindTo()'),
@@ -30,7 +70,10 @@
 
                         return VideoService;
                     });
+                    $provide.value('VoiceTrackService', VoiceTrackService);
                 });
+
+                module('c6.screenjackinator');
 
                 inject(function($injector) {
                     $controller = $injector.get('$controller');
@@ -68,6 +111,76 @@
                 expect(VideoService.bindTo).toHaveBeenCalledWith('video', C6ScreenjackPlayerCtrl.controlsDelegate, C6ScreenjackPlayerCtrl.controlsController, $scope, 'Ctrl.controlsController.ready');
             });
 
+            describe('after it gets the video', function() {
+                beforeEach(function() {
+
+                    $scope.$apply(function() {
+                        VideoService._.getVideoDeferred.resolve(video);
+                    });
+                });
+
+                it('should listen for the "play", "pause" and "timeupdate" events', function() {
+                    expect(video.on).toHaveBeenCalledWith('play', jasmine.any(Function));
+                    expect(video.on).toHaveBeenCalledWith('pause', jasmine.any(Function));
+                    expect(video.on).toHaveBeenCalledWith('timeupdate', jasmine.any(Function));
+                });
+
+                describe('when "play" is fired', function() {
+                    beforeEach(function() {
+                        video.trigger('play');
+                    });
+
+                    it('should call play on the VoiceTrackService', function() {
+                        expect(VoiceTrackService.play).toHaveBeenCalled();
+                    });
+                });
+
+                describe('when "pause" is fired', function() {
+                    beforeEach(function() {
+                        video.trigger('pause');
+                    });
+
+                    it('should call pause on the VoiceTrackService', function() {
+                        expect(VoiceTrackService.pause).toHaveBeenCalled();
+                    });
+                });
+
+                describe('when "timeupdate" is fired', function() {
+                    it('should call tick() on the VoiceTrackService with the currentTime', function() {
+                        function timeupdate(time) {
+                            video.player.currentTime = time;
+                            video.trigger('timeupdate');
+                        }
+
+                        timeupdate(1);
+                        expect(VoiceTrackService.tick).toHaveBeenCalledWith(1);
+
+                        timeupdate(45);
+                        expect(VoiceTrackService.tick).toHaveBeenCalledWith(45);
+
+                        timeupdate(120);
+                        expect(VoiceTrackService.tick).toHaveBeenCalledWith(120);
+                    });
+                });
+
+                describe('when the controller is $destroyed', function() {
+                    beforeEach(function() {
+                        $scope.$destroy();
+                    });
+
+                    it('should remove its listeners from the video', function() {
+                        expect(video.off).toHaveBeenCalledWith('play', jasmine.any(Function));
+                        expect(video.eventHandlers.play.length).toBe(0);
+
+                        expect(video.off).toHaveBeenCalledWith('pause', jasmine.any(Function));
+                        expect(video.eventHandlers.pause.length).toBe(0);
+
+                        expect(video.off).toHaveBeenCalledWith('timeupdate', jasmine.any(Function));
+                        expect(video.eventHandlers.timeupdate.length).toBe(0);
+                    });
+                });
+            });
+
             describe('when c6Bubble:show is $emitted', function() {
                 describe('if the video doesn\'t exist', function() {
                     it('should do nothing', function() {
@@ -78,19 +191,12 @@
                 });
 
                 describe('when the video does exist', function() {
-                    var annotation,
-                        video;
+                    var annotation;
 
                     beforeEach(function() {
                         annotation = {
                             sfx: {
                                 play: jasmine.createSpy('annotation.sfx.play()')
-                            }
-                        };
-
-                        video = {
-                            player: {
-                                paused: true
                             }
                         };
 
@@ -174,6 +280,50 @@
                     });
                 });
 
+                describe('lines()', function() {
+                    var annotations;
+
+                    beforeEach(function() {
+                        $scope.$apply(function() {
+                            annotations = $scope.annotations = [
+                                {
+                                    type: 'popup'
+                                },
+                                {
+                                    type: 'tts'
+                                },
+                                {
+                                    type: 'tts'
+                                },
+                                {
+                                    type: 'popup'
+                                },
+                                {
+                                    type: 'popup'
+                                }
+                            ];
+                        });
+                    });
+
+                    it('should be an array of just the tts annotations', function() {
+                        var lines = C6ScreenjackPlayerCtrl.lines();
+
+                        expect(lines[0]).toBe(annotations[1]);
+                        expect(lines[1]).toBe(annotations[2]);
+                        expect(lines.length).toBe(2);
+                    });
+
+                    it('should be an empty array if annotations is undefined', function() {
+                        $scope.$apply(function() {
+                            $scope.annotations = undefined;
+                        });
+
+                        expect(function() { C6ScreenjackPlayerCtrl.lines(); }).not.toThrow();
+                        expect(C6ScreenjackPlayerCtrl.lines().length).toBe(0);
+                        expect(angular.isArray(C6ScreenjackPlayerCtrl.lines())).toBe(true);
+                    });
+                });
+
                 describe('controlsDelegate', function() {
                     it('should be an empty object', function() {
                         expect(angular.equals(C6ScreenjackPlayerCtrl.controlsDelegate, {})).toBe(true);
@@ -252,11 +402,7 @@
                             $scope.annotations = annotations;
 
                             $scope.$apply(function() {
-                                VideoService._.getVideoDeferred.resolve({
-                                    player: {
-                                        duration: 60
-                                    }
-                                });
+                                VideoService._.getVideoDeferred.resolve(video);
                             });
                         });
 
@@ -295,15 +441,7 @@
                     });
 
                     describe('if there is a video', function() {
-                        var video;
-
                         beforeEach(function() {
-                            video = {
-                                player: {
-                                    currentTime: 0
-                                }
-                            };
-
                             $scope.$apply(function() {
                                 VideoService._.getVideoDeferred.resolve(video);
                             });
@@ -351,15 +489,7 @@
                     });
 
                     describe('if there is a video', function() {
-                        var video;
-
                         beforeEach(function() {
-                            video = {
-                                player: {
-                                    currentTime: 0
-                                }
-                            };
-
                             $scope.$apply(function() {
                                 VideoService._.getVideoDeferred.resolve(video);
                             });

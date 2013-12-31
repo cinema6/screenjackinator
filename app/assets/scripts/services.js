@@ -2,8 +2,8 @@
     'use strict';
 
     angular.module('c6.screenjackinator.services', ['c6.ui'])
-        .service('ProjectService', ['$cacheFactory', 'c6Sfx', 'c6UrlMaker', 'c6VideoService',
-        function                   ( $cacheFactory ,  c6Sfx ,  c6UrlMaker ,  c6VideoService ) {
+        .service('ProjectService', ['$cacheFactory', 'c6Sfx', 'c6UrlMaker', 'c6VideoService', '$window', 'DubService', '$q', '$rootScope',
+        function                   ( $cacheFactory ,  c6Sfx ,  c6UrlMaker ,  c6VideoService ,  $window ,  DubService ,  $q ,  $rootScope ) {
             var _private = {};
 
             /* @private PROPERTIES */
@@ -69,6 +69,8 @@
              **************************************/
             _private.Voice = function(config) {
                 this.setupWith(config);
+
+                this.voiceFx = this.voiceFx && _private.get('VoiceFx', { id: config.voiceFx });
             };
             _private.Voice.prototype = new _private.Model({});
             _private.Voice.prototype.constructor = _private.Voice;
@@ -141,10 +143,100 @@
                         this[key] = _private.get(capitalize(key), { id: value });
                     }
                 }.bind(this));
+
+                this.voiceBox = new $window.Audio();
+
+                this.haveMP3For = null;
             };
             _private.Annotation.prototype = new _private.Model({});
             _private.Annotation.prototype.constructor = _private.Annotation;
             _private.Annotation.prototype._type = 'Annotation';
+            _private.Annotation.prototype.getMP3 = function() {
+                var voice = this.voice,
+                    voiceFx = voice && voice.voiceFx,
+                    options = voice ? {
+                        voice: this.voice.id,
+                        effect: voiceFx && voiceFx.id,
+                        level: voiceFx && 1
+                    } : {},
+                    self = this,
+                    voiceBox = this.voiceBox;
+
+                function waitForVoiceBox(src) {
+                    var deferred = $q.defer();
+
+                    function cleanUp() {
+                        voiceBox.removeEventListener('error', reject, false);
+                        voiceBox.removeEventListener('canplaythrough', resolve, false);
+                    }
+
+                    function resolve() {
+                        $rootScope.$apply(function() {
+                            deferred.resolve(self);
+                        });
+                        cleanUp();
+                    }
+
+                    function reject(event) {
+                        $rootScope.$apply(function() {
+                            deferred.reject(event.target.error);
+                        });
+                        cleanUp();
+                    }
+
+                    voiceBox.addEventListener('canplaythrough', resolve, false);
+                    voiceBox.addEventListener('error', reject, false);
+
+                    voiceBox.src = src;
+                    voiceBox.load();
+
+                    return deferred.promise;
+                }
+
+                if (this.haveMP3For === this.text) {
+                    return $q.when(this);
+                }
+
+                this.haveMP3For = this.text;
+
+                return DubService.getMP3(this.text, options)
+                    .then(waitForVoiceBox);
+            };
+            _private.Annotation.prototype.speak = function() {
+                function play(self) {
+                    var deferred = $q.defer(),
+                        voiceBox = self.voiceBox;
+
+                    function cleanUp() {
+                        voiceBox.removeEventListener('ended', resolve, false);
+                        voiceBox.removeEventListener('stalled', reject, false);
+                    }
+
+                    function resolve() {
+                        $rootScope.$apply(function() {
+                            deferred.resolve(self);
+                        });
+                        cleanUp();
+                    }
+
+                    function reject(event) {
+                        $rootScope.$apply(function() {
+                            deferred.reject(event.target.error);
+                        });
+                        cleanUp();
+                    }
+
+                    voiceBox.addEventListener('ended', resolve, false);
+                    voiceBox.addEventListener('stalled', reject, false);
+
+                    voiceBox.play();
+
+                    return deferred.promise;
+                }
+
+                return this.getMP3()
+                    .then(play);
+            };
 
             /***************************************
              * Project(appConfig, videoConfig)
@@ -359,18 +451,17 @@
                     };
 
                     this.getMP3 = function(text, options) {
-                        var deferred = $q.defer();
+                        var deferred = $q.defer(),
+                            data = {
+                                tts: options,
+                                line: text
+                            };
 
                         function success(response) {
                             _service.handleDubResponse(response, deferred);
                         }
 
-                        $http.post((_provider.dubUrl + '/track/create'), {
-                            data: {
-                                tts: options,
-                                line: text
-                            }
-                        })
+                        $http.post((_provider.dubUrl + '/track/create'), data)
                             .then(success, deferred.reject);
 
                         return deferred.promise;
@@ -380,5 +471,98 @@
                 }
                 return new DubService();
             }];
+        }])
+
+        .service('VoiceTrackService', ['$q',
+        function                      ( $q ) {
+            var state = {
+                    ready: false,
+                    paused: true,
+                    annotations: [],
+                    currentTime: 0
+                },
+                self = this;
+
+            Object.defineProperties(this, {
+                paused: {
+                    get: function() {
+                        return state.paused;
+                    }
+                },
+                annotations: {
+                    get: function() {
+                        return state.annotations;
+                    }
+                },
+                ready: {
+                    get: function() {
+                        return state.ready;
+                    }
+                },
+                currentTime: {
+                    get: function() {
+                        return state.currentTime;
+                    }
+                }
+            });
+
+            this.init = function(annotations) {
+                state.annotations = annotations;
+
+                return $q.all(annotations.map(function(annotation) {
+                    return annotation.getMP3();
+                }))
+                    .then(function() {
+                        return self;
+                    });
+            };
+
+            this.play = function() {
+                state.paused = false;
+
+                this.tick(state.currentTime);
+            };
+
+            this.pause = function() {
+                state.paused = true;
+
+                angular.forEach(state.annotations, function(annotation) {
+                    annotation.voiceBox.pause();
+                });
+            };
+
+            this.tick = function(time) {
+                var annotations = state.annotations;
+
+                state.currentTime = time;
+
+                if (state.paused) {
+                    angular.forEach(annotations, function(annotation) {
+                        var targetTime = Math.max((time - annotation.timestamp), 0),
+                            voiceBox = annotation.voiceBox;
+
+                        if (targetTime > voiceBox.duration) {
+                            targetTime = 0;
+                        }
+
+                        voiceBox.currentTime = targetTime;
+                    });
+                } else {
+                    angular.forEach(annotations, function(annotation) {
+                        var voiceBox = annotation.voiceBox,
+                            targetTime = annotation.timestamp,
+                            duration = voiceBox.duration,
+                            targetEnd = (targetTime + duration),
+                            shouldBePlaying = (time >= targetTime && time < targetEnd),
+                            isPlaying = (!voiceBox.paused && !voiceBox.ended);
+
+                        if (shouldBePlaying && !isPlaying) {
+                            voiceBox.play();
+                        } else if (!shouldBePlaying && isPlaying) {
+                            voiceBox.pause();
+                        }
+                    });
+                }
+            };
         }]);
 }());

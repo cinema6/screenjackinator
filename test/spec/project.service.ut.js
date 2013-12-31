@@ -4,11 +4,15 @@
     define(['services'], function() {
         describe('ProjectService', function() {
             var ProjectService,
+                $rootScope,
                 $cacheFactory,
+                $q,
                 _private;
 
             var c6Sfx,
                 c6VideoService,
+                $window,
+                DubService,
                 soundFx;
 
             var appConfig,
@@ -27,6 +31,44 @@
             beforeEach(function() {
                 spyOn(angular, 'copy').andCallThrough();
                 spyOn(angular, 'extend').andCallThrough();
+
+                $window = {
+                    Audio: function() {
+                        var eventHandlers = {
+                            canplaythrough: [],
+                            error: [],
+                            ended: [],
+                            stalled: []
+                        };
+
+                        this.eventHandlers = eventHandlers;
+
+                        this.src = null;
+
+                        this.load = jasmine.createSpy('audio.load()');
+                        this.play = jasmine.createSpy('audio.play()');
+
+                        this.addEventListener = jasmine.createSpy('audio.addEventListener()')
+                            .andCallFake(function(event, handler) {
+                                eventHandlers[event].push(handler);
+                            });
+
+                        this.removeEventListener = jasmine.createSpy('audio.removeEventListener()')
+                            .andCallFake(function(event, handler) {
+                                var handlers = eventHandlers[event];
+
+                                handlers.splice(handlers.indexOf(handler), 1);
+                            });
+
+                        this.trigger = function(event) {
+                            var self = this;
+
+                            eventHandlers[event].forEach(function(handler) {
+                                handler({ target: self });
+                            });
+                        };
+                    }
+                };
 
                 c6VideoService = {
                     bestFormat: jasmine.createSpy('c6VideoService.bestFormat(formats)').andReturn('video/mp4'),
@@ -167,9 +209,35 @@
                     });
                 });
 
-                module('c6.screenjackinator');
+                module('c6.screenjackinator.services', function($provide) {
+                    $provide.provider('DubService', function() {
+                        this.$get = function($q) {
+                            DubService = {
+                                getMP3: jasmine.createSpy('DubService.getMP3()')
+                                    .andCallFake(function() {
+                                        return DubService._.getMP3Deferred.promise;
+                                    }),
+                                _: {
+                                    getMP3Deferred: $q.defer()
+                                }
+                            };
+
+                            return DubService;
+                        };
+
+                        this.useDubAt = function() {
+                            return this;
+                        };
+                    });
+                });
+
+                module('c6.screenjackinator', function($provide) {
+                    $provide.value('$window', $window);
+                });
 
                 inject(function($injector) {
+                    $rootScope = $injector.get('$rootScope');
+                    $q = $injector.get('$q');
                     ProjectService = $injector.get('ProjectService');
                     $cacheFactory = $injector.get('$cacheFactory');
                     c6Sfx = $injector.get('c6Sfx');
@@ -272,13 +340,25 @@
 
                     describe('Voice', function() {
                         var voice,
-                            config;
+                            config,
+                            voiceFx;
 
                         beforeEach(function() {
+                            voiceFx = {
+                                id: 'testVoiceFx'
+                            };
                             config = {
-                                id: 'myvoice'
+                                id: 'myvoice',
+                                voiceFx: 'testVoiceFx'
                             };
                             spyOn(_private.Voice.prototype, 'setupWith').andCallThrough();
+                            spyOn(_private, 'get').andCallFake(function(type, config) {
+                                if (type === 'VoiceFx' && config.id === 'testVoiceFx') {
+                                    return voiceFx;
+                                }
+
+                                return config;
+                            });
                             voice = new _private.Voice(config);
                         });
 
@@ -290,6 +370,12 @@
 
                         it('should set itself up with the passed config', function() {
                             expect(voice.setupWith).toHaveBeenCalledWith(config);
+                        });
+
+                        it('should resolve its voiceFx to an object if one is supplied', function() {
+                            expect(voice.voiceFx).toBe(voiceFx);
+
+                            expect(new _private.Voice({ id: 'another' }).voiceFx).not.toBeDefined();
                         });
                     });
 
@@ -407,7 +493,10 @@
                                 id: 'pop'
                             };
                             mockVoice = {
-                                id: 'dave'
+                                id: 'Dave',
+                                voiceFx: {
+                                    id: 'P'
+                                }
                             };
 
                             spyOn(_private, 'get').andCallFake(function(type, config) {
@@ -422,7 +511,7 @@
                                         return mockSfx;
                                     }
                                 } else if (type === 'Voice') {
-                                    if (config.id === 'dave') {
+                                    if (config.id === 'Dave') {
                                         return mockVoice;
                                     }
                                 }
@@ -447,7 +536,7 @@
                                 id: 'another',
                                 style: 'karate',
                                 sfx: 'pop',
-                                voice: 'dave'
+                                voice: 'Dave'
                             }, {});
 
                             expect(newAnnotation.style).toBe(anotherStyle);
@@ -462,6 +551,228 @@
                             expect(newAnnotation.permissions).toBe(videoConfig.defaults.permissions);
                             expect(newAnnotation.style).toBe(mockStyle);
                             expect(newAnnotation.sfx).toBe(null);
+                        });
+
+                        describe('properties', function() {
+                            describe('voiceBox', function() {
+                                it('should be an Audio element', function() {
+                                    expect(annotation.voiceBox.constructor).toBe($window.Audio);
+                                });
+                            });
+                        });
+
+                        describe('methods', function() {
+                            describe('speak()', function() {
+                                var result,
+                                    spy,
+                                    failSpy,
+                                    getMP3Deferred;
+
+                                beforeEach(function() {
+                                    getMP3Deferred = $q.defer();
+
+                                    spy = jasmine.createSpy('promise spy');
+                                    failSpy = jasmine.createSpy('promise fail');
+
+                                    spyOn(_private.Annotation.prototype, 'getMP3')
+                                        .andReturn(getMP3Deferred.promise);
+
+                                    result = annotation.speak();
+                                    result.then(spy, failSpy);
+                                });
+
+                                it('should return a promise', function() {
+                                    expect(angular.isFunction(result.then)).toBe(true);
+                                });
+
+                                it('should get the MP3', function() {
+                                    expect(annotation.getMP3).toHaveBeenCalled();
+                                });
+
+                                describe('after it gets the mp3', function() {
+                                    beforeEach(function() {
+                                        $rootScope.$apply(function() {
+                                            getMP3Deferred.resolve(annotation);
+                                        });
+                                    });
+
+                                    it('should not resolve the promise', function() {
+                                        expect(spy).not.toHaveBeenCalled();
+                                    });
+
+                                    it('should play the mp3', function() {
+                                        expect(annotation.voiceBox.play).toHaveBeenCalled();
+                                    });
+
+                                    it('should listen for the "ended" and "stalled" events', function() {
+                                        expect(annotation.voiceBox.addEventListener).toHaveBeenCalledWith('ended', jasmine.any(Function), false);
+                                        expect(annotation.voiceBox.addEventListener).toHaveBeenCalledWith('stalled', jasmine.any(Function), false);
+                                    });
+
+                                    describe('when finished playing', function() {
+                                        beforeEach(function() {
+                                            annotation.voiceBox.trigger('ended');
+                                        });
+
+                                        it('should resolve the promise', function() {
+                                            expect(spy).toHaveBeenCalledWith(annotation);
+                                        });
+
+                                        it('should clean up after itself', function() {
+                                            expect(annotation.voiceBox.removeEventListener).toHaveBeenCalledWith('ended', jasmine.any(Function), false);
+                                            expect(annotation.voiceBox.eventHandlers.ended.length).toBe(0);
+
+                                            expect(annotation.voiceBox.removeEventListener).toHaveBeenCalledWith('stalled', jasmine.any(Function), false);
+                                            expect(annotation.voiceBox.eventHandlers.stalled.length).toBe(0);
+                                        });
+                                    });
+
+                                    describe('if fails to play through', function() {
+                                        beforeEach(function() {
+                                            annotation.voiceBox.error = {};
+                                            annotation.voiceBox.trigger('stalled');
+                                        });
+
+                                        it('should reject the promise', function() {
+                                            expect(failSpy).toHaveBeenCalledWith(annotation.voiceBox.error);
+                                        });
+
+                                        it('should clean up after itself', function() {
+                                            expect(annotation.voiceBox.removeEventListener).toHaveBeenCalledWith('ended', jasmine.any(Function), false);
+                                            expect(annotation.voiceBox.eventHandlers.ended.length).toBe(0);
+
+                                            expect(annotation.voiceBox.removeEventListener).toHaveBeenCalledWith('stalled', jasmine.any(Function), false);
+                                            expect(annotation.voiceBox.eventHandlers.stalled.length).toBe(0);
+                                        });
+                                    });
+                                });
+                            });
+
+                            describe('getMP3()', function() {
+                                var result,
+                                    spy,
+                                    failSpy;
+
+                                beforeEach(function() {
+                                    spy = jasmine.createSpy('promise spy');
+                                    failSpy = jasmine.createSpy('promise fail');
+                                    annotation = new _private.Annotation({
+                                        id: 'foo',
+                                        text: 'Greetings!',
+                                        voice: 'Dave'
+                                    });
+                                    result = annotation.getMP3();
+                                    result.then(spy, failSpy);
+                                });
+
+                                it('should return a promise', function() {
+                                    expect(angular.isFunction(result.then)).toBe(true);
+                                });
+
+                                it('should get the MP3 src from dub', function() {
+                                    expect(DubService.getMP3).toHaveBeenCalledWith('Greetings!', jasmine.any(Object));
+                                    expect(DubService.getMP3.mostRecentCall.args[1]).toEqual({
+                                        voice: 'Dave',
+                                        effect: 'P',
+                                        level: 1
+                                    });
+                                });
+
+                                it('should work on voice/effectless annotations', function() {
+                                    expect(function() {
+                                        annotation = new _private.Annotation({ id: 'test', text: 'Hello!' });
+
+                                        annotation.getMP3();
+
+                                        delete mockVoice.voiceFx;
+                                        annotation = new _private.Annotation({ id: 'another', text: 'Sup!', voice: 'Dave' });
+
+                                        annotation.getMP3();
+                                    }).not.toThrow();
+                                });
+
+                                it('should only go to dub if the text has changed', function() {
+                                    expect(DubService.getMP3.callCount).toBe(1);
+
+                                    $rootScope.$apply(function() {
+                                        annotation.getMP3().then(spy);
+                                    });
+                                    expect(DubService.getMP3.callCount).toBe(1);
+
+                                    annotation.text = 'Different Text!';
+                                    $rootScope.$apply(function() {
+                                        annotation.getMP3().then(spy);
+                                    });
+                                    expect(DubService.getMP3.callCount).toBe(2);
+
+                                    expect(spy).toHaveBeenCalledWith(annotation);
+                                });
+
+                                describe('after the MP3 is fetched', function() {
+                                    beforeEach(function() {
+                                        $rootScope.$apply(function() {
+                                            DubService._.getMP3Deferred.resolve('foo.mp3');
+                                        });
+                                    });
+
+                                    it('should set the voiceBox\'s src', function() {
+                                        expect(annotation.voiceBox.src).toBe('foo.mp3');
+                                    });
+
+                                    it('should load the voiceBox', function() {
+                                        expect(annotation.voiceBox.load).toHaveBeenCalled();
+                                    });
+
+                                    it('should not resolve the promise', function() {
+                                        expect(spy).not.toHaveBeenCalled();
+                                    });
+
+                                    it('should listen for the "canplaythrough" event on the voiceBox', function() {
+                                        expect(annotation.voiceBox.addEventListener).toHaveBeenCalledWith('canplaythrough', jasmine.any(Function), false);
+                                    });
+
+                                    it('should listen for the "error" event on the voiceBox', function() {
+                                        expect(annotation.voiceBox.addEventListener).toHaveBeenCalledWith('error', jasmine.any(Function), false);
+                                    });
+
+                                    describe('when the voiceBox can play', function() {
+                                        beforeEach(function() {
+                                            annotation.voiceBox.trigger('canplaythrough');
+                                        });
+
+                                        it('should resolve the promise with itself', function() {
+                                            expect(spy).toHaveBeenCalledWith(annotation);
+                                        });
+
+                                        it('should clean up after itself', function() {
+                                            expect(annotation.voiceBox.removeEventListener).toHaveBeenCalledWith('error', jasmine.any(Function), false);
+                                            expect(annotation.voiceBox.eventHandlers.error.length).toBe(0);
+
+                                            expect(annotation.voiceBox.removeEventListener).toHaveBeenCalledWith('canplaythrough', jasmine.any(Function), false);
+                                            expect(annotation.voiceBox.eventHandlers.canplaythrough.length).toBe(0);
+                                        });
+                                    });
+
+                                    describe('if there is an error', function() {
+                                        beforeEach(function() {
+                                            annotation.voiceBox.error = {};
+                                            annotation.voiceBox.trigger('error');
+                                        });
+
+                                        it('should reject the promise', function() {
+                                            expect(failSpy).toHaveBeenCalledWith(annotation.voiceBox.error);
+                                        });
+
+                                        it('should clean up after itself', function() {
+                                            expect(annotation.voiceBox.removeEventListener).toHaveBeenCalledWith('error', jasmine.any(Function), false);
+                                            expect(annotation.voiceBox.eventHandlers.error.length).toBe(0);
+
+                                            expect(annotation.voiceBox.removeEventListener).toHaveBeenCalledWith('canplaythrough', jasmine.any(Function), false);
+                                            expect(annotation.voiceBox.eventHandlers.canplaythrough.length).toBe(0);
+                                        });
+                                    });
+                                });
+                            });
                         });
                     });
 
