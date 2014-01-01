@@ -11,6 +11,12 @@ c6-screenjack-player {
     display: inline-block;
 }
 
+c6-line {
+    display: inline-block;
+    cursor: pointer;
+    text-align: center;
+}
+
 .video__player--inactive {
     visibility: hidden;
 }
@@ -35,6 +41,16 @@ c6-screenjack-player {
     position: absolute; top: 0; bottom: 40px; left: 0; right: 0; z-index: 500;
     list-style-type: none;
     margin: 0; padding: 0;
+}
+
+.line__wrapper {
+    position: absolute; bottom: 10px;
+    width: 100%;
+    text-align: center;
+}
+
+.line__item {
+    font-size: 2em; color: white;
 }
 
 .annotation__group {

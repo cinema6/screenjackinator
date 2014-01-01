@@ -28,7 +28,17 @@
                 video
                     .on('play', playVoices)
                     .on('pause', pauseVoices)
+                    .on('ended', pauseVoices)
                     .on('timeupdate', tickVoices);
+            }
+
+            function annotationEmit(event) {
+                var eventName = ('c6Annotation:' + (event.name.split(':')[1])),
+                    args = Array.prototype.slice.call(arguments);
+
+                args[0] = eventName;
+
+                $scope.$emit.apply($scope, args);
             }
 
             VideoService.listenOn($scope);
@@ -53,10 +63,20 @@
                 }
             });
 
+            $scope.$on('c6Bubble:show', annotationEmit);
+            $scope.$on('c6Line:show', annotationEmit);
+            $scope.$on('c6Bubble:hide', annotationEmit);
+            $scope.$on('c6Line:hide', annotationEmit);
+            $scope.$on('c6Bubble:editstart', annotationEmit);
+            $scope.$on('c6Line:editstart', annotationEmit);
+            $scope.$on('c6Bubble:editdone', annotationEmit);
+            $scope.$on('c6Line:editdone', annotationEmit);
+
             $scope.$on('$destroy', function() {
                 video
                     .off('play', playVoices)
                     .off('pause', pauseVoices)
+                    .off('ended', pauseVoices)
                     .off('timeupdate', tickVoices);
             });
 
@@ -127,6 +147,64 @@
                 controller: 'C6ScreenjackPlayerController',
                 link: function(scope, element, attrs) {
                     scope.readOnly = angular.isDefined(attrs.readonly);
+                }
+            };
+        }])
+
+        .directive('c6Line', ['c6UrlMaker',
+        function             ( c6UrlMaker ) {
+            return {
+                restrict: 'E',
+                templateUrl: c6UrlMaker('views/directives/c6_line.html'),
+                scope: {
+                    editable: '=',
+                    show: '=',
+                    annotation: '='
+                },
+                link: function(scope, element) {
+                    var preEditText = null;
+
+                    scope.discardChanges = function() {
+                        scope.annotation.text = preEditText;
+                        scope.editing = false;
+                    };
+
+                    scope.saveChanges = function() {
+                        scope.annotation.getMP3()
+                            .then(function() {
+                                scope.editing = false;
+                            });
+                    };
+
+                    scope.enterEdit = function() {
+                        scope.editing = true;
+                    };
+
+                    element.bind('click', function() {
+                        if (!scope.editable) { return; }
+
+                        scope.enterEdit();
+                        scope.$digest();
+                    });
+
+                    scope.$watch('show', function(show) {
+                        var display = show ? '' : 'none',
+                            event = 'c6Line:' + (show ? 'show' : 'hide');
+
+                        element.css('display', display);
+                        scope.$emit(event, scope.annotation, element[0].getBoundingClientRect());
+                    });
+
+                    scope.$watch('editing', function(editing, wasEditing) {
+                        var text = scope.annotation && scope.annotation.text,
+                            eventName = 'c6Line:' + (editing ? 'editstart' : 'editdone');
+
+                        preEditText = editing ? text : null;
+
+                        if (editing !== wasEditing) {
+                            scope.$emit(eventName, scope.annotation);
+                        }
+                    });
                 }
             };
         }])

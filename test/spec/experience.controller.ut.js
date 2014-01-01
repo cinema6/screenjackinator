@@ -75,7 +75,7 @@
                 expect(ExperienceCtrl.video).toBe(video);
             });
 
-            describe('when c6Bubble:show is $emitted', function() {
+            describe('when c6Annotation:show is $emitted', function() {
                 var annotation,
                     boundingBox,
                     childScope;
@@ -87,15 +87,15 @@
 
                     spyOn($scope, '$broadcast').andCallThrough();
 
-                    childScope.$emit('c6Bubble:show', annotation, boundingBox);
+                    childScope.$emit('c6Annotation:show', annotation, boundingBox);
                 });
 
                 it('should $broadcast the event so everybody in the experience knows', function() {
-                    expect($scope.$broadcast).toHaveBeenCalledWith('c6Bubble:show', annotation, boundingBox);
+                    expect($scope.$broadcast).toHaveBeenCalledWith('c6Annotation:show', annotation, boundingBox);
                 });
             });
 
-            describe('when c6Bubble:editdone is $emitted', function() {
+            describe('when c6Annotation:editdone is $emitted', function() {
                 beforeEach(function() {
                     spyOn(ExperienceCtrl, 'endWizard');
                 });
@@ -104,7 +104,7 @@
                     beforeEach(function() {
                         ExperienceCtrl.showWizard = true;
 
-                        $scope.$emit('c6Bubble:editdone', {});
+                        $scope.$emit('c6Annotation:editdone', {});
                     });
 
                     it('should stop the wizard', function() {
@@ -116,7 +116,7 @@
                     beforeEach(function() {
                         ExperienceCtrl.showWizard = false;
 
-                        $scope.$emit('c6Bubble:editdone', {});
+                        $scope.$emit('c6Annotation:editdone', {});
                     });
 
                     it('should do nothing', function() {
@@ -125,7 +125,7 @@
                 });
             });
 
-            describe('when c6Bubble:editstart is $emitted', function() {
+            describe('when c6Annotation:editstart is $emitted', function() {
                 beforeEach(function() {
                     ExperienceCtrl.video = {
                         player: {
@@ -133,7 +133,7 @@
                         }
                     };
 
-                    $scope.$emit('c6Bubble:editstart', {}, {});
+                    $scope.$emit('c6Annotation:editstart', {}, {});
                 });
 
                 it('should pause the player', function() {

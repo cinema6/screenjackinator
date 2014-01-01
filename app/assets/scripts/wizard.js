@@ -12,7 +12,7 @@
                 }
             };
 
-            $scope.$on('c6Bubble:show', function(event, annotation, position) {
+            $scope.$on('c6Annotation:show', function(event, annotation, position) {
                 var tipPosition = this.annotationTip.position;
 
                 $scope.ExperienceCtrl.video.player.pause();

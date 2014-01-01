@@ -20,7 +20,8 @@
                     eventHandlers: {
                         play: [],
                         pause: [],
-                        timeupdate: []
+                        timeupdate: [],
+                        ended: []
                     },
                     on: jasmine.createSpy('video.on()')
                         .andCallFake(function(event, handler) {
@@ -111,6 +112,86 @@
                 expect(VideoService.bindTo).toHaveBeenCalledWith('video', C6ScreenjackPlayerCtrl.controlsDelegate, C6ScreenjackPlayerCtrl.controlsController, $scope, 'Ctrl.controlsController.ready');
             });
 
+            describe('when "c6Bubble:show" or "c6Line:show" is $emitted', function() {
+                beforeEach(function() {
+                    spyOn($scope, '$emit').andCallThrough();
+                });
+
+                it('should re-$emit as "c6Annotation:show"', function() {
+                    var args;
+
+                    $scope.$emit('c6Bubble:show', {}, {});
+                    args = $scope.$emit.mostRecentCall.args;
+
+                    expect($scope.$emit).toHaveBeenCalledWith('c6Annotation:show', args[1], args[2]);
+
+                    $scope.$emit('c6Line:show', {}, {});
+                    args = $scope.$emit.mostRecentCall.args;
+
+                    expect($scope.$emit).toHaveBeenCalledWith('c6Annotation:show', args[1], args[2]);
+                });
+            });
+
+            describe('when "c6Bubble:hide" or "c6Line:hide" is $emitted', function() {
+                beforeEach(function() {
+                    spyOn($scope, '$emit').andCallThrough();
+                });
+
+                it('should re-$emit as "c6Annotation:hide"', function() {
+                    var args;
+
+                    $scope.$emit('c6Bubble:hide', {}, {});
+                    args = $scope.$emit.mostRecentCall.args;
+
+                    expect($scope.$emit).toHaveBeenCalledWith('c6Annotation:hide', args[1], args[2]);
+
+                    $scope.$emit('c6Line:hide', {}, {});
+                    args = $scope.$emit.mostRecentCall.args;
+
+                    expect($scope.$emit).toHaveBeenCalledWith('c6Annotation:hide', args[1], args[2]);
+                });
+            });
+
+            describe('when "c6Bubble:editstart" or "c6Line:editstart" is $emitted', function() {
+                beforeEach(function() {
+                    spyOn($scope, '$emit').andCallThrough();
+                });
+
+                it('should re-$emit as "c6Annotation:editstart"', function() {
+                    var args;
+
+                    $scope.$emit('c6Bubble:editstart', {}, {});
+                    args = $scope.$emit.mostRecentCall.args;
+
+                    expect($scope.$emit).toHaveBeenCalledWith('c6Annotation:editstart', args[1], args[2]);
+
+                    $scope.$emit('c6Line:editstart', {}, {});
+                    args = $scope.$emit.mostRecentCall.args;
+
+                    expect($scope.$emit).toHaveBeenCalledWith('c6Annotation:editstart', args[1], args[2]);
+                });
+            });
+
+            describe('when "c6Bubble:editdone" or "c6Line:editdone" is $emitted', function() {
+                beforeEach(function() {
+                    spyOn($scope, '$emit').andCallThrough();
+                });
+
+                it('should re-$emit as "c6Annotation:editdone"', function() {
+                    var args;
+
+                    $scope.$emit('c6Bubble:editdone', {}, {});
+                    args = $scope.$emit.mostRecentCall.args;
+
+                    expect($scope.$emit).toHaveBeenCalledWith('c6Annotation:editdone', args[1], args[2]);
+
+                    $scope.$emit('c6Line:editdone', {}, {});
+                    args = $scope.$emit.mostRecentCall.args;
+
+                    expect($scope.$emit).toHaveBeenCalledWith('c6Annotation:editdone', args[1], args[2]);
+                });
+            });
+
             describe('after it gets the video', function() {
                 beforeEach(function() {
 
@@ -123,6 +204,7 @@
                     expect(video.on).toHaveBeenCalledWith('play', jasmine.any(Function));
                     expect(video.on).toHaveBeenCalledWith('pause', jasmine.any(Function));
                     expect(video.on).toHaveBeenCalledWith('timeupdate', jasmine.any(Function));
+                    expect(video.on).toHaveBeenCalledWith('ended', jasmine.any(Function));
                 });
 
                 describe('when "play" is fired', function() {
@@ -138,6 +220,16 @@
                 describe('when "pause" is fired', function() {
                     beforeEach(function() {
                         video.trigger('pause');
+                    });
+
+                    it('should call pause on the VoiceTrackService', function() {
+                        expect(VoiceTrackService.pause).toHaveBeenCalled();
+                    });
+                });
+
+                describe('when "ended" is fired', function() {
+                    beforeEach(function() {
+                        video.trigger('ended');
                     });
 
                     it('should call pause on the VoiceTrackService', function() {
@@ -177,6 +269,9 @@
 
                         expect(video.off).toHaveBeenCalledWith('timeupdate', jasmine.any(Function));
                         expect(video.eventHandlers.timeupdate.length).toBe(0);
+
+                        expect(video.off).toHaveBeenCalledWith('ended', jasmine.any(Function));
+                        expect(video.eventHandlers.ended.length).toBe(0);
                     });
                 });
             });

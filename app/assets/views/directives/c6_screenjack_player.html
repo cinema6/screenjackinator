@@ -10,4 +10,13 @@
             editable="!readOnly">
         </c6-bubble>
     </li>
+    <li ng-show="!readOnly"
+        class="line__wrapper"
+        ng-repeat="annotation in Ctrl.lines()">
+        <c6-line annotation="annotation"
+            class="line__item"
+            editable="'true'"
+            show="Ctrl.annotationIsActive(annotation)">
+        </c6-line>
+    </li>
 </ul>

@@ -38,9 +38,9 @@
                 expect($scope.WizardCtrl).toBe(WizardCtrl);
             });
 
-            describe('when c6Bubble:show is $emitted', function() {
+            describe('when c6Annotation:show is $emitted', function() {
                 beforeEach(function() {
-                    $scope.$emit('c6Bubble:show', {}, { top: 54, left: 200 });
+                    $scope.$emit('c6Annotation:show', {}, { top: 54, left: 200 });
                 });
 
                 it('should pause the video', function() {

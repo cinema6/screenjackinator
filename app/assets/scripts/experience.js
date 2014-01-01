@@ -71,17 +71,17 @@
                 this.video.player.play();
             };
 
-            $scope.$on('c6Bubble:show', function(event, annotation, boundingBox) {
+            $scope.$on('c6Annotation:show', function(event, annotation, boundingBox) {
                 if (event.targetScope === event.currentScope) { return; }
 
-                $scope.$broadcast('c6Bubble:show', annotation, boundingBox);
+                $scope.$broadcast('c6Annotation:show', annotation, boundingBox);
             });
 
-            $scope.$on('c6Bubble:editstart', function() {
+            $scope.$on('c6Annotation:editstart', function() {
                 this.video.player.pause();
             }.bind(this));
 
-            $scope.$on('c6Bubble:editdone', function() {
+            $scope.$on('c6Annotation:editdone', function() {
                 if (this.showWizard) {
                     this.endWizard();
                 }
