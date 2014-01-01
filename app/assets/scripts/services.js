@@ -558,8 +558,6 @@
 
                         if (shouldBePlaying && !isPlaying) {
                             voiceBox.play();
-                        } else if (!shouldBePlaying && isPlaying) {
-                            voiceBox.pause();
                         }
                     });
                 }

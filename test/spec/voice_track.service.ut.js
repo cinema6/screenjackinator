@@ -325,9 +325,8 @@
                                 assertPlayCount([1, 1, 1]);
 
                                 tick(10);
-                                assertPaused([false, false, true]);
+                                assertPaused([false, false, false]);
                                 assertPlayCount([2, 1, 1]);
-                                expect(annotations[2].voiceBox.pause).toHaveBeenCalled();
                             });
                         });
                     });
