@@ -161,7 +161,7 @@
 
                 this.haveMP3For = null;
 
-                this.trackVirginity();
+                //this.trackVirginity();
             };
             _private.Annotation.prototype = new _private.Model({});
             _private.Annotation.prototype.constructor = _private.Annotation;
