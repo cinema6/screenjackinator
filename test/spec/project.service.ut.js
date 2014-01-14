@@ -303,6 +303,68 @@
                                 });
                             });
 
+                            describe('trackVirginity()', function() {
+                                beforeEach(function() {
+                                    model.trackVirginity();
+                                });
+
+                                it('should store a copy of itself as the _virgin property', function() {
+                                    expect(model._virgin).toEqual(model);
+                                });
+                            });
+
+                            describe('isVirgin()', function() {
+                                describe('if virginity is not being tracked', function() {
+                                    it('should be undefined', function() {
+                                        expect(model.isVirgin()).toBeUndefined();
+                                    });
+
+                                    it('should still work after virginity starts being tracked', function() {
+                                        expect(model.isVirgin()).toBeUndefined();
+
+                                        model.trackVirginity();
+
+                                        expect(model.isVirgin()).toBe(true);
+                                    });
+                                });
+
+                                describe('if virginity is being tracked', function() {
+                                    beforeEach(function() {
+                                        model.trackVirginity();
+                                    });
+
+                                    describe('if the model is unchanged', function() {
+                                        it('should be true', function() {
+                                            expect(model.isVirgin()).toBe(true);
+                                        });
+                                    });
+
+                                    describe('if the model is changed', function() {
+                                        beforeEach(function() {
+                                            model.id = 'test';
+                                        });
+
+                                        it('should be false', function() {
+                                            expect(model.isVirgin()).toBe(false);
+                                        });
+                                    });
+
+                                    describe('if the model is changed and then changed back to its original state', function() {
+                                        beforeEach(function() {
+                                            model.id = 'test';
+
+                                            expect(model.isVirgin()).toBe(false);
+
+                                            model.id = 'foo';
+                                        });
+
+                                        it('should be false', function() {
+                                            expect(model.isVirgin()).toBe(false);
+                                        });
+                                    });
+                                });
+                            });
+
                             describe('cache', function() {
                                 var result;
 
@@ -518,6 +580,7 @@
                             });
 
                             spyOn(_private.Annotation.prototype, 'setupWith').andCallThrough();
+                            spyOn(_private.Model.prototype, 'trackVirginity').andCallThrough();
                             annotation = new _private.Annotation(config, videoConfig.defaults);
                         });
 
@@ -529,6 +592,10 @@
 
                         it('should set itself up with the passed config', function() {
                             expect(annotation.setupWith).toHaveBeenCalledWith(config);
+                        });
+
+                        it('should track its virginity', function() {
+                            expect(_private.Model.prototype.trackVirginity).toHaveBeenCalled();
                         });
 
                         it('should resolve relationships', function() {
