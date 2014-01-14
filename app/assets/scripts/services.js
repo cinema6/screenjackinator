@@ -63,6 +63,19 @@
 
                 return cache.put(this.id, this);
             };
+            _private.Model.prototype.trackVirginity = function() {
+                this._virgin = angular.copy(this);
+                this._virgin._virgin = this._virgin;
+            };
+            _private.Model.prototype.isVirgin = function() {
+                var isVirgin = this._virgin && angular.equals(this, this._virgin);
+
+                if (isVirgin === false) {
+                    _private.Model.prototype.isVirgin = function() { return false; };
+                }
+
+                return isVirgin;
+            };
 
             /***************************************
              * Voice(config)
@@ -147,6 +160,8 @@
                 this.voiceBox = new $window.Audio();
 
                 this.haveMP3For = null;
+
+                this.trackVirginity();
             };
             _private.Annotation.prototype = new _private.Model({});
             _private.Annotation.prototype.constructor = _private.Annotation;
