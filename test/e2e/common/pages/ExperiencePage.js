@@ -4,17 +4,14 @@ module.exports = function(ptor) {
     var LandingPage = require('./LandingPage.js')(ptor);
 
     function ExperiencePage() {
-        var self = this;
-
-        this.seatbelt = null;
+        this.section = $('ui-view section#experience');
+        this.video = $('ui-view section#experience #video');
 
         this.get = function() {
             var landingPage = new LandingPage();
 
             landingPage.get();
-            landingPage.playBtn.click().then(function() {
-                self.seatbelt = $('#seatbelt');
-            });
+            landingPage.playBtn.click();
         };
     }
 

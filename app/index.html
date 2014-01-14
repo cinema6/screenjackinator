@@ -9,6 +9,8 @@
         <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
         <link rel="stylesheet" href="assets/styles/main.css">
 
+        <link class="custom-styles" rel="stylesheet" ng-repeat="href in AppCtrl.stylesheets()" ng-href="{{href}}">
+
         <script type="text/javascript">
             (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
                 (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -18,6 +20,9 @@
     </head>
     <body>
         <ui-view ng-animate="'view'"></ui-view>
+        <div class="video__player--inactive" c6-plane="video" priority="2">
+            <video c6-video id="video" c6-src="AppCtrl.videoSrc()"></video>
+        </div>
 
         <script>
             (function() {

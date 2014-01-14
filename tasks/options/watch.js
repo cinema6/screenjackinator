@@ -12,8 +12,7 @@
             ],
             options: {
                 livereload: true
-            },
-            tasks: ['jshint:all']
+            }
         },
         e2e: {
             files: [
@@ -22,7 +21,8 @@
                 '<%= settings.appDir %>/assets/styles/**/*.css',
                 '<%= settings.appDir %>/assets/scripts/**/*.js',
                 '<%= settings.appDir %>/assets/img/**/*.{png,jpg,jpeg,gif,webp,svg}',
-                'test/e2e/**/*.e2e.js'
+                'test/e2e/**/*.e2e.js',
+                'test/e2e/**/pages/**/*.js'
             ],
             tasks: [
                 'protractor:<%= grunt.task.current.args[1] %>:local'

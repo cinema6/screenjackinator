@@ -5,6 +5,7 @@
         describe('AppController', function() {
             var $rootScope,
                 $scope,
+                $httpBackend,
                 $q,
                 $timeout,
                 AppCtrl;
@@ -12,11 +13,16 @@
             var site,
                 c6ImagePreloader,
                 gsap,
+                fail,
                 googleAnalytics,
                 $stateProvider,
                 $state,
+                ProjectService,
+                VideoService,
+                VoiceTrackService,
                 appData,
-                siteSession;
+                siteSession,
+                appConfig;
 
             beforeEach(function() {
                 c6ImagePreloader = {
@@ -36,7 +42,38 @@
                     }
                 };
 
+                fail = jasmine.createSpy('fail(error)');
+
                 googleAnalytics = jasmine.createSpy('googleAnalytics');
+
+                ProjectService = {
+                    new: jasmine.createSpy('ProjectService.new(appConfig, videoConfig)').andCallFake(function() {
+                        return ProjectService._.newResult;
+                    }),
+                    _: {
+                        newResult: {
+                            annotations: [
+                                {
+                                    type: 'tts'
+                                },
+                                {
+                                    type: 'popup'
+                                },
+                                {
+                                    type: 'tts'
+                                }
+                            ]
+                        }
+                    }
+                };
+
+                VideoService = {
+                    listenOn: jasmine.createSpy('VideoService.listenOn(scope)')
+                };
+
+                VoiceTrackService = {
+                    init: jasmine.createSpy('VoiceTrackService.init()')
+                };
 
                 $stateProvider = {
                     state: jasmine.createSpy('$stateProvider.state()').andCallFake(function() {
@@ -53,12 +90,16 @@
 
                 appData = {
                     experience: {
-                        img: {}
+                        img: {},
+                        data: {}
                     },
                     profile: {
                         raf: {}
                     }
                 };
+
+                appConfig = {};
+
                 module('ui.router', function($provide) {
                     $provide.provider('$state', $stateProvider);
                 });
@@ -73,9 +114,13 @@
                             requestTransitionState: jasmine.createSpy('site.requestTransitionState()').andCallFake(function() {
                                 return site._.requestTransitionStateResult.promise;
                             }),
+                            getAppData: jasmine.createSpy('site.getAppData()').andCallFake(function() {
+                                return site._.getAppDataResult.promise;
+                            }),
                             _: {
                                 getSessionResult: $q.defer(),
-                                requestTransitionStateResult: $q.defer()
+                                requestTransitionStateResult: $q.defer(),
+                                getAppDataResult: $q.defer()
                             }
                         };
 
@@ -86,14 +131,22 @@
 
                 module('c6.screenjackinator', function($provide) {
                     $provide.value('gsap', gsap);
+                    $provide.value('fail', fail);
                     $provide.value('googleAnalytics', googleAnalytics);
+                    $provide.value('ProjectService', ProjectService);
+                    $provide.value('VideoService', VideoService);
+                    $provide.value('VoiceTrackService', VoiceTrackService);
                 });
 
-                inject(function(_$rootScope_, _$q_, _$timeout_, $controller, c6EventEmitter) {
+                inject(function(_$rootScope_, _$q_, _$timeout_, $controller, _$httpBackend_, c6EventEmitter) {
                     $rootScope = _$rootScope_;
                     $q = _$q_;
                     $timeout = _$timeout_;
+                    $httpBackend = _$httpBackend_;
                     $scope = _$rootScope_.$new();
+
+                    $httpBackend.expectGET('assets/collateral/app.config.json')
+                        .respond(200, appConfig);
 
                     AppCtrl = $controller('AppController', {
                         $scope: $scope
@@ -109,6 +162,48 @@
 
             it('should publish itself to the $scope', function() {
                 expect($scope.AppCtrl).toBe(AppCtrl);
+            });
+
+            it('should tell the VideoService to listen on its scope', function() {
+                expect(VideoService.listenOn).toHaveBeenCalledWith($scope);
+            });
+
+            describe('getting a project', function() {
+                it('should get the appConfig', function() {
+                    $httpBackend.flush();
+                });
+
+                it('then should request app data from the site', function() {
+                    expect(site.getAppData).toHaveBeenCalled();
+                });
+
+                it('then should then set the project property', function() {
+                    $httpBackend.flush();
+                    $rootScope.$apply(function() { site._.getAppDataResult.resolve(appData); });
+
+                    expect(ProjectService.new).toHaveBeenCalledWith(appConfig, appData.experience.data);
+                    expect(AppCtrl.project).toBe(ProjectService._.newResult);
+                });
+
+                it('should initialize the VoiceTrackService', function() {
+                    var annotations;
+
+                    $httpBackend.flush();
+                    $rootScope.$apply(function() { site._.getAppDataResult.resolve(appData); });
+                    annotations = ProjectService._.newResult.annotations;
+
+                    expect(VoiceTrackService.init).toHaveBeenCalled();
+                    expect(VoiceTrackService.init.mostRecentCall.args[0]).toEqual([annotations[0], annotations[2]]);
+                });
+
+                it('should "fail" if there is failure.', function() {
+                    var error = 'blah blah error error blah';
+
+                    $httpBackend.flush();
+                    $rootScope.$apply(function() { site._.getAppDataResult.reject(error); });
+
+                    expect(fail).toHaveBeenCalledWith(error);
+                });
             });
 
             describe('site integration', function() {
@@ -190,6 +285,7 @@
 
                 describe('on first transition to experience', function() {
                     var event,
+                        toParams,
                         unregister;
 
                     beforeEach(function() {
@@ -197,14 +293,25 @@
                             preventDefault: jasmine.createSpy('event.preventDefault()')
                         };
 
+                        toParams = {};
+
                         unregister = $scope.$new().$on('$stateChangeStart', function(event) {
                             expect(event.defaultPrevented).toBe(true);
                         });
-                        $rootScope.$broadcast('$stateChangeStart', { name: 'experience' }, {}, { name: 'landing' });
+                        $rootScope.$broadcast('$stateChangeStart', { name: 'experience' }, toParams, { name: 'landing' });
                     });
 
                     it('should requestTransitionState(true) from the site', function() {
                         expect(site.requestTransitionState).toHaveBeenCalledWith(true);
+                    });
+
+                    it('should not interfere if the state change does not involve the landing page at all', function() {
+                        unregister();
+                        $scope.$new().$on('$stateChangeStart', function(event) {
+                            expect(event.defaultPrevented).toBe(false);
+                        });
+                        $rootScope.$broadcast('$stateChangeStart', { name: 'experience' }, toParams, { name: 'player' });
+                        expect(site.requestTransitionState.callCount).toBe(1);
                     });
 
                     describe('after the transition state is entered', function() {
@@ -215,15 +322,34 @@
                                 expect(event.defaultPrevented).toBe(false);
                             });
                             fromState = 'landing';
-                            $rootScope.$apply(function() { site._.requestTransitionStateResult.resolve(); });
+                            $rootScope.$apply(function() {
+                                var deferred = site._.requestTransitionStateResult;
+
+                                site._.requestTransitionStateResult = $q.defer();
+
+                                deferred.resolve();
+                            });
                         });
 
                         it('should transition to the state', function() {
-                            expect(AppCtrl.goto).toHaveBeenCalledWith('experience');
+                            expect(AppCtrl.goto).toHaveBeenCalledWith('experience', toParams);
                         });
 
                         it('should requestTransitionState(false) from the site', function() {
                             expect(site.requestTransitionState).toHaveBeenCalledWith(false);
+                        });
+
+                        describe('when the panels come up', function() {
+                            beforeEach(function() {
+                                spyOn($scope, '$broadcast');
+                                $scope.$apply(function() {
+                                    site._.requestTransitionStateResult.resolve();
+                                });
+                            });
+
+                            it('should $broadcast the "siteTransitionComplete" event', function() {
+                                expect($scope.$broadcast).toHaveBeenCalledWith('siteTransitionComplete');
+                            });
                         });
 
                         it('should rerun this whole procedure during the next transisition', function() {
@@ -257,12 +383,67 @@
             });
 
             describe('@public', function() {
+                describe('properties', function() {
+                    describe('videoSrc()', function() {
+                        beforeEach(function() {
+                            AppCtrl.project = {
+                                src: null
+                            };
+                        });
+
+                        it('should be the full video url', function() {
+                            expect(AppCtrl.videoSrc()).toBe(null);
+
+                            $scope.$apply(function() { AppCtrl.project.src = 'foo.mp4'; });
+                            expect(AppCtrl.videoSrc()).toBe('assets/media/foo.mp4');
+
+                            $scope.$apply(function() { AppCtrl.project.src = 'not_over.mp4'; });
+                            expect(AppCtrl.videoSrc()).toBe('assets/media/not_over.mp4');
+                        });
+                    });
+
+                    describe('stylesheets()', function() {
+                        it('should be an empty array if there is no project/styles', function() {
+                            var stylesheets = AppCtrl.stylesheets();
+
+                            expect(angular.isArray(stylesheets)).toBe(true);
+                            expect(stylesheets.length).toBe(0);
+                        });
+
+                        it('should be an array of resolved stylesheets if there is a project/styles', function() {
+                            var stylesheets;
+
+                            $scope.$apply(function() {
+                                AppCtrl.project = {
+                                    styles: [
+                                        {
+                                            stylesheet: 'assets/collateral/test/foo/style.css'
+                                        },
+                                        {
+                                            stylesheet: 'assets/collateral/test.css'
+                                        },
+                                        {
+                                            stylesheet: 'assets/collateral/test/styles.css'
+                                        }
+                                    ]
+                                };
+                            });
+                            stylesheets = AppCtrl.stylesheets();
+
+                            expect(stylesheets.length).toBe(3);
+                            expect(stylesheets[0]).toBe('assets/collateral/test/foo/style.css');
+                            expect(stylesheets[1]).toBe('assets/collateral/test.css');
+                            expect(stylesheets[2]).toBe('assets/collateral/test/styles.css');
+                        });
+                    });
+                });
+
                 describe('methods', function() {
                     describe('goto(state)', function() {
                         it('should proxy to $state.go(state)', function() {
-                            AppCtrl.goto('experience');
+                            AppCtrl.goto('experience', {});
 
-                            expect($state.go).toHaveBeenCalledWith('experience');
+                            expect($state.go).toHaveBeenCalledWith('experience', jasmine.any(Object));
                         });
                     });
 

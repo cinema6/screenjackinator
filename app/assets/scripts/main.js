@@ -34,7 +34,13 @@
                 ];
             } else {
                 return [
-                    'scripts/app'
+                    'scripts/app',
+                    'scripts/services',
+                    'scripts/landing',
+                    'scripts/experience',
+                    'scripts/player',
+                    'scripts/wizard',
+                    'scripts/screenjack_player'
                 ];
             }
         }()),
@@ -87,10 +93,15 @@
     c6.kLogLevels = (c6.kDebug) ? ['error','warn','log','info'] : [];
     c6.kVideoUrls = {
         local: c6.kBaseUrl + '/media',
-        dev: 'http://s3.amazonaws.com/c6.dev/media/src/stub',
-        cdn: 'http://cdn1.cinema6.com/src/stub'
+        dev: 'http://s3.amazonaws.com/c6.dev/media/src/screenjack/video',
+        cdn: 'http://cdn1.cinema6.com/src/screenjack/video'
     };
-    c6.kModDeps = ['ui.router', 'c6.ui'];
+    c6.kCollateralUrls = {
+        local: c6.kBaseUrl + '/collateral',
+        dev: 'http://s3.amazonaws.com/c6.dev/collateral/screenjackinator'
+    };
+    c6.kDubUrl = 'http://dv-api1.cinema6.com/dub';
+    c6.kModDeps = ['ui.router', 'c6.ui', 'c6.screenjackinator.services'];
 
     loadScriptsInOrder(libScripts, function() {
         var Modernizr = window.Modernizr;

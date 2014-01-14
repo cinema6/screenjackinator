@@ -14,6 +14,7 @@
     $window.ga = function() {};
 
     c6.kBaseUrl = 'assets';
+    c6.kEnv = 'dev';
     c6.kLocal = true;
     c6.kDebug = true;
     c6.kHasKarma = true;
@@ -22,7 +23,11 @@
         local: 'assets/media',
         cdn: 'http://foo.cinema6.com/media/app'
     };
-    c6.kModDeps = ['ui.router', 'c6.ui', 'c6.log'];
+    c6.kCollateralUrls = {
+        local: c6.kBaseUrl + '/collateral',
+        dev: 'http://s3.amazonaws.com/c6.dev/collateral/screenjackinator'
+    };
+    c6.kModDeps = ['ui.router', 'c6.screenjackinator.services', 'c6.ui', 'c6.log'];
 
     packageRequest.onload = function(event) {
         var settings = JSON.parse(event.target.response),
@@ -77,6 +82,24 @@
                 },
                 app: {
                     deps: ['angular', 'angularMocks', 'modernizr', 'timelinemax', 'uirouter', 'c6ui', 'c6log']
+                },
+                services: {
+                    deps: ['app']
+                },
+                landing: {
+                    deps: ['app']
+                },
+                wizard: {
+                    deps: ['app']
+                },
+                screenjack_player: {
+                    deps: ['templates']
+                },
+                experience: {
+                    deps: ['app']
+                },
+                player: {
+                    deps: ['app']
                 }
             },
 

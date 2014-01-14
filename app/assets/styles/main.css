@@ -1,2 +1,106 @@
 /* overall css stylesheet */
 html { height: 100%; width: 100%;}
+
+c6-tip {
+    position: fixed;
+    display: inline-block;
+}
+
+c6-screenjack-player {
+    position: relative;
+    display: inline-block;
+}
+
+c6-line {
+    display: inline-block;
+    cursor: pointer;
+    text-align: center;
+}
+
+.video__player--inactive {
+    visibility: hidden;
+}
+
+.video__player--active {
+    width: 100%;
+}
+
+.video__player--active video {
+    width: 100%;
+}
+
+.experience__group {
+    position: absolute; top: 0; bottom: 0; left: 0; right: 0;
+}
+
+.video__group {
+    position: absolute; left: 20em; right: 0;
+}
+
+.video__annotations {
+    position: absolute; top: 0; bottom: 40px; left: 0; right: 0; z-index: 500;
+    list-style-type: none;
+    margin: 0; padding: 0;
+}
+
+.line__wrapper {
+    position: absolute; bottom: 10px;
+    width: 100%;
+    text-align: center;
+}
+
+.line__item {
+    font-size: 2em; color: white;
+}
+
+.annotation__group {
+    position: absolute;
+    cursor: pointer;
+}
+
+.annotations__form {
+    position: absolute; z-index: 100; top: 0.8em;
+}
+
+.controls__container {
+    height: 40px; position: relative;
+}
+
+.welcome__background {
+    position: fixed; top: 0; bottom: 0; left: 0; right: 0; z-index: 1000;
+    background: black; opacity: 0.9;
+}
+
+.welcome__dialog {
+    width: 50em; margin: 0 auto; padding: 7px;
+    background: white;
+    border-radius: 5px;
+}
+
+.annotation-tip__group {
+    background: white;
+    border-radius: 5px;
+    z-index: 1000;
+    width: 20em; padding: 0 5px;
+}
+
+.wizard__background {
+    position: fixed; top: 0; bottom: 0; left: 0; right: 0; z-index: 200;
+    background: black; opacity: 0.9;
+}
+
+.player__group {
+    position: absolute; top: 0; bottom: 0; left: 0; right: 0;
+    max-height: 100%;
+    background: black;
+}
+
+.player__player {
+    width: 100%;
+}
+
+.player__end {
+    position: absolute; z-index: 1000;
+    width: 100%;
+    text-align: center;
+}

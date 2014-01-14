@@ -1,0 +1,22 @@
+<!-- The video will move to this plane as soon as the experience is started -->
+<div class="video__player--active" c6-plane="video" priority="0"></div>
+<div class="controls__container">
+    <c6-controls controller="Ctrl.controlsController" delegate="Ctrl.controlsDelegate" nodes="Ctrl.controlsNodes()"></c6-controls>
+</div>
+<ul class="video__annotations">
+    <li ng-repeat="annotation in Ctrl.bubbles()">
+        <c6-bubble annotation="annotation"
+            show="Ctrl.annotationIsActive(annotation)"
+            editable="!readOnly">
+        </c6-bubble>
+    </li>
+    <li ng-show="!readOnly"
+        class="line__wrapper"
+        ng-repeat="annotation in Ctrl.lines()">
+        <c6-line annotation="annotation"
+            class="line__item"
+            editable="'true'"
+            show="Ctrl.annotationIsActive(annotation)">
+        </c6-line>
+    </li>
+</ul>

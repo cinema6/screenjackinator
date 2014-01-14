@@ -12,8 +12,8 @@
             experiencePage.get();
         });
 
-        it('should display the seatbelt text', function() {
-            expect(experiencePage.seatbelt.getText()).toBe('Buckle Your Seatbelt!');
+        it('should display the video', function() {
+            expect(experiencePage.video.isDisplayed()).toBe(true);
         });
     });
 }());
