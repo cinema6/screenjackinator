@@ -19,10 +19,7 @@
         </script>
     </head>
     <body>
-        <ui-view ng-animate="'view'"></ui-view>
-        <div class="video__player--inactive" c6-plane="video" priority="2">
-            <video c6-video id="video" c6-src="AppCtrl.videoSrc()"></video>
-        </div>
+        <ng-include src="'assets/views/experience.html'" ng-controller="ExperienceController"></ng-include>
 
         <script>
             (function() {
@@ -76,7 +73,7 @@
                     return stylesheet;
                 }
                 body.appendChild(requireScript(requireJS, 'assets/scripts/main'));
-                head.appendChild(stylesheet(libUrl('c6ui/v1.2.12-0-g08ccc1d/css/c6uilib.min.css')));
+                head.appendChild(stylesheet(libUrl('c6ui/v2.1.0-0-g235a9de/css/c6uilib.min.css')));
             }());
         </script>
     </body>

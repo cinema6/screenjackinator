@@ -78,35 +78,14 @@
             c6UrlMakerProvider.location(c6Defines.kVideoUrls[assetLocation] ,'video');
             c6UrlMakerProvider.location(c6Defines.kCollateralUrls[assetLocation], 'collateral');
         }])
-        .config(['$stateProvider', '$urlRouterProvider', 'c6UrlMakerProvider',
-        function( $stateProvider ,  $urlRouterProvider ,  c6UrlMakerProvider ) {
-            $urlRouterProvider.otherwise('/');
-            $stateProvider
-                .state('landing', {
-                    templateUrl: c6UrlMakerProvider.makeUrl('views/landing.html'),
-                    controller: 'LandingController',
-                    url: '/?playback'
-                })
-                .state('experience', {
-                    templateUrl: c6UrlMakerProvider.makeUrl('views/experience.html'),
-                    controller: 'ExperienceController',
-                    url: '/experience'
-                })
-                .state('player', {
-                    templateUrl: c6UrlMakerProvider.makeUrl('views/player.html'),
-                    controller: 'PlayerController',
-                    url: '/player'
-                });
-        }])
         .config(['DubServiceProvider', 'c6Defines',
         function( DubServiceProvider ,  c6Defines ) {
             DubServiceProvider
                 .useDubAt(c6Defines.kDubUrl);
         }])
-        .controller('AppController', ['$scope','$state','$log', 'site', 'c6ImagePreloader', 'gsap', '$timeout', 'googleAnalytics', '$http', 'c6UrlMaker', 'ProjectService', 'VideoService', '$q', 'fail', 'c6Computed', 'VoiceTrackService',
-        function                     ( $scope , $state , $log ,  site ,  c6ImagePreloader ,  gsap ,  $timeout ,  googleAnalytics ,  $http ,  c6UrlMaker ,  ProjectService ,  VideoService ,  $q ,  fail ,  c          ,  VoiceTrackService ) {
-            var self = this,
-                canChangeState = false;
+        .controller('AppController', ['$scope','$log', 'cinema6', 'c6ImagePreloader', 'gsap', '$timeout', 'googleAnalytics', '$http', 'c6UrlMaker', 'ProjectService', 'VideoService', '$q', 'fail', 'c6Computed', 'VoiceTrackService',
+        function                     ( $scope , $log ,  cinema6 ,  c6ImagePreloader ,  gsap ,  $timeout ,  googleAnalytics ,  $http ,  c6UrlMaker ,  ProjectService ,  VideoService ,  $q ,  fail ,  c          ,  VoiceTrackService ) {
+            var self = this;
 
             $log.info('AppCtlr loaded.');
 
@@ -125,35 +104,6 @@
                     return style.stylesheet;
                 });
             }, ['AppCtrl.project.styles']);
-
-            this.src = function(src) {
-                var profile = self.profile,
-                    modifiers = {
-                        slow: '--low',
-                        average: '--med',
-                        fast: '--high'
-                    },
-                    speed, webp, extArray, ext;
-
-                if (!src || !profile) {
-                    return null;
-                }
-
-                speed = profile.speed;
-                webp = profile.webp;
-                extArray = src.split('.');
-                ext = extArray[extArray.length - 1];
-
-                if (webp && speed !== 'slow') {
-                    return src.replace(('.' + ext), (modifiers[speed] + '.webp'));
-                } else {
-                    return src.replace(('.' + ext), (modifiers[speed] + '.' + ext));
-                }
-            };
-
-            this.goto = function(state, toParams) {
-                $state.go(state, toParams);
-            };
 
             function createProject(results) {
                 var appConfig = results.appConfigResponse.data,
@@ -174,60 +124,19 @@
 
             $q.all({
                 appConfigResponse: $http.get(c6UrlMaker('app.config.json', 'collateral')),
-                appData: site.getAppData()
+                appData: cinema6.getAppData()
             })
                 .then(createProject)
                 .then(initializeVoiceTrack)
                 .then(null, fail);
 
-            site.init({
+            cinema6.init({
                 setup: function(appData) {
                     self.experience = appData.experience;
                     self.profile = appData.profile;
 
                     gsap.TweenLite.ticker.useRAF(self.profile.raf);
-
-                    return c6ImagePreloader.load([self.src(self.experience.img.hero)]);
                 }
-            });
-
-            site.getSession().then(function(session) {
-                session.on('gotoState', function(state) {
-                    if (state === 'start') {
-                        self.goto('landing');
-                    }
-                });
-            });
-
-            $scope.$on('$stateChangeStart', function(event, toState, toParams, fromState) {
-                if (!fromState.name || canChangeState ||
-                    (fromState.name !== 'landing' && toState.name !== 'landing')) {
-                    return;
-                }
-
-                event.preventDefault();
-
-                site.requestTransitionState(true)
-                    .then(function() {
-                        canChangeState = true;
-
-                        self.goto(toState.name, toParams);
-
-                        $timeout(function() { canChangeState = false; });
-
-                        return site.requestTransitionState(false);
-                    })
-                    .then(function() {
-                        $scope.$broadcast('siteTransitionComplete');
-                    });
-            });
-
-            $scope.$on('$stateChangeSuccess',
-                function(event,toState,toParams,fromState){
-                $log.info('State Change Success: ' + fromState.name +
-                          ' ===> ' + toState.name);
-
-                googleAnalytics('send', 'event', '$state', 'changed', toState.name);
             });
 
             $scope.AppCtrl = this;

@@ -10,7 +10,7 @@
                 $timeout,
                 AppCtrl;
 
-            var site,
+            var cinema6,
                 c6ImagePreloader,
                 gsap,
                 fail,
@@ -21,7 +21,7 @@
                 VideoService,
                 VoiceTrackService,
                 appData,
-                siteSession,
+                cinema6Session,
                 appConfig;
 
             beforeEach(function() {
@@ -105,17 +105,17 @@
                 });
 
                 module('c6.ui', function($provide) {
-                    $provide.factory('site', function($q) {
-                        site = {
-                            init: jasmine.createSpy('site.init()'),
-                            getSession: jasmine.createSpy('site.getSiteSession()').andCallFake(function() {
-                                return site._.getSessionResult.promise;
+                    $provide.factory('cinema6', function($q) {
+                        cinema6 = {
+                            init: jasmine.createSpy('cinema6.init()'),
+                            getSession: jasmine.createSpy('cinema6.getSiteSession()').andCallFake(function() {
+                                return cinema6._.getSessionResult.promise;
                             }),
-                            requestTransitionState: jasmine.createSpy('site.requestTransitionState()').andCallFake(function() {
-                                return site._.requestTransitionStateResult.promise;
+                            requestTransitionState: jasmine.createSpy('cinema6.requestTransitionState()').andCallFake(function() {
+                                return cinema6._.requestTransitionStateResult.promise;
                             }),
-                            getAppData: jasmine.createSpy('site.getAppData()').andCallFake(function() {
-                                return site._.getAppDataResult.promise;
+                            getAppData: jasmine.createSpy('cinema6.getAppData()').andCallFake(function() {
+                                return cinema6._.getAppDataResult.promise;
                             }),
                             _: {
                                 getSessionResult: $q.defer(),
@@ -124,7 +124,7 @@
                             }
                         };
 
-                        return site;
+                        return cinema6;
                     });
                     $provide.value('c6ImagePreloader', c6ImagePreloader);
                 });
@@ -152,7 +152,7 @@
                         $scope: $scope
                     });
 
-                    siteSession = c6EventEmitter({});
+                    cinema6Session = c6EventEmitter({});
                 });
             });
 
@@ -173,13 +173,13 @@
                     $httpBackend.flush();
                 });
 
-                it('then should request app data from the site', function() {
-                    expect(site.getAppData).toHaveBeenCalled();
+                it('then should request app data from the cinema6', function() {
+                    expect(cinema6.getAppData).toHaveBeenCalled();
                 });
 
                 it('then should then set the project property', function() {
                     $httpBackend.flush();
-                    $rootScope.$apply(function() { site._.getAppDataResult.resolve(appData); });
+                    $rootScope.$apply(function() { cinema6._.getAppDataResult.resolve(appData); });
 
                     expect(ProjectService.new).toHaveBeenCalledWith(appConfig, appData.experience.data);
                     expect(AppCtrl.project).toBe(ProjectService._.newResult);
@@ -189,7 +189,7 @@
                     var annotations;
 
                     $httpBackend.flush();
-                    $rootScope.$apply(function() { site._.getAppDataResult.resolve(appData); });
+                    $rootScope.$apply(function() { cinema6._.getAppDataResult.resolve(appData); });
                     annotations = ProjectService._.newResult.annotations;
 
                     expect(VoiceTrackService.init).toHaveBeenCalled();
@@ -200,185 +200,32 @@
                     var error = 'blah blah error error blah';
 
                     $httpBackend.flush();
-                    $rootScope.$apply(function() { site._.getAppDataResult.reject(error); });
+                    $rootScope.$apply(function() { cinema6._.getAppDataResult.reject(error); });
 
                     expect(fail).toHaveBeenCalledWith(error);
                 });
             });
 
-            describe('site integration', function() {
-                var setupResult,
-                    srcResult;
+            describe('cinema6 integration', function() {
+                var setupResult;
 
                 beforeEach(function() {
-                    var setup = site.init.mostRecentCall.args[0].setup;
-
-                    srcResult = {};
-                    spyOn(AppCtrl, 'src').andReturn(srcResult);
-
-                    appData.experience.img.hero = {};
+                    var setup = cinema6.init.mostRecentCall.args[0].setup;
 
                     setupResult = setup(appData);
                 });
 
-                it('should initialize a session with the site', function() {
-                    expect(site.init).toHaveBeenCalled();
+                it('should initialize a session with the cinema6', function() {
+                    expect(cinema6.init).toHaveBeenCalled();
                 });
 
                 it('should setup the session', function() {
                     expect(AppCtrl.experience).toBe(appData.experience);
                     expect(AppCtrl.profile).toBe(appData.profile);
-
-                    expect(setupResult).toBe(c6ImagePreloader._.loadResult);
-                    expect(AppCtrl.src).toHaveBeenCalledWith(appData.experience.img.hero);
-                    expect(c6ImagePreloader.load.mostRecentCall.args[0][0]).toBe(srcResult);
                 });
 
                 it('should configure gsap', function() {
                     expect(gsap.TweenLite.ticker.useRAF).toHaveBeenCalledWith(appData.profile.raf);
-                });
-
-                describe('working with the session', function() {
-                    beforeEach(function() {
-                        $scope.$apply(function() { site._.getSessionResult.resolve(siteSession); });
-
-                        spyOn(AppCtrl, 'goto');
-                    });
-
-                    it('should get the siteSession', function() {
-                        expect(site.getSession).toHaveBeenCalled();
-                    });
-
-                    it('should call AppCtrl.goto(\'landing\') when the site requests it', function() {
-                        siteSession.emit('gotoState', 'experience');
-
-                        expect(AppCtrl.goto).not.toHaveBeenCalled();
-
-                        siteSession.emit('gotoState', 'start');
-                        expect(AppCtrl.goto).toHaveBeenCalledWith('landing');
-                    });
-                });
-            });
-
-            describe('when $stateChangeStart is fired', function() {
-                var fromState;
-
-                beforeEach(function() {
-                    spyOn(AppCtrl, 'goto').andCallFake(function(state) {
-                        $rootScope.$broadcast('$stateChangeStart', { name: state }, {}, { name: fromState });
-                    });
-                });
-
-                describe('on initial landing page load', function() {
-                    beforeEach(function() {
-                        $scope.$new().$on('$stateChangeStart', function(event) {
-                            expect(event.defaultPrevented).toBe(false);
-                        });
-                        $rootScope.$broadcast('$stateChangeStart', { name: 'landing' }, {},  { name: '' });
-                    });
-
-                    it('should do nothing', function() {
-                        expect(site.requestTransitionState).not.toHaveBeenCalled();
-                        expect(AppCtrl.goto).not.toHaveBeenCalled();
-                    });
-                });
-
-                describe('on first transition to experience', function() {
-                    var event,
-                        toParams,
-                        unregister;
-
-                    beforeEach(function() {
-                        event = {
-                            preventDefault: jasmine.createSpy('event.preventDefault()')
-                        };
-
-                        toParams = {};
-
-                        unregister = $scope.$new().$on('$stateChangeStart', function(event) {
-                            expect(event.defaultPrevented).toBe(true);
-                        });
-                        $rootScope.$broadcast('$stateChangeStart', { name: 'experience' }, toParams, { name: 'landing' });
-                    });
-
-                    it('should requestTransitionState(true) from the site', function() {
-                        expect(site.requestTransitionState).toHaveBeenCalledWith(true);
-                    });
-
-                    it('should not interfere if the state change does not involve the landing page at all', function() {
-                        unregister();
-                        $scope.$new().$on('$stateChangeStart', function(event) {
-                            expect(event.defaultPrevented).toBe(false);
-                        });
-                        $rootScope.$broadcast('$stateChangeStart', { name: 'experience' }, toParams, { name: 'player' });
-                        expect(site.requestTransitionState.callCount).toBe(1);
-                    });
-
-                    describe('after the transition state is entered', function() {
-                        beforeEach(function() {
-                            unregister();
-
-                            unregister = $scope.$new().$on('$stateChangeStart', function(event) {
-                                expect(event.defaultPrevented).toBe(false);
-                            });
-                            fromState = 'landing';
-                            $rootScope.$apply(function() {
-                                var deferred = site._.requestTransitionStateResult;
-
-                                site._.requestTransitionStateResult = $q.defer();
-
-                                deferred.resolve();
-                            });
-                        });
-
-                        it('should transition to the state', function() {
-                            expect(AppCtrl.goto).toHaveBeenCalledWith('experience', toParams);
-                        });
-
-                        it('should requestTransitionState(false) from the site', function() {
-                            expect(site.requestTransitionState).toHaveBeenCalledWith(false);
-                        });
-
-                        describe('when the panels come up', function() {
-                            beforeEach(function() {
-                                spyOn($scope, '$broadcast');
-                                $scope.$apply(function() {
-                                    site._.requestTransitionStateResult.resolve();
-                                });
-                            });
-
-                            it('should $broadcast the "siteTransitionComplete" event', function() {
-                                expect($scope.$broadcast).toHaveBeenCalledWith('siteTransitionComplete');
-                            });
-                        });
-
-                        it('should rerun this whole procedure during the next transisition', function() {
-                            unregister();
-
-                            $timeout.flush();
-
-                            unregister = $scope.$new().$on('$stateChangeStart', function(event) {
-                                expect(event.defaultPrevented).toBe(true);
-                            });
-
-                            fromState = 'experience';
-                            AppCtrl.goto('landing');
-                        });
-                    });
-                });
-            });
-
-            describe('when $stateChangeSuccess is fired', function() {
-                beforeEach(function() {
-                    $rootScope.$broadcast('$stateChangeSuccess', { name: 'landing' }, {}, { name: '' });
-                });
-
-                it('should send an event to Google Analytics', function() {
-                    expect(googleAnalytics).toHaveBeenCalledWith('send', 'event', '$state', 'changed', 'landing');
-
-                    $rootScope.$broadcast('$stateChangeSuccess', { name: 'experience' }, {}, { name: 'landing' });
-
-                    expect(googleAnalytics).toHaveBeenCalledWith('send', 'event', '$state', 'changed', 'experience');
                 });
             });
 
@@ -434,50 +281,6 @@
                             expect(stylesheets[0]).toBe('assets/collateral/test/foo/style.css');
                             expect(stylesheets[1]).toBe('assets/collateral/test.css');
                             expect(stylesheets[2]).toBe('assets/collateral/test/styles.css');
-                        });
-                    });
-                });
-
-                describe('methods', function() {
-                    describe('goto(state)', function() {
-                        it('should proxy to $state.go(state)', function() {
-                            AppCtrl.goto('experience', {});
-
-                            expect($state.go).toHaveBeenCalledWith('experience', jasmine.any(Object));
-                        });
-                    });
-
-                    describe('img(src)', function() {
-                        it('should append a different modifier based on different profile properties', function() {
-                            var src = 'test/foo.jpg';
-
-                            AppCtrl.profile = appData.profile;
-                            expect(AppCtrl.src()).toBe(null);
-
-                            AppCtrl.profile = undefined;
-                            expect(AppCtrl.src(src)).toBe(null);
-
-                            AppCtrl.profile = appData.profile;
-
-                            appData.profile.speed = 'slow';
-                            appData.profile.webp = false;
-                            expect(AppCtrl.src(src)).toBe('test/foo--low.jpg');
-
-                            appData.profile.speed = 'average';
-                            expect(AppCtrl.src(src)).toBe('test/foo--med.jpg');
-
-                            appData.profile.speed = 'fast';
-                            expect(AppCtrl.src(src)).toBe('test/foo--high.jpg');
-
-                            appData.profile.speed = 'slow';
-                            appData.profile.webp = true;
-                            expect(AppCtrl.src(src)).toBe('test/foo--low.jpg');
-
-                            appData.profile.speed = 'average';
-                            expect(AppCtrl.src(src)).toBe('test/foo--med.webp');
-
-                            appData.profile.speed = 'fast';
-                            expect(AppCtrl.src(src)).toBe('test/foo--high.webp');
                         });
                     });
                 });
