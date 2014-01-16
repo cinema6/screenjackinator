@@ -594,10 +594,6 @@
                             expect(annotation.setupWith).toHaveBeenCalledWith(config);
                         });
 
-                        it('should track its virginity', function() {
-                            expect(_private.Model.prototype.trackVirginity).toHaveBeenCalled();
-                        });
-
                         it('should resolve relationships', function() {
                             var newAnnotation = new _private.Annotation({
                                 id: 'another',

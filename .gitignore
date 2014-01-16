@@ -9,7 +9,6 @@ lib-cov
 pids
 logs
 results
-test-results.xml
 
 app/assets/media
 
@@ -18,3 +17,4 @@ protractor.conf.json
 node_modules/
 dist/
 .tmp/
+reports/
