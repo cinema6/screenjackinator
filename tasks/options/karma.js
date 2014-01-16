@@ -5,7 +5,14 @@
         options: {
             configFile: 'test/karma.conf.js'
         },
-        unit: {},
+        unit: {
+            options: {
+                reporters: ['progress', 'junit'],
+                junitReporter: {
+                    outputFile: 'test-results.xml'
+                }
+            }
+        },
         debug: {
             options: {
                 singleRun: false,

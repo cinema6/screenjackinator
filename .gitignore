@@ -9,6 +9,7 @@ lib-cov
 pids
 logs
 results
+test-results.xml
 
 app/assets/media
 
