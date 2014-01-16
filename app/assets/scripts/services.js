@@ -321,9 +321,24 @@
             _private.videoDeferreds = {};
 
             _private.handleVideoReady = function(event, video) {
-                // Get existing deferred or create new one. Resolve it.
-                (_private.videoDeferreds[video.id] = (_private.videoDeferreds[video.id] || $q.defer()))
-                    .resolve(video);
+                var readyState = video.player.readyState;
+
+                function handleMetaDataLoad() {
+                    resolve();
+                    video.off('loadedmetadata', handleMetaDataLoad);
+                }
+
+                function resolve() {
+                    // Get existing deferred or create new one. Resolve it.
+                    (_private.videoDeferreds[video.id] = (_private.videoDeferreds[video.id] || $q.defer()))
+                        .resolve(video);
+                }
+
+                if (readyState > 0) {
+                    resolve();
+                } else {
+                    video.on('loadedmetadata', handleMetaDataLoad);
+                }
             };
 
             _private.waitForController = function(scope, expression) {

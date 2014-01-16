@@ -52,8 +52,9 @@
             VideoService.getVideo('video').then(function(c6Video) {
                 video = c6Video;
 
+                this.controlsNodes.invalidate();
                 syncVoiceTrackService(c6Video);
-            });
+            }.bind(this));
 
             $scope.$on('c6Bubble:show', function(event, annotation) {
                 if (!video || !annotation.sfx) { return; }
@@ -98,7 +99,7 @@
                     });
                 });
 
-                return  nodes;
+                return nodes;
             }, ['annotations']);
 
             this.bubbles = c($scope, function(annotations) {
