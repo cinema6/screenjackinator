@@ -49,7 +49,7 @@
                     libUrl('jquery/2.0.3-0-gf576d00/jquery.min.js'),
                     libUrl('gsap/1.11.2-0-g79f8c87/TweenMax.min.js'),
                     libUrl('gsap/1.11.2-0-g79f8c87/TimelineMax.min.js'),
-                    libUrl('angular/v1.2.8-0-g0f9a1c2/angular.min.js'),
+                    libUrl('angular/v1.2.9-0-g07ee29c/angular.min.js'),
                     libUrl('c6ui/v2.1.0-0-g235a9de/c6uilib.min.js'),
                     libUrl('c6ui/v2.1.0-0-g235a9de/c6log.min.js')
                 ];
@@ -59,7 +59,7 @@
                     libUrl('jquery/2.0.3-0-gf576d00/jquery.js'),
                     libUrl('gsap/1.11.2-0-g79f8c87/TweenMax.min.js'),
                     libUrl('gsap/1.11.2-0-g79f8c87/TimelineMax.min.js'),
-                    libUrl('angular/v1.2.8-0-g0f9a1c2/angular.js'),
+                    libUrl('angular/v1.2.9-0-g07ee29c/angular.js'),
                     libUrl('c6ui/v2.1.0-0-g235a9de/c6uilib.js'),
                     libUrl('c6ui/v2.1.0-0-g235a9de/c6log.js')
                 ];
@@ -106,8 +106,8 @@
             test: Modernizr.touch,
             yep: [
                 __C6_BUILD_VERSION__ ?
-                    libUrl('angular/v1.2.8-0-g0f9a1c2/angular-touch.min.js') :
-                    libUrl('angular/v1.2.8-0-g0f9a1c2/angular-touch.js')
+                    libUrl('angular/v1.2.9-0-g07ee29c/angular-touch.min.js') :
+                    libUrl('angular/v1.2.9-0-g07ee29c/angular-touch.js')
             ],
             nope: [
                 libUrl('c6ui/v2.1.0-0-g235a9de/css/c6uilib--hover.min.css'),

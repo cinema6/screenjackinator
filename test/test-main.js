@@ -46,8 +46,8 @@
             baseUrl: '/base/' + appDir + '/assets/scripts',
 
             paths: {
-                angular: libUrl('angular/v1.2.8-0-g0f9a1c2/angular'),
-                angularMocks: libUrl('angular/v1.2.8-0-g0f9a1c2/angular-mocks'),
+                angular: libUrl('angular/v1.2.9-0-g07ee29c/angular'),
+                angularMocks: libUrl('angular/v1.2.9-0-g07ee29c/angular-mocks'),
                 jquery: libUrl('jquery/2.0.3-0-gf576d00/jquery'),
                 modernizr: libUrl('modernizr/modernizr.custom.71747'),
                 tweenmax: libUrl('gsap/1.11.2-0-g79f8c87/TweenMax.min'),
