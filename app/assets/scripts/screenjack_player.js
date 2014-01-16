@@ -142,7 +142,8 @@
                 restrict: 'E',
                 templateUrl: c6UrlMaker('views/directives/c6_screenjack_player.html'),
                 scope: {
-                    annotations: '='
+                    annotations: '=',
+                    src: '@'
                 },
                 controller: 'C6ScreenjackPlayerController',
                 link: function(scope, element, attrs) {
