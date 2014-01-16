@@ -28,7 +28,7 @@
                     $scope.$apply(function() {
                         line = $compile('<c6-line editable="editable"></c6-line>')($scope);
                     });
-                    scope = line.scope();
+                    scope = line.children().scope();
                 });
 
                 describe('if editable is true', function() {
@@ -143,7 +143,7 @@
                     });
 
                     it('should hide the form', function() {
-                        expect(line.find('form').css('display')).toBe('none');
+                        expect(line.find('form').hasClass('ng-hide')).toBe(true);
                     });
 
                     it('should show the text span', function() {
@@ -154,10 +154,10 @@
                         expect(editDoneSpy).not.toHaveBeenCalled();
 
                         $scope.$apply(function() {
-                            line.scope().editing = true;
+                            line.children().scope().editing = true;
                         });
                         $scope.$apply(function() {
-                            line.scope().editing = false;
+                            line.children().scope().editing = false;
                         });
 
                         expect(editDoneSpy).toHaveBeenCalled();
@@ -179,7 +179,7 @@
                         });
                         $scope.$on('c6Line:editstart', editStartSpy);
                         $scope.$apply(function() {
-                            line.scope().editing = true;
+                            line.children().scope().editing = true;
                         });
                     });
 
@@ -219,7 +219,7 @@
                             line = $compile('<c6-line annotation="annotation"></c6-line>')($scope);
                         });
                         $scope.$apply(function() {
-                            scope = line.scope();
+                            scope = line.children().scope();
                             scope.editing = true;
                         });
                         $scope.$apply(function() {

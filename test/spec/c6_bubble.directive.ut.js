@@ -36,7 +36,7 @@
                     $scope.$apply(function() {
                         bubble = $compile('<c6-bubble editable="editable"></c6-bubble>')($scope);
                     });
-                    scope = bubble.scope();
+                    scope = bubble.children().scope();
                 });
 
                 describe('if editable is true', function() {
@@ -147,11 +147,15 @@
                             bubble = $compile('<c6-bubble annotation="annotation"></c6-bubble>')($scope);
                         });
 
+                        $scope.$apply(function() {
+                            $scope.editing = false;
+                        });
+
                         $scope.$on('c6Bubble:editdone', editDoneSpy);
                     });
 
                     it('should hide the form', function() {
-                        expect(bubble.find('form').css('display')).toBe('none');
+                        expect(bubble.find('form').hasClass('ng-hide')).toBe(true);
                     });
 
                     it('should show the text span', function() {
@@ -162,10 +166,10 @@
                         expect(editDoneSpy).not.toHaveBeenCalled();
 
                         $scope.$apply(function() {
-                            bubble.scope().editing = true;
+                            bubble.children().scope().editing = true;
                         });
                         $scope.$apply(function() {
-                            bubble.scope().editing = false;
+                            bubble.children().scope().editing = false;
                         });
 
                         expect(editDoneSpy).toHaveBeenCalled();
@@ -187,7 +191,7 @@
                         });
                         $scope.$on('c6Bubble:editstart', editStartSpy);
                         $scope.$apply(function() {
-                            bubble.scope().editing = true;
+                            bubble.children().scope().editing = true;
                         });
                     });
 
@@ -219,7 +223,7 @@
                             bubble = $compile('<c6-bubble annotation="annotation"></c6-bubble>')($scope);
                         });
                         $scope.$apply(function() {
-                            scope = bubble.scope();
+                            scope = bubble.children().scope();
                             scope.editing = true;
                         });
                         $scope.$apply(function() {

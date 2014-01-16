@@ -9,12 +9,12 @@
             </li>
         </ul>
         <button ng-click="ExperienceCtrl.startWizard()">Help</button>
-        <button ng-click="AppCtrl.goto('player')">Preview</button>
     </nav>
     <c6-screenjack-player
         class="video__group"
         c6-vertical-center="top"
         resize
+        src="{{AppCtrl.videoSrc()}}"
         annotations="ExperienceCtrl.annotations()">
     </c6-screenjack-player>
 </section>

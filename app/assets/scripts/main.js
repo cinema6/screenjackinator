@@ -36,9 +36,7 @@
                 return [
                     'scripts/app',
                     'scripts/services',
-                    'scripts/landing',
                     'scripts/experience',
-                    'scripts/player',
                     'scripts/wizard',
                     'scripts/screenjack_player'
                 ];
@@ -51,10 +49,9 @@
                     libUrl('jquery/2.0.3-0-gf576d00/jquery.min.js'),
                     libUrl('gsap/1.11.2-0-g79f8c87/TweenMax.min.js'),
                     libUrl('gsap/1.11.2-0-g79f8c87/TimelineMax.min.js'),
-                    libUrl('angular/v1.1.5-0-g9a7035e/angular.min.js'),
-                    libUrl('ui-router/0.2.0-0-g818b0d6/angular-ui-router.min.js'),
-                    libUrl('c6ui/v1.2.12-0-g08ccc1d/c6uilib.min.js'),
-                    libUrl('c6ui/v1.2.12-0-g08ccc1d/c6log.min.js')
+                    libUrl('angular/v1.2.8-0-g0f9a1c2/angular.min.js'),
+                    libUrl('c6ui/v2.1.0-0-g235a9de/c6uilib.min.js'),
+                    libUrl('c6ui/v2.1.0-0-g235a9de/c6log.min.js')
                 ];
             } else {
                 return [
@@ -62,10 +59,9 @@
                     libUrl('jquery/2.0.3-0-gf576d00/jquery.js'),
                     libUrl('gsap/1.11.2-0-g79f8c87/TweenMax.min.js'),
                     libUrl('gsap/1.11.2-0-g79f8c87/TimelineMax.min.js'),
-                    libUrl('angular/v1.1.5-0-g9a7035e/angular.js'),
-                    libUrl('ui-router/0.2.0-0-g818b0d6/angular-ui-router.js'),
-                    libUrl('c6ui/v1.2.12-0-g08ccc1d/c6uilib.js'),
-                    libUrl('c6ui/v1.2.12-0-g08ccc1d/c6log.js')
+                    libUrl('angular/v1.2.8-0-g0f9a1c2/angular.js'),
+                    libUrl('c6ui/v2.1.0-0-g235a9de/c6uilib.js'),
+                    libUrl('c6ui/v2.1.0-0-g235a9de/c6log.js')
                 ];
             }
         }());
@@ -101,7 +97,7 @@
         dev: 'http://s3.amazonaws.com/c6.dev/collateral/screenjackinator'
     };
     c6.kDubUrl = 'http://dv-api1.cinema6.com/dub';
-    c6.kModDeps = ['ui.router', 'c6.ui', 'c6.screenjackinator.services'];
+    c6.kModDeps = ['c6.ui', 'c6.screenjackinator.services'];
 
     loadScriptsInOrder(libScripts, function() {
         var Modernizr = window.Modernizr;
@@ -110,15 +106,15 @@
             test: Modernizr.touch,
             yep: [
                 __C6_BUILD_VERSION__ ?
-                    libUrl('angular/v1.1.5-0-g9a7035e/angular-mobile.min.js') :
-                    libUrl('angular/v1.1.5-0-g9a7035e/angular-mobile.js')
+                    libUrl('angular/v1.2.8-0-g0f9a1c2/angular-touch.min.js') :
+                    libUrl('angular/v1.2.8-0-g0f9a1c2/angular-touch.js')
             ],
             nope: [
-                libUrl('c6ui/v1.2.12-0-g08ccc1d/css/c6uilib--hover.min.css'),
+                libUrl('c6ui/v2.1.0-0-g235a9de/css/c6uilib--hover.min.css'),
                 __C6_APP_BASE_URL__ + '/styles/main--hover.css'
             ],
             complete: function() {
-                if (Modernizr.touch) { c6.kModDeps.push('ngMobile'); }
+                if (Modernizr.touch) { c6.kModDeps.push('ngTouch'); }
 
                 loadScriptsInOrder(appScripts, function() {
                     angular.bootstrap(document.documentElement, ['c6.screenjackinator']);

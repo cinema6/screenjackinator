@@ -7,99 +7,6 @@
         "title": "The Notebook",
         "subtitle": "Fully-customizable true love",
         "summary": "Need I say more?",
-        "img": {
-            "hero": "experiences/notebook/assets/notebook__hero.jpg",
-            "tag": null
-        },
-        "landingPageContent": {
-            "middle": "experiences/notebook/middle.html",
-            "right": "experiences/notebook/right.html",
-            "stylesheet": "experiences/notebook/assets/styles.css"
-        },
-        "data": {
-            "src": "not_over",
-            "styles": [
-                {
-                    "id": "antique",
-                    "name": "Antique",
-                    "modifier": "antique",
-                    "stylesheet": "styles/antique/antique.css"
-                }
-            ],
-            "sfx": [
-                {
-                    "id": "pop",
-                    "name": "pop",
-                    "src": "sounds/pop"
-                }
-            ],
-            "length": 61,
-            "thumbs": [
-                "notebook/thumbs/beginning.jpg",
-                "notebook/thumbs/middle.png",
-                "notebook/thumbs/end.jpg"
-            ],
-            "features": [
-                "popup"
-            ],
-            "annotations": [
-                {
-                    "type": "popup",
-                    "timestamp": 5,
-                    "duration": 2,
-                    "text": "What's up?!",
-                    "maxChars": 15,
-                    "position": {
-                        "top": "10%",
-                        "left": "40%"
-                    }
-                },
-                {
-                    "type": "popup",
-                    "timestamp": 12,
-                    "duration": 2,
-                    "text": "How are you?!",
-                    "maxChars": 15
-                },
-                {
-                    "type": "popup",
-                    "timestamp": 33,
-                    "duration": 4,
-                    "text": "This is the final test.",
-                    "maxChars": 15
-                }
-            ],
-            "defaults": {
-                "style": "antique",
-                "sfx": "pop",
-                "permissions": {
-                    "add": false,
-                    "delete": false,
-                    "modifyTimestamp": false,
-                    "modifyDuration": false,
-                    "modifyText": true,
-                    "modifyStyle": false
-                }
-            }
-        }
-    },
-    {
-        "id": "e-f1e91eac3f973b",
-        "uri": "notebook~shared",
-        "appUriPrefix": "<%= settings.appUrl %>",
-        "appUri": "screenjackinator/#/?playback=true",
-        "title": "Josh's Notebook",
-        "subtitle": "Created by Josh",
-        "summary": "Because I'm super creative.",
-        "img": {
-            "hero": "experiences/notebook~shared/assets/notebook~shared__hero.jpg",
-            "tag": null
-        },
-        "landingPageContent": {
-            "middle": "experiences/notebook~shared/middle.html",
-            "right": "experiences/notebook~shared/right.html",
-            "stylesheet": "experiences/notebook~shared/assets/styles.css"
-        },
         "data": {
             "src": "not_over",
             "styles": [
@@ -175,15 +82,6 @@
         "title": "2001",
         "subtitle": "With voices!",
         "summary": "Nothing.",
-        "img": {
-            "hero": "experiences/2001/assets/2001__hero.jpg",
-            "tag": null
-        },
-        "landingPageContent": {
-            "middle": "experiences/2001/middle.html",
-            "right": "experiences/2001/right.html",
-            "stylesheet": "experiences/2001/assets/styles.css"
-        },
         "data": {
             "src": "2001",
             "length": 61,

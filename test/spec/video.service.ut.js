@@ -78,13 +78,38 @@
                         });
                     });
 
-                    describe('handleVideoReady', function() {
+                    describe('handleVideoReady(event, video)', function() {
                         var deferred,
                             c6Video;
 
                         beforeEach(function() {
                             c6Video = {
-                                id: 'foo'
+                                id: 'foo',
+                                player: {
+                                    readyState: 4
+                                },
+                                on: jasmine.createSpy('video.on()')
+                                    .andCallFake(function(event, handler) {
+                                        c6Video._.handlers[event].push(handler);
+                                    }),
+                                off: jasmine.createSpy('video.off()')
+                                    .andCallFake(function(event, handler) {
+                                        var handlers = c6Video._.handlers[event];
+
+                                        handlers.splice(handlers.indexOf(handler));
+                                    }),
+                                trigger: function(event) {
+                                    c6Video._.handlers[event].forEach(function(handler) {
+                                        $rootScope.$apply(function() {
+                                            handler({ target: c6Video.player }, c6Video);
+                                        });
+                                    });
+                                },
+                                _: {
+                                    handlers: {
+                                        loadedmetadata: []
+                                    }
+                                }
                             };
 
                             deferred = {
@@ -125,6 +150,41 @@
                             it('should not create a new deferred', function() {
                                 expect($q.defer).not.toHaveBeenCalled();
                                 expect(_private.videoDeferreds.foo).not.toBe(deferred);
+                            });
+                        });
+
+                        describe('if the video has metadata', function() {
+                            beforeEach(function() {
+                                c6Video.player.readyState = 1;
+
+                                _private.handleVideoReady({}, c6Video);
+                            });
+
+                            it('should resolve the promise', function() {
+                                expect(deferred.resolve).toHaveBeenCalledWith(c6Video);
+                            });
+                        });
+
+                        describe('if the video has no metadata', function() {
+                            beforeEach(function() {
+                                c6Video.player.readyState = 0;
+
+                                _private.handleVideoReady({}, c6Video);
+                            });
+
+                            it('should resolve the promise after the "loadedmetadata" event', function() {
+                                expect(deferred.resolve).not.toHaveBeenCalled();
+
+                                c6Video.trigger('loadedmetadata');
+
+                                expect(deferred.resolve).toHaveBeenCalledWith(c6Video);
+                            });
+
+                            it('should clean up after itself', function() {
+                                c6Video.trigger('loadedmetadata');
+
+                                expect(c6Video.off).toHaveBeenCalledWith('loadedmetadata', jasmine.any(Function));
+                                expect(c6Video._.handlers.loadedmetadata.length).toBe(0);
                             });
                         });
                     });

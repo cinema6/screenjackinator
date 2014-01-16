@@ -148,7 +148,9 @@
                                         expectGET;
 
                                     beforeEach(function() {
-                                        responseData = {};
+                                        responseData = {
+                                            foo: 'test'
+                                        };
 
                                         spyOn(DubService._private, 'handleDubResponse');
 
@@ -166,7 +168,7 @@
                                         $httpBackend.flush();
 
                                         expect(DubService._private.handleDubResponse).toHaveBeenCalledWith(jasmine.any(Object), deferred);
-                                        expect(DubService._private.handleDubResponse.mostRecentCall.args[0].data).toBe(responseData);
+                                        expect(DubService._private.handleDubResponse.mostRecentCall.args[0].data).toEqual(responseData);
                                     });
 
                                     describe('in the event of an error', function() {
@@ -198,7 +200,9 @@
                             beforeEach(function() {
                                 failSpy = jasmine.createSpy('promise fail');
 
-                                responseData = {};
+                                responseData = {
+                                    test: 'foo'
+                                };
 
                                 options = {
                                     voice: 'dave',
@@ -239,7 +243,7 @@
                                     var args = DubService._private.handleDubResponse.mostRecentCall.args;
 
                                     expect(DubService._private.handleDubResponse).toHaveBeenCalled();
-                                    expect(args[0].data).toBe(responseData);
+                                    expect(args[0].data).toEqual(responseData);
                                     expect(args[1].promise.then).toBe(result.then);
                                 });
                             });
