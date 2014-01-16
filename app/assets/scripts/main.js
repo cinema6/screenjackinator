@@ -36,9 +36,7 @@
                 return [
                     'scripts/app',
                     'scripts/services',
-                    'scripts/landing',
                     'scripts/experience',
-                    'scripts/player',
                     'scripts/wizard',
                     'scripts/screenjack_player'
                 ];

@@ -86,9 +86,6 @@
                 services: {
                     deps: ['app']
                 },
-                landing: {
-                    deps: ['app']
-                },
                 wizard: {
                     deps: ['app']
                 },
@@ -96,9 +93,6 @@
                     deps: ['templates']
                 },
                 experience: {
-                    deps: ['app']
-                },
-                player: {
                     deps: ['app']
                 }
             },
