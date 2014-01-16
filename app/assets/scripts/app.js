@@ -83,8 +83,8 @@
             DubServiceProvider
                 .useDubAt(c6Defines.kDubUrl);
         }])
-        .controller('AppController', ['$scope','$log', 'cinema6', 'c6ImagePreloader', 'gsap', '$timeout', 'googleAnalytics', '$http', 'c6UrlMaker', 'ProjectService', 'VideoService', '$q', 'fail', 'c6Computed', 'VoiceTrackService',
-        function                     ( $scope , $log ,  cinema6 ,  c6ImagePreloader ,  gsap ,  $timeout ,  googleAnalytics ,  $http ,  c6UrlMaker ,  ProjectService ,  VideoService ,  $q ,  fail ,  c          ,  VoiceTrackService ) {
+        .controller('AppController', ['$scope','$log', 'cinema6', 'gsap', '$http', 'c6UrlMaker', 'ProjectService', 'VideoService', '$q', 'fail', 'c6Computed', 'VoiceTrackService',
+        function                     ( $scope , $log ,  cinema6 ,  gsap ,  $http ,  c6UrlMaker ,  ProjectService ,  VideoService ,  $q ,  fail ,  c          ,  VoiceTrackService ) {
             var self = this;
 
             $log.info('AppCtlr loaded.');
