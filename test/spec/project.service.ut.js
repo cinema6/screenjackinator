@@ -265,7 +265,8 @@
 
                     describe('Model', function() {
                         var model,
-                            config;
+                            config,
+                            copy;
 
                         beforeEach(function() {
                             config = {
@@ -306,10 +307,21 @@
                             describe('trackVirginity()', function() {
                                 beforeEach(function() {
                                     model.trackVirginity();
+                                    copy = model._virgin;
                                 });
 
                                 it('should store a copy of itself as the _virgin property', function() {
-                                    expect(model._virgin).toEqual(model);
+                                    // for (var prop in model) {
+                                    //    if (!angular.isFunction(val) && key.charAt(0) !== '_') {
+                                    //        expect(model[prop]).toBe(copy[prop]);
+                                    //    }
+                                    // }
+                                    angular.forEach(model, function(val, key){
+                                        if (!angular.isFunction(val) && key.charAt(0) !== '_') {
+                                           expect(val).toBe(copy[key]);
+                                       }
+                                    });
+                                    //expect(model._virgin).toEqual(model);
                                 });
                             });
 
