@@ -72,7 +72,6 @@
                     }
                 }, copy);
                 this._virgin = copy;
-
             };
             _private.Model.prototype.isVirgin = function() {
                 var isVirgin;
@@ -91,7 +90,6 @@
                 }
 
                 return isVirgin;
-
             };
 
             /***************************************
