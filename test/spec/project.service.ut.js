@@ -272,7 +272,9 @@
                             config = {
                                 id: 'foo',
                                 test: 'hey',
-                                another: {}
+                                another: {},
+                                _priv: 'private',
+                                _another: {}
                             };
 
                             model = new _private.Model(config);
@@ -306,15 +308,20 @@
 
                             describe('trackVirginity()', function() {
                                 beforeEach(function() {
+                                    model.setupWith(config);
                                     model.trackVirginity();
                                     copy = model._virgin;
                                 });
 
                                 it('should store a copy of itself as the _virgin property', function() {
-                                    angular.forEach(model, function(val, key){
-                                        if (!angular.isFunction(val) && key.charAt(0) !== '_') {
-                                           expect(val).toBe(copy[key]);
-                                       }
+                                    angular.forEach(copy, function(val, key){
+                                        expect(val).toBe(model[key]);
+                                    });
+                                });
+
+                                it('should not store copies of private properties', function() {
+                                    angular.forEach(copy, function(val, key) {
+                                        expect(key.charAt(0) === '_').toBe(false);
                                     });
                                 });
                             });
