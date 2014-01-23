@@ -15,6 +15,10 @@
                 {
                     src: '<%= settings.appDir %>/assets/scripts/main.js',
                     dest: '<%= settings.appDir %>/assets/scripts/main.js'
+                },
+                {
+                    src: 'test/test-main.js',
+                    dest: 'test/test-main.js'
                 }
             ]
         }

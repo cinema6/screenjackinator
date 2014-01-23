@@ -9,7 +9,7 @@
         debug: {
             options: {
                 singleRun: false,
-                autoWatch: true
+                background: true
             }
         }
     };
