@@ -64,14 +64,29 @@
                 return cache.put(this.id, this);
             };
             _private.Model.prototype.trackVirginity = function() {
-                this._virgin = angular.copy(this);
-                this._virgin._virgin = this._virgin;
+                var copy = {};
+
+                angular.forEach(this, function(val, key){
+                    if (key.charAt(0) !== '_') {
+                        this[key] = val;
+                    }
+                }, copy);
+                this._virgin = copy;
             };
             _private.Model.prototype.isVirgin = function() {
-                var isVirgin = this._virgin && angular.equals(this, this._virgin);
+                var isVirgin;
+
+                if(this._virgin) {
+                    isVirgin = true;
+                    angular.forEach(this._virgin, function(val, key) {
+                        if(val !== this[key]) {
+                            isVirgin = false;
+                        }
+                    }, this);
+                }
 
                 if (isVirgin === false) {
-                    _private.Model.prototype.isVirgin = function() { return false; };
+                    this.isVirgin = function() { return false; };
                 }
 
                 return isVirgin;
@@ -159,9 +174,9 @@
 
                 this.voiceBox = new $window.Audio();
 
-                this.haveMP3For = null;
+                this._haveMP3For = null;
 
-                //this.trackVirginity();
+                this.trackVirginity();
             };
             _private.Annotation.prototype = new _private.Model({});
             _private.Annotation.prototype.constructor = _private.Annotation;
@@ -208,11 +223,11 @@
                     return deferred.promise;
                 }
 
-                if (this.haveMP3For === this.text) {
+                if (this._haveMP3For === this.text) {
                     return $q.when(this);
                 }
 
-                this.haveMP3For = this.text;
+                this._haveMP3For = this.text;
 
                 return DubService.getMP3(this.text, options)
                     .then(waitForVoiceBox);
