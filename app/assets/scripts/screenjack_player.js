@@ -257,7 +257,7 @@
                         preEditText = editing ? text : null;
 
                         if(wasEditing && !editing) {
-                            scope.modified = scope.annotation.isVirgin() ? false : true;
+                            scope.modified = !scope.annotation.isVirgin();
                         }
 
                         if (editing !== wasEditing) {

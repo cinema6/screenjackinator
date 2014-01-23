@@ -67,7 +67,7 @@
                 var copy = {};
 
                 angular.forEach(this, function(val, key){
-                    if (!angular.isFunction(val) && key.charAt(0) !== '_') {
+                    if (key.charAt(0) !== '_') {
                         this[key] = val;
                     }
                 }, copy);
