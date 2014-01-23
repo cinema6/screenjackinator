@@ -133,7 +133,9 @@
                         editDoneSpy = jasmine.createSpy('edit done');
 
                         $scope.editing = false;
-                        $scope.annotation = {};
+                        $scope.annotation = {
+                            isVirgin: function() {return true;}
+                        };
 
                         $scope.$apply(function() {
                             line = $compile('<c6-line annotation="annotation"></c6-line>')($scope);
@@ -205,6 +207,9 @@
                     beforeEach(function() {
                         $scope.annotation = {
                             text: 'Initial Text',
+                            isVirgin: function() {
+                                return this.text === 'Initial Text';
+                            },
                             getMP3: jasmine.createSpy('annotation.getMP3()')
                                 .andCallFake(function() {
                                     return $scope.annotation._.getMP3Deferred.promise;
@@ -214,6 +219,8 @@
                                 getMP3Deferred: $q.defer()
                             }
                         };
+
+                        spyOn($scope.annotation, 'isVirgin').andCallThrough();
 
                         $scope.$apply(function() {
                             line = $compile('<c6-line annotation="annotation"></c6-line>')($scope);
@@ -242,6 +249,14 @@
                         it('should exit editing mode', function() {
                             expect(scope.editing).toBe(false);
                         });
+
+                        it('should call isVirgin()', function() {
+                            expect($scope.annotation.isVirgin).toHaveBeenCalled();
+                        });
+
+                        it('should not have added modified-class to container', function() {
+                            expect(line.hasClass('modified-class')).toBe(false);
+                        });
                     });
 
                     describe('clicking save', function() {
@@ -269,6 +284,14 @@
 
                             it('should exit editing mode', function() {
                                 expect(scope.editing).toBe(false);
+                            });
+
+                            it('should call isVirgin()', function() {
+                                expect($scope.annotation.isVirgin).toHaveBeenCalled();
+                            });
+
+                            it('should have added modified-class to container', function() {
+                                expect(line.hasClass('modified-class')).toBe(true);
                             });
                         });
                     });

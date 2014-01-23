@@ -141,7 +141,9 @@
                         editDoneSpy = jasmine.createSpy('edit done');
 
                         $scope.editing = false;
-                        $scope.annotation = {};
+                        $scope.annotation = {
+                            isVirgin: function() {return true;}
+                        };
 
                         $scope.$apply(function() {
                             bubble = $compile('<c6-bubble annotation="annotation"></c6-bubble>')($scope);
@@ -216,8 +218,13 @@
 
                     beforeEach(function() {
                         $scope.annotation = {
-                            text: 'Initial Text'
+                            text: 'Initial Text',
+                            isVirgin: function() {
+                                return this.text === 'Initial Text';
+                            }
                         };
+
+                        $scope.modified = false;
 
                         $scope.$apply(function() {
                             bubble = $compile('<c6-bubble annotation="annotation"></c6-bubble>')($scope);
@@ -246,6 +253,10 @@
                         it('should exit editing mode', function() {
                             expect(scope.editing).toBe(false);
                         });
+
+                        it('should not modify virginty', function() {
+                            expect(scope.modified).toBe(false);
+                        });
                     });
 
                     describe('clicking save', function() {
@@ -262,6 +273,10 @@
 
                         it('should exit editing mode', function() {
                             expect(scope.editing).toBe(false);
+                        });
+
+                        it('should modify virginity', function() {
+                            expect(scope.modified).toBe(true);
                         });
                     });
                 });
