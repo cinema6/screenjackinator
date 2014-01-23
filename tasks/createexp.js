@@ -18,15 +18,6 @@ module.exports = function(grunt) {
                 title: null,
                 subtitle: null,
                 summary: null,
-                img: {
-                    hero: null,
-                    tag: null
-                },
-                landingPageContent: {
-                    middle: null,
-                    right: null,
-                    stylesheet: null
-                },
                 data: {}
             },
             getInput = Q.nbind(prompt.get, prompt),
@@ -43,34 +34,6 @@ module.exports = function(grunt) {
         }
 
         function modifyProject() {
-            function collateral(src) {
-                return settings.collateralDir + '/' + src;
-            }
-
-            function copyImgSet(src) {
-                var seed = 'tasks/resources/hero--sample.',
-                    seeds = {
-                        jpg: seed + 'jpg',
-                        webp: seed + 'webp'
-                    },
-                    unprocessedSrc = src.slice(0, src.lastIndexOf('.')),
-                    modifiers = [
-                        '--low.jpg',
-                        '--med.jpg',
-                        '--high.jpg',
-                        '--med.webp',
-                        '--high.webp'
-                    ];
-
-                modifiers.forEach(function(modifier) {
-                    var ext = modifier.slice(modifier.lastIndexOf('.') + 1),
-                        file = unprocessedSrc + modifier;
-
-                    grunt.file.copy(seeds[ext], file);
-                    grunt.log.ok('Created ' + file);
-                });
-            }
-
             grunt.log.writeln('Generated Experience:');
             grunt.log.write(JSON.stringify(experience, null, '    ') + '\n');
 
@@ -79,15 +42,6 @@ module.exports = function(grunt) {
             // Add to experiences.json and write
             grunt.file.write(settings.experiencesJSON, JSON.stringify(experiences, null, '    '));
             grunt.log.ok('Wrote to ' + settings.experiencesJSON);
-
-            // Create files in collateral directory
-            Object.keys(experience.landingPageContent).forEach(function(key) {
-                var file = collateral(experience.landingPageContent[key]);
-
-                grunt.file.write(file);
-                grunt.log.ok('Created ' + file);
-            });
-            copyImgSet(collateral(experience.img.hero));
         }
 
         getInput([
@@ -121,39 +75,6 @@ module.exports = function(grunt) {
         ])
         .then(function(result) {
             copy(result, experience);
-
-            return getInput([
-                {
-                    name: 'hero',
-                    type: 'string',
-                    description: 'Hero IMG Src (Relative to ' + settings.collateralDir + ' Folder)',
-                    default: 'experiences/' + experience.uri + '/assets/' + experience.uri + '__hero.jpg'
-                },
-                {
-                    name: 'middle',
-                    type: 'string',
-                    description: 'Middle Template Src (Relative to ' + settings.collateralDir + ' Folder)',
-                    default: 'experiences/' + experience.uri + '/middle.html'
-                },
-                {
-                    name: 'right',
-                    type: 'string',
-                    description: 'Right Template Src (Relative to ' + settings.collateralDir + ' Folder)',
-                    default: 'experiences/' + experience.uri + '/right.html'
-                },
-                {
-                    name: 'stylesheet',
-                    type: 'string',
-                    description: 'Stylesheet Src (Relative to ' + settings.collateralDir + ' Folder)',
-                    default: 'experiences/' + experience.uri + '/assets/styles.css'
-                }
-            ]);
-        })
-        .then(function(result) {
-            experience.img.hero = result.hero;
-            experience.landingPageContent.middle = result.middle;
-            experience.landingPageContent.right = result.right;
-            experience.landingPageContent.stylesheet = result.stylesheet;
         })
         .then(modifyProject)
         .then(done, handleError);
