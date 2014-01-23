@@ -86,7 +86,7 @@
                 }
 
                 if (isVirgin === false) {
-                    _private.Model.prototype.isVirgin = function() { return false; };
+                    this.isVirgin = function() { return false; };
                 }
 
                 return isVirgin;
@@ -174,7 +174,7 @@
 
                 this.voiceBox = new $window.Audio();
 
-                this.haveMP3For = null;
+                this._haveMP3For = null;
 
                 this.trackVirginity();
             };
@@ -223,11 +223,11 @@
                     return deferred.promise;
                 }
 
-                if (this.haveMP3For === this.text) {
+                if (this._haveMP3For === this.text) {
                     return $q.when(this);
                 }
 
-                this.haveMP3For = this.text;
+                this._haveMP3For = this.text;
 
                 return DubService.getMP3(this.text, options)
                     .then(waitForVoiceBox);

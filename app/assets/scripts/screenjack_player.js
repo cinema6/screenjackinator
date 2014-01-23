@@ -166,6 +166,8 @@
                 link: function(scope, element) {
                     var preEditText = null;
 
+                    //scope.modified = false;
+
                     scope.discardChanges = function() {
                         scope.annotation.text = preEditText;
                         scope.editing = false;
@@ -203,6 +205,12 @@
 
                         preEditText = editing ? text : null;
 
+                        if(wasEditing && !editing) {
+                            if(!scope.annotation.isVirgin()) {
+                                element.addClass('modified-class');
+                            }
+                        }
+
                         if (editing !== wasEditing) {
                             scope.$emit(eventName, scope.annotation);
                         }
@@ -223,6 +231,8 @@
                 },
                 link: function(scope, element) {
                     var preEditText = null;
+
+                    scope.modified = false;
 
                     scope.discardChanges = function() {
                         scope.annotation.text = preEditText;
@@ -247,6 +257,10 @@
                             eventName = 'c6Bubble:' + (editing ? 'editstart' : 'editdone');
 
                         preEditText = editing ? text : null;
+
+                        if(wasEditing && !editing) {
+                            scope.modified = scope.annotation.isVirgin() ? false : true;
+                        }
 
                         if (editing !== wasEditing) {
                             scope.$emit(eventName, scope.annotation);

@@ -1,4 +1,4 @@
-<div class="annotations__style">
+<div class="annotations__style" ng-class="{'modified-class': modified}">
     <div class="annotations__text">
         <span ng-style="{visibility: (editing ? 'hidden' : 'visible')}">{{annotation.text}}</span>
         <form class="annotations__form" ng-show="editing">
