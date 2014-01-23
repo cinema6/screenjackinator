@@ -166,8 +166,6 @@
                 link: function(scope, element) {
                     var preEditText = null;
 
-                    //scope.modified = false;
-
                     scope.discardChanges = function() {
                         scope.annotation.text = preEditText;
                         scope.editing = false;
