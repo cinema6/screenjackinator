@@ -166,6 +166,19 @@
                 link: function(scope, element) {
                     var preEditText = null;
 
+                    scope.fetching = false;
+
+                    scope.listen = function(e) {
+                        e.target.disabled = true;
+                        scope.fetching = true;
+
+                        scope.annotation.getMP3().then(function() {
+                            e.target.disabled = false;
+                            scope.fetching = false;
+                            scope.annotation.speak();
+                        });
+                    };
+
                     scope.discardChanges = function() {
                         scope.annotation.text = preEditText;
                         scope.editing = false;
