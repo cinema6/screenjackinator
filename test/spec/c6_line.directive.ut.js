@@ -304,8 +304,27 @@
                             listen.click();
                         });
 
-                        it('should speak the line', function() {
-                            expect($scope.annotation.speak).toHaveBeenCalled();
+                        it('should disable the listen button', function() {
+                            expect(listen.attr('disabled')).toBeDefined();
+                        });
+
+                        it('should show loading... indicator', function() {
+                            expect(scope.fetching).toBe(true);
+                        });
+
+                        it('should get the MP3', function() {
+                            expect($scope.annotation.getMP3).toHaveBeenCalled();
+                        });
+
+                        describe('after getting the MP3', function() {
+                            beforeEach(function() {
+                                $scope.$apply(function() {
+                                    $scope.annotation._.getMP3Deferred.resolve($scope.annotation);
+                                });
+                            });
+                            it('should speak the line', function() {
+                                expect($scope.annotation.speak).toHaveBeenCalled();
+                            });
                         });
                     });
                 });

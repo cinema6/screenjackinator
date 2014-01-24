@@ -53,6 +53,10 @@ c6-line {
     font-size: 2em; color: white;
 }
 
+.line__loading {
+    display:inline;
+}
+
 .annotation__group {
     position: absolute;
     cursor: pointer;
