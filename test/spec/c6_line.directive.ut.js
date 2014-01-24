@@ -216,7 +216,7 @@
                                 }),
                             speak: jasmine.createSpy('annotation.speak()'),
                             _: {
-                                getMP3Deferred: $q.defer(),
+                                getMP3Deferred: $q.defer()
                             }
                         };
 
