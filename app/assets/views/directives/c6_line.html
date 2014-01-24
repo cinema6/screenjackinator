@@ -1,8 +1,8 @@
 <span ng-style="{visibility: (editing ? 'hidden' : 'visible')}">{{annotation.text}}</span>
 <form ng-show="editing">
     <input type="text" ng-model="annotation.text">
-    <button name="listen" ng-click="$event.stopPropagation(); listen($event);">Listen</button>
-    <div ng-style="{display: (fetching ? 'inline' : 'none')}">Loading...</div>
+    <button name="listen" ng-click="$event.stopPropagation(); listen();" ng-disabled="fetching">Listen</button>
+    <div class="line__loading" ng-show="fetching">Loading...</div>
     <button name="save" ng-click="$event.stopPropagation(); saveChanges();">Save</button>
     <button name="cancel" ng-click="$event.stopPropagation(); discardChanges();">X</button>
 </form>
