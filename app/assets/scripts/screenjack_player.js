@@ -168,12 +168,10 @@
 
                     scope.fetching = false;
 
-                    scope.listen = function(e) {
-                        e.target.disabled = true;
+                    scope.listen = function() {
                         scope.fetching = true;
 
                         scope.annotation.getMP3().then(function() {
-                            e.target.disabled = false;
                             scope.fetching = false;
                             scope.annotation.speak();
                         });
