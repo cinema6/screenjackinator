@@ -1,9 +1,9 @@
-<div class="annotations__style" ng-class="{'modified-class': modified}">
+<div class="annotations__style" ng-class="{'modified-class': modified, 'bubble__invalid': invalid}">
     <div class="annotations__text">
         <span ng-style="{visibility: (editing ? 'hidden' : 'visible')}">{{annotation.text}}</span>
         <form class="annotations__form" ng-show="editing">
             <input type="text" ng-model="annotation.text">
-            <button name="save" ng-click="$event.stopPropagation(); editing = false;">Save</button>
+            <button name="save" ng-click="$event.stopPropagation(); saveChanges();">Save</button>
             <button name="cancel" ng-click="$event.stopPropagation(); discardChanges();">X</button>
         </form>
         <div class="annotations__frame"></div>

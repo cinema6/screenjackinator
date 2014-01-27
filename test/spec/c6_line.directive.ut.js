@@ -210,6 +210,7 @@
                             isVirgin: function() {
                                 return this.text === 'Initial Text';
                             },
+                            isValid: function() {},
                             getMP3: jasmine.createSpy('annotation.getMP3()')
                                 .andCallFake(function() {
                                     return $scope.annotation._.getMP3Deferred.promise;
@@ -228,6 +229,7 @@
                         $scope.$apply(function() {
                             scope = line.children().scope();
                             scope.editing = true;
+                            scope.fetching = false;
                         });
                         $scope.$apply(function() {
                             $scope.annotation.text = 'My Edit';
@@ -250,6 +252,10 @@
                             expect(scope.editing).toBe(false);
                         });
 
+                        it('should not add invalid css class to form element', function() {
+                            expect(scope.invalid).toBe(false);
+                        });
+
                         it('should call isVirgin()', function() {
                             expect($scope.annotation.isVirgin).toHaveBeenCalled();
                         });
@@ -260,38 +266,91 @@
                     });
 
                     describe('clicking save', function() {
-                        var save;
+                        describe('with valid changes', function() {
+                            var save;
 
-                        beforeEach(function() {
-                            save = line.find('form button[name=save]');
-                            save.click();
-                        });
-
-                        it('should keep the changes', function() {
-                            expect($scope.annotation.text).toBe('My Edit');
-                        });
-
-                        it('should get the MP3 for the line', function() {
-                            expect($scope.annotation.getMP3).toHaveBeenCalled();
-                        });
-
-                        describe('after getting the MP3', function() {
                             beforeEach(function() {
-                                $scope.$apply(function() {
-                                    $scope.annotation._.getMP3Deferred.resolve($scope.annotation);
+                                spyOn($scope.annotation, 'isValid').andReturn(true);
+
+                                save = line.find('form button[name=save]');
+                                save.click();
+                            });
+
+                            it('should get the MP3 for the line', function() {
+                                expect($scope.annotation.getMP3).toHaveBeenCalled();
+                            });
+
+                            describe('after getting the MP3', function() {
+                                beforeEach(function() {
+                                    $scope.$apply(function() {
+                                        $scope.annotation._.getMP3Deferred.resolve($scope.annotation);
+                                    });
+                                });
+
+                                it('should not add invalid css class to form element', function() {
+                                    expect($scope.annotation.isValid).toHaveBeenCalled();
+                                    expect(scope.invalid).toBe(false);
+                                });
+
+                                it('should keep the changes', function() {
+                                    expect($scope.annotation.text).toBe('My Edit');
+                                });
+
+                                it('should exit editing mode', function() {
+                                    expect(scope.editing).toBe(false);
+                                });
+
+                                it('should call isVirgin()', function() {
+                                    expect($scope.annotation.isVirgin).toHaveBeenCalled();
+                                });
+
+                                it('should have added modified-class to container', function() {
+                                    expect(line.hasClass('modified-class')).toBe(true);
                                 });
                             });
+                        });
 
-                            it('should exit editing mode', function() {
-                                expect(scope.editing).toBe(false);
+                        describe('with invalid changes', function() {
+                            var save;
+
+                            beforeEach(function() {
+                                spyOn($scope.annotation, 'isValid').andReturn(false);
+
+                                save = line.find('form button[name=save]');
+                                save.click();
                             });
 
-                            it('should call isVirgin()', function() {
-                                expect($scope.annotation.isVirgin).toHaveBeenCalled();
+                            it('should get the MP3 for the line', function() {
+                                expect($scope.annotation.getMP3).toHaveBeenCalled();
                             });
 
-                            it('should have added modified-class to container', function() {
-                                expect(line.hasClass('modified-class')).toBe(true);
+                            describe('after getting the MP3', function() {
+                                beforeEach(function() {
+                                    $scope.$apply(function() {
+                                        $scope.annotation._.getMP3Deferred.resolve($scope.annotation);
+                                    });
+                                });
+
+                                it('should add invalid css class to form element', function() {
+                                    expect($scope.annotation.isValid).toHaveBeenCalled();
+                                    expect(scope.invalid).toBe(true);
+                                });
+
+                                it('should not exit editing mode', function() {
+                                    expect(scope.editing).toBe(true);
+                                });
+
+                                it('should leave the invalid text in the field', function() {
+                                    expect($scope.annotation.text).toBe('My Edit');
+                                });
+
+                                it('should not call isVirgin()', function() {
+                                    expect($scope.annotation.isVirgin).not.toHaveBeenCalled();
+                                });
+
+                                it('should not have added modified-class to container', function() {
+                                    expect(line.hasClass('modified-class')).toBe(false);
+                                });
                             });
                         });
                     });
@@ -322,8 +381,43 @@
                                     $scope.annotation._.getMP3Deferred.resolve($scope.annotation);
                                 });
                             });
-                            it('should speak the line', function() {
-                                expect($scope.annotation.speak).toHaveBeenCalled();
+
+                            it('should hide loading... indicator', function() {
+                                expect(scope.fetching).toBe(false);
+                            });
+
+                            describe('with valid MP3', function() {
+                                beforeEach(function() {
+                                    spyOn($scope.annotation, 'isValid').andReturn(true);
+
+                                    listen = line.find('form button[name=listen]');
+                                    listen.click();
+                                });
+
+                                it('should not add invalid css class to form element', function() {
+                                    expect(scope.invalid).toBe(false);
+                                });
+
+                                it('should speak the line', function() {
+                                    expect($scope.annotation.speak).toHaveBeenCalled();
+                                });
+                            });
+
+                            describe('with invalid MP3', function() {
+                                beforeEach(function() {
+                                    spyOn($scope.annotation, 'isValid').andReturn(false);
+
+                                    listen = line.find('form button[name=listen]');
+                                    listen.click();
+                                });
+
+                                it('should add invalid css class to form element', function() {
+                                    expect(scope.invalid).toBe(true);
+                                });
+
+                                it('should not speak the line', function() {
+                                    expect($scope.annotation.speak).not.toHaveBeenCalled();
+                                });
                             });
                         });
                     });

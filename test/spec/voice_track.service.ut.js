@@ -23,16 +23,16 @@
 
                         angular.extend(this, config);
 
-                        this.voiceBox = {
+                        this._voiceBox = {
                             paused: true,
                             ended: false,
                             play: jasmine.createSpy('voiceBox.play()')
                                 .andCallFake(function() {
-                                    self.voiceBox.paused = false;
+                                    self._voiceBox.paused = false;
                                 }),
                             pause: jasmine.createSpy('voiceBox.pause()')
                                 .andCallFake(function() {
-                                    self.voiceBox.paused = true;
+                                    self._voiceBox.paused = true;
                                 }),
                             duration: duration,
                             currentTime: 0
@@ -190,7 +190,7 @@
 
                         it('should pause all the players', function() {
                             annotations.forEach(function(annotation) {
-                                expect(annotation.voiceBox.pause).toHaveBeenCalled();
+                                expect(annotation._voiceBox.pause).toHaveBeenCalled();
                             });
                         });
                     });
@@ -226,7 +226,7 @@
                             it('should sync the currentTime of the voiceBoxs to the supplied time', function() {
                                 function assertCurrentTime(times) {
                                     times.forEach(function(time, index) {
-                                        expect(annotations[index].voiceBox.currentTime).toBe(time);
+                                        expect(annotations[index]._voiceBox.currentTime).toBe(time);
                                     });
                                 }
 
@@ -267,7 +267,7 @@
                             it('should play annotations that should be playing', function() {
                                 function tick(time) {
                                     annotations.forEach(function(annotation) {
-                                        var voiceBox = annotation.voiceBox,
+                                        var voiceBox = annotation._voiceBox,
                                             currentTime = Math.min((time - annotation.timestamp), voiceBox.duration);
 
                                         if (!voiceBox.paused) {
@@ -282,13 +282,13 @@
 
                                 function assertPaused(statuses) {
                                     statuses.forEach(function(status, index) {
-                                        expect(annotations[index].voiceBox.paused).toBe(status);
+                                        expect(annotations[index]._voiceBox.paused).toBe(status);
                                     });
                                 }
 
                                 function assertPlayCount(counts) {
                                     counts.forEach(function(count, index) {
-                                        expect(annotations[index].voiceBox.play.callCount).toBe(count);
+                                        expect(annotations[index]._voiceBox.play.callCount).toBe(count);
                                     });
                                 }
 

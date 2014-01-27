@@ -164,28 +164,34 @@
                     annotation: '='
                 },
                 link: function(scope, element) {
-                    var preEditText = null;
+                    var preEditText = null,
+                        _invalid;
 
                     scope.fetching = false;
+                    scope.invalid = false;
 
                     scope.listen = function() {
                         scope.fetching = true;
 
                         scope.annotation.getMP3().then(function() {
                             scope.fetching = false;
-                            scope.annotation.speak();
+                            scope.invalid = !scope.annotation.isValid();
+                            if(!scope.invalid) { scope.annotation.speak(); }
                         });
                     };
 
                     scope.discardChanges = function() {
                         scope.annotation.text = preEditText;
+                        scope.invalid = false;
                         scope.editing = false;
                     };
 
                     scope.saveChanges = function() {
                         scope.annotation.getMP3()
                             .then(function() {
-                                scope.editing = false;
+                                _invalid = !scope.annotation.isValid();
+                                scope.invalid = _invalid;
+                                scope.editing = _invalid;
                             });
                     };
 
@@ -239,12 +245,21 @@
                     editable: '='
                 },
                 link: function(scope, element) {
-                    var preEditText = null;
+                    var preEditText = null,
+                        _invalid;
 
                     scope.modified = false;
+                    scope.invalid = false;
+
+                    scope.saveChanges = function() {
+                        _invalid = !scope.annotation.isValid();
+                        scope.invalid = _invalid;
+                        scope.editing = _invalid;
+                    };
 
                     scope.discardChanges = function() {
                         scope.annotation.text = preEditText;
+                        scope.invalid = false;
                         scope.editing = false;
                     };
 
