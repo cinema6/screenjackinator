@@ -229,7 +229,6 @@
                         $scope.$apply(function() {
                             scope = line.children().scope();
                             scope.editing = true;
-                            scope.fetching = false;
                         });
                         $scope.$apply(function() {
                             $scope.annotation.text = 'My Edit';
