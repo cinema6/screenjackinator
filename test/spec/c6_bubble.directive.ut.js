@@ -274,7 +274,7 @@
                                 save.click();
                             });
 
-                            it('should call isValid() and set scope.invalid to true', function() {
+                            it('should not add invalid css class to container element', function() {
                                 expect($scope.annotation.isValid).toHaveBeenCalled();
                                 expect(scope.invalid).toBe(false);
                             });
@@ -307,7 +307,7 @@
                                 save.click();
                             });
 
-                            it('should call isValid() and set scope.invalid to true', function() {
+                            it('should add invalid css class to form element', function() {
                                 expect($scope.annotation.isValid).toHaveBeenCalled();
                                 expect(scope.invalid).toBe(true);
                             });
