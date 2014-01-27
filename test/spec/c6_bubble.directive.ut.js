@@ -219,12 +219,18 @@
                     beforeEach(function() {
                         $scope.annotation = {
                             text: 'Initial Text',
+                            maxChars: 15,
                             isVirgin: function() {
                                 return this.text === 'Initial Text';
+                            },
+                            isValid: function() {
+                                return this.text.length <= this.maxChars;
                             }
                         };
 
                         $scope.modified = false;
+
+                        $scope.invalid = false;
 
                         $scope.$apply(function() {
                             bubble = $compile('<c6-bubble annotation="annotation"></c6-bubble>')($scope);
@@ -260,23 +266,61 @@
                     });
 
                     describe('clicking save', function() {
-                        var save;
+                        describe('with valid changes', function() {
+                            var save;
 
-                        beforeEach(function() {
-                            save = bubble.find('form button[name=save]');
-                            save.click();
+                            beforeEach(function() {
+                                spyOn($scope.annotation, 'isValid').andCallThrough();
+
+                                save = bubble.find('form button[name=save]');
+                                save.click();
+                            });
+
+                            it('should call isValid() and set scope.invalid to true', function() {
+                                expect($scope.annotation.isValid).toHaveBeenCalled();
+                                expect(scope.invalid).toBe(false);
+                            });
+
+                            it('should keep the changes', function() {
+                                expect($scope.annotation.text).toBe('My Edit');
+                            });
+
+                            it('should exit editing mode', function() {
+                                expect(scope.editing).toBe(false);
+                            });
+
+                            it('should modify virginity', function() {
+                                expect(scope.modified).toBe(true);
+                            });
                         });
 
-                        it('should keep the changes', function() {
-                            expect($scope.annotation.text).toBe('My Edit');
-                        });
+                        describe('with invalid changes', function() {
+                            var save;
 
-                        it('should exit editing mode', function() {
-                            expect(scope.editing).toBe(false);
-                        });
+                            beforeEach(function() {
+                                $scope.$apply(function() {
+                                    $scope.annotation.text = 'My Edit is too long to save';
+                                    $scope.annotation.maxChars = 15;
+                                });
 
-                        it('should modify virginity', function() {
-                            expect(scope.modified).toBe(true);
+                                spyOn($scope.annotation, 'isValid').andCallThrough();
+
+                                save = bubble.find('form button[name=save]');
+                                save.click();
+                            });
+
+                            it('should call isValid() and set scope.invalid to true', function() {
+                                expect($scope.annotation.isValid).toHaveBeenCalled();
+                                expect(scope.invalid).toBe(true);
+                            });
+
+                            it('should not exit editing mode', function() {
+                                expect(scope.editing).toBe(true);
+                            });
+
+                            it('should not modifiy virginity', function() {
+                                expect(scope.modified).toBe(false);
+                            });
                         });
                     });
                 });

@@ -57,6 +57,14 @@ c6-line {
     display:inline;
 }
 
+.line__invalid {
+    background-color: red;
+}
+
+.bubble__invalid {
+    border: 2px solid red;
+}
+
 .annotation__group {
     position: absolute;
     cursor: pointer;
