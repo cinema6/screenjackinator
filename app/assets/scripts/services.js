@@ -268,7 +268,6 @@
                     .then(play);
             };
             _private.Annotation.prototype.isValid = function() {
-                //window.console.log(this.text.length);
                 return (this.text.length <= this.maxChars) && (this._voiceBox.duration <= this.duration ? true : this.type === 'tts' ? false : true);
             };
 
