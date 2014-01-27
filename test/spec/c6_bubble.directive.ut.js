@@ -223,9 +223,7 @@
                             isVirgin: function() {
                                 return this.text === 'Initial Text';
                             },
-                            isValid: function() {
-                                return this.text.length <= this.maxChars;
-                            }
+                            isValid: function() {}
                         };
 
                         $scope.modified = false;
@@ -270,7 +268,7 @@
                             var save;
 
                             beforeEach(function() {
-                                spyOn($scope.annotation, 'isValid').andCallThrough();
+                                spyOn($scope.annotation, 'isValid').andReturn(true);
 
                                 save = bubble.find('form button[name=save]');
                                 save.click();
@@ -303,7 +301,7 @@
                                     $scope.annotation.maxChars = 15;
                                 });
 
-                                spyOn($scope.annotation, 'isValid').andCallThrough();
+                                spyOn($scope.annotation, 'isValid').andReturn(false);
 
                                 save = bubble.find('form button[name=save]');
                                 save.click();
