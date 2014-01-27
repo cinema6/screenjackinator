@@ -219,7 +219,6 @@
                     beforeEach(function() {
                         $scope.annotation = {
                             text: 'Initial Text',
-                            maxChars: 15,
                             isVirgin: function() {
                                 return this.text === 'Initial Text';
                             },
