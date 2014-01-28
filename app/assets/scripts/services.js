@@ -172,7 +172,7 @@
                     }
                 }.bind(this));
 
-                this.voiceBox = new $window.Audio();
+                this._voiceBox = new $window.Audio();
 
                 this._haveMP3For = null;
 
@@ -190,7 +190,7 @@
                         level: voiceFx && 1
                     } : {},
                     self = this,
-                    voiceBox = this.voiceBox;
+                    voiceBox = this._voiceBox;
 
                 function waitForVoiceBox(src) {
                     var deferred = $q.defer();
@@ -235,7 +235,7 @@
             _private.Annotation.prototype.speak = function() {
                 function play(self) {
                     var deferred = $q.defer(),
-                        voiceBox = self.voiceBox;
+                        voiceBox = self._voiceBox;
 
                     function cleanUp() {
                         voiceBox.removeEventListener('ended', resolve, false);
@@ -266,6 +266,9 @@
 
                 return this.getMP3()
                     .then(play);
+            };
+            _private.Annotation.prototype.isValid = function() {
+                return (this.text.length <= this.maxChars) && ( (this._voiceBox.duration <= this.duration) ? true : !(this.type === 'tts') );
             };
 
             /***************************************
@@ -572,7 +575,7 @@
                 state.paused = true;
 
                 angular.forEach(state.annotations, function(annotation) {
-                    annotation.voiceBox.pause();
+                    annotation._voiceBox.pause();
                 });
             };
 
@@ -584,7 +587,7 @@
                 if (state.paused) {
                     angular.forEach(annotations, function(annotation) {
                         var targetTime = Math.max((time - annotation.timestamp), 0),
-                            voiceBox = annotation.voiceBox;
+                            voiceBox = annotation._voiceBox;
 
                         if (targetTime > voiceBox.duration) {
                             targetTime = 0;
@@ -594,7 +597,7 @@
                     });
                 } else {
                     angular.forEach(annotations, function(annotation) {
-                        var voiceBox = annotation.voiceBox,
+                        var voiceBox = annotation._voiceBox,
                             targetTime = annotation.timestamp,
                             duration = voiceBox.duration,
                             targetEnd = (targetTime + duration),

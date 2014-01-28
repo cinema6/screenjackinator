@@ -636,7 +636,7 @@
                         describe('properties', function() {
                             describe('voiceBox', function() {
                                 it('should be an Audio element', function() {
-                                    expect(annotation.voiceBox.constructor).toBe($window.Audio);
+                                    expect(annotation._voiceBox.constructor).toBe($window.Audio);
                                 });
                             });
                         });
@@ -681,17 +681,17 @@
                                     });
 
                                     it('should play the mp3', function() {
-                                        expect(annotation.voiceBox.play).toHaveBeenCalled();
+                                        expect(annotation._voiceBox.play).toHaveBeenCalled();
                                     });
 
                                     it('should listen for the "ended" and "stalled" events', function() {
-                                        expect(annotation.voiceBox.addEventListener).toHaveBeenCalledWith('ended', jasmine.any(Function), false);
-                                        expect(annotation.voiceBox.addEventListener).toHaveBeenCalledWith('stalled', jasmine.any(Function), false);
+                                        expect(annotation._voiceBox.addEventListener).toHaveBeenCalledWith('ended', jasmine.any(Function), false);
+                                        expect(annotation._voiceBox.addEventListener).toHaveBeenCalledWith('stalled', jasmine.any(Function), false);
                                     });
 
                                     describe('when finished playing', function() {
                                         beforeEach(function() {
-                                            annotation.voiceBox.trigger('ended');
+                                            annotation._voiceBox.trigger('ended');
                                         });
 
                                         it('should resolve the promise', function() {
@@ -699,30 +699,30 @@
                                         });
 
                                         it('should clean up after itself', function() {
-                                            expect(annotation.voiceBox.removeEventListener).toHaveBeenCalledWith('ended', jasmine.any(Function), false);
-                                            expect(annotation.voiceBox.eventHandlers.ended.length).toBe(0);
+                                            expect(annotation._voiceBox.removeEventListener).toHaveBeenCalledWith('ended', jasmine.any(Function), false);
+                                            expect(annotation._voiceBox.eventHandlers.ended.length).toBe(0);
 
-                                            expect(annotation.voiceBox.removeEventListener).toHaveBeenCalledWith('stalled', jasmine.any(Function), false);
-                                            expect(annotation.voiceBox.eventHandlers.stalled.length).toBe(0);
+                                            expect(annotation._voiceBox.removeEventListener).toHaveBeenCalledWith('stalled', jasmine.any(Function), false);
+                                            expect(annotation._voiceBox.eventHandlers.stalled.length).toBe(0);
                                         });
                                     });
 
                                     describe('if fails to play through', function() {
                                         beforeEach(function() {
-                                            annotation.voiceBox.error = {};
-                                            annotation.voiceBox.trigger('stalled');
+                                            annotation._voiceBox.error = {};
+                                            annotation._voiceBox.trigger('stalled');
                                         });
 
                                         it('should reject the promise', function() {
-                                            expect(failSpy).toHaveBeenCalledWith(annotation.voiceBox.error);
+                                            expect(failSpy).toHaveBeenCalledWith(annotation._voiceBox.error);
                                         });
 
                                         it('should clean up after itself', function() {
-                                            expect(annotation.voiceBox.removeEventListener).toHaveBeenCalledWith('ended', jasmine.any(Function), false);
-                                            expect(annotation.voiceBox.eventHandlers.ended.length).toBe(0);
+                                            expect(annotation._voiceBox.removeEventListener).toHaveBeenCalledWith('ended', jasmine.any(Function), false);
+                                            expect(annotation._voiceBox.eventHandlers.ended.length).toBe(0);
 
-                                            expect(annotation.voiceBox.removeEventListener).toHaveBeenCalledWith('stalled', jasmine.any(Function), false);
-                                            expect(annotation.voiceBox.eventHandlers.stalled.length).toBe(0);
+                                            expect(annotation._voiceBox.removeEventListener).toHaveBeenCalledWith('stalled', jasmine.any(Function), false);
+                                            expect(annotation._voiceBox.eventHandlers.stalled.length).toBe(0);
                                         });
                                     });
                                 });
@@ -796,11 +796,11 @@
                                     });
 
                                     it('should set the voiceBox\'s src', function() {
-                                        expect(annotation.voiceBox.src).toBe('foo.mp3');
+                                        expect(annotation._voiceBox.src).toBe('foo.mp3');
                                     });
 
                                     it('should load the voiceBox', function() {
-                                        expect(annotation.voiceBox.load).toHaveBeenCalled();
+                                        expect(annotation._voiceBox.load).toHaveBeenCalled();
                                     });
 
                                     it('should not resolve the promise', function() {
@@ -808,16 +808,16 @@
                                     });
 
                                     it('should listen for the "canplaythrough" event on the voiceBox', function() {
-                                        expect(annotation.voiceBox.addEventListener).toHaveBeenCalledWith('canplaythrough', jasmine.any(Function), false);
+                                        expect(annotation._voiceBox.addEventListener).toHaveBeenCalledWith('canplaythrough', jasmine.any(Function), false);
                                     });
 
                                     it('should listen for the "error" event on the voiceBox', function() {
-                                        expect(annotation.voiceBox.addEventListener).toHaveBeenCalledWith('error', jasmine.any(Function), false);
+                                        expect(annotation._voiceBox.addEventListener).toHaveBeenCalledWith('error', jasmine.any(Function), false);
                                     });
 
                                     describe('when the voiceBox can play', function() {
                                         beforeEach(function() {
-                                            annotation.voiceBox.trigger('canplaythrough');
+                                            annotation._voiceBox.trigger('canplaythrough');
                                         });
 
                                         it('should resolve the promise with itself', function() {
@@ -825,32 +825,72 @@
                                         });
 
                                         it('should clean up after itself', function() {
-                                            expect(annotation.voiceBox.removeEventListener).toHaveBeenCalledWith('error', jasmine.any(Function), false);
-                                            expect(annotation.voiceBox.eventHandlers.error.length).toBe(0);
+                                            expect(annotation._voiceBox.removeEventListener).toHaveBeenCalledWith('error', jasmine.any(Function), false);
+                                            expect(annotation._voiceBox.eventHandlers.error.length).toBe(0);
 
-                                            expect(annotation.voiceBox.removeEventListener).toHaveBeenCalledWith('canplaythrough', jasmine.any(Function), false);
-                                            expect(annotation.voiceBox.eventHandlers.canplaythrough.length).toBe(0);
+                                            expect(annotation._voiceBox.removeEventListener).toHaveBeenCalledWith('canplaythrough', jasmine.any(Function), false);
+                                            expect(annotation._voiceBox.eventHandlers.canplaythrough.length).toBe(0);
                                         });
                                     });
 
                                     describe('if there is an error', function() {
                                         beforeEach(function() {
-                                            annotation.voiceBox.error = {};
-                                            annotation.voiceBox.trigger('error');
+                                            annotation._voiceBox.error = {};
+                                            annotation._voiceBox.trigger('error');
                                         });
 
                                         it('should reject the promise', function() {
-                                            expect(failSpy).toHaveBeenCalledWith(annotation.voiceBox.error);
+                                            expect(failSpy).toHaveBeenCalledWith(annotation._voiceBox.error);
                                         });
 
                                         it('should clean up after itself', function() {
-                                            expect(annotation.voiceBox.removeEventListener).toHaveBeenCalledWith('error', jasmine.any(Function), false);
-                                            expect(annotation.voiceBox.eventHandlers.error.length).toBe(0);
+                                            expect(annotation._voiceBox.removeEventListener).toHaveBeenCalledWith('error', jasmine.any(Function), false);
+                                            expect(annotation._voiceBox.eventHandlers.error.length).toBe(0);
 
-                                            expect(annotation.voiceBox.removeEventListener).toHaveBeenCalledWith('canplaythrough', jasmine.any(Function), false);
-                                            expect(annotation.voiceBox.eventHandlers.canplaythrough.length).toBe(0);
+                                            expect(annotation._voiceBox.removeEventListener).toHaveBeenCalledWith('canplaythrough', jasmine.any(Function), false);
+                                            expect(annotation._voiceBox.eventHandlers.canplaythrough.length).toBe(0);
                                         });
                                     });
+                                });
+                            });
+
+                            describe('isValid()', function() {
+                                var isValid, testAnnotation = {
+                                    type: "popup",
+                                    timestamp: 5,
+                                    duration: 2,
+                                    text: "What's up?!",
+                                    maxChars: 15,
+                                    _voiceBox: {
+                                        duration: NaN
+                                    }
+                                };
+                                beforeEach(function() {
+                                    isValid = _private.Annotation.prototype.isValid;
+                                });
+
+                                it('should be true if _voiceBox.duration is NaN and annotation is a popup', function() {
+                                    expect(isValid.call(testAnnotation)).toBe(true);
+                                });
+
+                                it('should be false if _voiceBox.duration is NaN and annotation is a TTS', function() {
+                                    testAnnotation.type = "tts";
+                                    expect(isValid.call(testAnnotation)).toBe(false);
+                                });
+
+                                it('should be true if _voiceBox.duration is less than duration and annotation is a TTS', function() {
+                                    testAnnotation._voiceBox.duration = 1;
+                                    expect(isValid.call(testAnnotation)).toBe(true);
+                                });
+
+                                it('should be false if _voiceBox.duration is more than duration and annotation is a TTS', function() {
+                                    testAnnotation._voiceBox.duration = 3;
+                                    expect(isValid.call(testAnnotation)).toBe(false);
+                                });
+
+                                it('should be false if text is more than maxChars', function() {
+                                    testAnnotation.text = "this text is too long for this annotation";
+                                    expect(isValid.call(testAnnotation)).toBe(false);
                                 });
                             });
                         });
