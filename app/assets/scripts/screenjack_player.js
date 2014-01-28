@@ -186,11 +186,9 @@
                     };
 
                     scope.saveChanges = function() {
-                        var _invalid;
-
                         scope.annotation.getMP3()
                             .then(function() {
-                                _invalid = !scope.annotation.isValid();
+                                var _invalid = !scope.annotation.isValid();
                                 scope.invalid = _invalid;
                                 scope.editing = _invalid;
                             });
@@ -252,9 +250,7 @@
                     scope.invalid = false;
 
                     scope.saveChanges = function() {
-                        var _invalid;
-
-                        _invalid = !scope.annotation.isValid();
+                        var _invalid = !scope.annotation.isValid();
                         scope.invalid = _invalid;
                         scope.editing = _invalid;
                     };
