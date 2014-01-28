@@ -164,8 +164,7 @@
                     annotation: '='
                 },
                 link: function(scope, element) {
-                    var preEditText = null,
-                        _invalid;
+                    var preEditText = null;
 
                     scope.fetching = false;
                     scope.invalid = false;
@@ -187,6 +186,8 @@
                     };
 
                     scope.saveChanges = function() {
+                        var _invalid;
+
                         scope.annotation.getMP3()
                             .then(function() {
                                 _invalid = !scope.annotation.isValid();
@@ -245,13 +246,14 @@
                     editable: '='
                 },
                 link: function(scope, element) {
-                    var preEditText = null,
-                        _invalid;
+                    var preEditText = null;
 
                     scope.modified = false;
                     scope.invalid = false;
 
                     scope.saveChanges = function() {
+                        var _invalid;
+
                         _invalid = !scope.annotation.isValid();
                         scope.invalid = _invalid;
                         scope.editing = _invalid;
