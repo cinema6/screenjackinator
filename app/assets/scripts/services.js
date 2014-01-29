@@ -2,8 +2,8 @@
     'use strict';
 
     angular.module('c6.screenjackinator.services', ['c6.ui'])
-        .service('ProjectService', ['$cacheFactory', 'c6Sfx', 'c6UrlMaker', 'c6VideoService', '$window', 'DubService', '$q', '$rootScope',
-        function                   ( $cacheFactory ,  c6Sfx ,  c6UrlMaker ,  c6VideoService ,  $window ,  DubService ,  $q ,  $rootScope ) {
+        .service('ProjectService', ['$cacheFactory', 'c6Sfx', 'c6UrlMaker', 'c6VideoService', 'VideoService', '$window', 'DubService', '$q', '$rootScope',
+        function                   ( $cacheFactory ,  c6Sfx ,  c6UrlMaker ,  c6VideoService ,  VideoService , $window ,  DubService ,  $q ,  $rootScope ) {
             var _private = {};
 
             /* @private PROPERTIES */
@@ -196,6 +196,7 @@
                     var deferred = $q.defer();
 
                     function cleanUp() {
+                        VideoService.isPlayable(true);
                         voiceBox.removeEventListener('error', reject, false);
                         voiceBox.removeEventListener('canplaythrough', resolve, false);
                     }
@@ -228,6 +229,8 @@
                 }
 
                 this._haveMP3For = this.text;
+
+                VideoService.isPlayable(false);
 
                 return DubService.getMP3(this.text, options)
                     .then(waitForVoiceBox);
@@ -337,6 +340,11 @@
 
             _private.antilisteners = [];
             _private.videoDeferreds = {};
+            _private.isPlayable = true;
+
+            this.isPlayable = function(bool) {
+                _private.isPlayable = bool;
+            };
 
             _private.handleVideoReady = function(event, video) {
                 var readyState = video.player.readyState;
@@ -429,7 +437,12 @@
                                 }
                             });
 
-                        delegate.play = video.player.play.bind(video.player);
+                        //delegate.play = video.player.play.bind(video.player);
+                        delegate.play = function() {
+                            if(_private.isPlayable) {
+                                video.player.play();
+                            }
+                        };
                         delegate.pause = video.player.pause.bind(video.player);
                         delegate.seekStart = function() {
                             wasPlaying = !video.player.paused;
