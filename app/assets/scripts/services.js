@@ -629,9 +629,6 @@
                             shouldBePlaying = (time >= targetTime && time < targetEnd),
                             isPlaying = (!voiceBox.paused && !voiceBox.ended),
                             wasPlaying = voiceBox.ended;
-                        if(annotation.text === 'How are you?!') {
-                            window.console.log(annotation.text + ': PAUSED: ' + voiceBox.paused + ': ENDED: ' +voiceBox.ended);
-                        }
 
                         if (shouldBePlaying && !isPlaying && !wasPlaying) {
                             voiceBox.play();
