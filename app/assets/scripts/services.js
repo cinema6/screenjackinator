@@ -196,7 +196,7 @@
                     var deferred = $q.defer();
 
                     function cleanUp() {
-                        VideoService.isPlayable(true);
+                        VideoService.enablePlay(self.text);
                         voiceBox.removeEventListener('error', reject, false);
                         voiceBox.removeEventListener('canplaythrough', resolve, false);
                     }
@@ -230,7 +230,7 @@
 
                 this._haveMP3For = this.text;
 
-                VideoService.isPlayable(false);
+                VideoService.disablePlay(this.text);
 
                 return DubService.getMP3(this.text, options)
                     .then(waitForVoiceBox);
@@ -340,11 +340,7 @@
 
             _private.antilisteners = [];
             _private.videoDeferreds = {};
-            _private.isPlayable = true;
-
-            this.isPlayable = function(bool) {
-                _private.isPlayable = bool;
-            };
+            _private.playDisablers = [];
 
             _private.handleVideoReady = function(event, video) {
                 var readyState = video.player.readyState;
@@ -377,6 +373,22 @@
                 });
 
                 return deferred.promise;
+            };
+
+            _private.isPlayable = function() {
+                return _private.playDisablers.length === 0;
+            };
+
+            this.disablePlay = function(identifier) {
+                _private.playDisablers.push(identifier);
+            };
+
+            this.enablePlay = function(identifier) {
+                angular.forEach(_private.playDisablers, function (val, key) {
+                    if(angular.equals(identifier, val)) {
+                        _private.playDisablers.splice(key, 1);
+                    }
+                });
             };
 
             this.listenOn = function(scope) {
@@ -439,7 +451,7 @@
 
                         //delegate.play = video.player.play.bind(video.player);
                         delegate.play = function() {
-                            if(_private.isPlayable) {
+                            if(_private.isPlayable()) {
                                 video.player.play();
                             }
                         };
@@ -615,9 +627,13 @@
                             duration = voiceBox.duration,
                             targetEnd = (targetTime + duration),
                             shouldBePlaying = (time >= targetTime && time < targetEnd),
-                            isPlaying = (!voiceBox.paused && !voiceBox.ended);
+                            isPlaying = (!voiceBox.paused && !voiceBox.ended),
+                            wasPlaying = voiceBox.ended;
+                        if(annotation.text === 'How are you?!') {
+                            window.console.log(annotation.text + ': PAUSED: ' + voiceBox.paused + ': ENDED: ' +voiceBox.ended);
+                        }
 
-                        if (shouldBePlaying && !isPlaying) {
+                        if (shouldBePlaying && !isPlaying && !wasPlaying) {
                             voiceBox.play();
                         }
                     });
