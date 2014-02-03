@@ -22,6 +22,8 @@
             this.showWelcome = true;
             this.showWizard = false;
 
+
+
             this.annotations = c($scope, function(annotations) {
                 return annotations || null;
             }, ['AppCtrl.project.annotations']);

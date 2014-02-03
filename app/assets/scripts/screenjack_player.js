@@ -10,7 +10,8 @@
                     nodeClicked: function(node) {
                         this.jumpTo(node.annotation);
                     }.bind(this)
-                };
+                },
+                _playDisablers = [];
 
             function playVoices() {
                 VoiceTrackService.play();
@@ -55,6 +56,23 @@
                 this.controlsNodes.invalidate();
                 syncVoiceTrackService(c6Video);
             }.bind(this));
+
+            $scope.$on('fetching', function(event, annotation) {
+                if(annotation._fetching) {
+                    _playDisablers.push(annotation.text);
+                } else {
+                    angular.forEach(_playDisablers, function (val, key) {
+                        if(angular.equals(annotation.text, val)) {
+                            _playDisablers.splice(key, 1);
+                        }
+                    });
+                }
+                if(_playDisablers.length === 0) {
+                    VideoService.enablePlay();
+                } else {
+                    VideoService.disablePlay();
+                }
+            });
 
             $scope.$on('c6Bubble:show', function(event, annotation) {
                 if (!video || !annotation.sfx) { return; }
@@ -203,6 +221,10 @@
 
                         scope.enterEdit();
                         scope.$digest();
+                    });
+
+                    scope.$watch('annotation._fetching', function() {
+                        scope.$emit('fetching', scope.annotation);
                     });
 
                     scope.$watch('show', function(show) {

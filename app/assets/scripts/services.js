@@ -2,8 +2,8 @@
     'use strict';
 
     angular.module('c6.screenjackinator.services', ['c6.ui'])
-        .service('ProjectService', ['$cacheFactory', 'c6Sfx', 'c6UrlMaker', 'c6VideoService', 'VideoService', '$window', 'DubService', '$q', '$rootScope',
-        function                   ( $cacheFactory ,  c6Sfx ,  c6UrlMaker ,  c6VideoService ,  VideoService , $window ,  DubService ,  $q ,  $rootScope ) {
+        .service('ProjectService', ['$cacheFactory', 'c6Sfx', 'c6UrlMaker', 'c6VideoService', '$window', 'DubService', '$q', '$rootScope',
+        function                   ( $cacheFactory ,  c6Sfx ,  c6UrlMaker ,  c6VideoService ,  $window ,  DubService ,  $q ,  $rootScope ) {
             var _private = {};
 
             /* @private PROPERTIES */
@@ -176,6 +176,8 @@
 
                 this._haveMP3For = null;
 
+                this._fetching = null;
+
                 this.trackVirginity();
             };
             _private.Annotation.prototype = new _private.Model({});
@@ -196,13 +198,13 @@
                     var deferred = $q.defer();
 
                     function cleanUp() {
-                        VideoService.enablePlay(self.text);
                         voiceBox.removeEventListener('error', reject, false);
                         voiceBox.removeEventListener('canplaythrough', resolve, false);
                     }
 
                     function resolve() {
                         $rootScope.$apply(function() {
+                            self._fetching = false;
                             deferred.resolve(self);
                         });
                         cleanUp();
@@ -225,12 +227,12 @@
                 }
 
                 if (this._haveMP3For === this.text) {
+                    this._fetching = false;
                     return $q.when(this);
                 }
 
                 this._haveMP3For = this.text;
-
-                VideoService.disablePlay(this.text);
+                this._fetching = true;
 
                 return DubService.getMP3(this.text, options)
                     .then(waitForVoiceBox);
@@ -340,7 +342,7 @@
 
             _private.antilisteners = [];
             _private.videoDeferreds = {};
-            _private.playDisablers = [];
+            _private.isPlayable = true;
 
             _private.handleVideoReady = function(event, video) {
                 var readyState = video.player.readyState;
@@ -375,20 +377,12 @@
                 return deferred.promise;
             };
 
-            _private.isPlayable = function() {
-                return _private.playDisablers.length === 0;
+            this.disablePlay = function() {
+                _private.isPlayable = false;
             };
 
-            this.disablePlay = function(identifier) {
-                _private.playDisablers.push(identifier);
-            };
-
-            this.enablePlay = function(identifier) {
-                angular.forEach(_private.playDisablers, function (val, key) {
-                    if(angular.equals(identifier, val)) {
-                        _private.playDisablers.splice(key, 1);
-                    }
-                });
+            this.enablePlay = function() {
+                _private.isPlayable = true;
             };
 
             this.listenOn = function(scope) {
@@ -449,9 +443,8 @@
                                 }
                             });
 
-                        //delegate.play = video.player.play.bind(video.player);
                         delegate.play = function() {
-                            if(_private.isPlayable()) {
+                            if(_private.isPlayable) {
                                 video.player.play();
                             }
                         };
