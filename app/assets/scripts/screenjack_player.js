@@ -154,7 +154,7 @@
 
             this.getPlayDisablers = function() {
                 return _playDisablers;
-            }
+            };
 
             $scope.Ctrl = this;
         }])
