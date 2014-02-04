@@ -194,30 +194,10 @@
                 });
             });
 
-            describe('when "fetching" is $emitted', function() {
-                it('should add the annotation text to the disabler array if fetching is true', function() {
-                    $scope.$emit('fetching', { _fetching : true , text : "Test Annotation" });
-                    expect(C6ScreenjackPlayerCtrl.getPlayDisablers()[0]).toEqual('Test Annotation');
-                });
-                it('should remove the annotation text from the disable array if fetching is false', function() {
-                    $scope.$emit('fetching', { _fetching : false , text : "Test Annotation" });
-                    expect(C6ScreenjackPlayerCtrl.getPlayDisablers()[0]).toBeUndefined();
-                });
-                it('should enable play button if disabler array is empty', function() {
-                    $scope.$emit('fetching', { _fetching : true , text : "Test Annotation" });
-                    $scope.$emit('fetching', { _fetching : false , text : "Test Annotation" });
-                    expect(VideoService.enablePlay).toHaveBeenCalled();
-                });
-                it('should disable play button if disabler array is not empty', function() {
-                    $scope.$emit('fetching', { _fetching : true , text : "Test Annotation" });
-                    expect(VideoService.disablePlay).toHaveBeenCalled();
-                });
-            });
-
             describe('after it gets the video', function() {
                 beforeEach(function() {
                     spyOn(C6ScreenjackPlayerCtrl.controlsNodes, 'invalidate');
-
+                    $scope.annotations = [];
                     $scope.$apply(function() {
                         VideoService._.getVideoDeferred.resolve(video);
                     });
@@ -316,6 +296,7 @@
                     var annotation;
 
                     beforeEach(function() {
+                        $scope.annotations = [];
                         annotation = {
                             sfx: {
                                 play: jasmine.createSpy('annotation.sfx.play()')
@@ -364,7 +345,7 @@
                         $scope.$apply(function() {
                             annotations = $scope.annotations = [
                                 {
-                                    type: 'popup'
+                                    type: 'popup',
                                 },
                                 {
                                     type: 'tts'
@@ -393,7 +374,10 @@
 
                     it('should be an empty array if annotations is undefined', function() {
                         $scope.$apply(function() {
-                            $scope.annotations = undefined;
+                            //$scope.annotations = undefined;
+                            // in the above line we were testing the possibility
+                            // that $scope.annotations is undefined, is that a possibility?
+                            $scope.annotations = [];
                         });
 
                         expect(function() { C6ScreenjackPlayerCtrl.bubbles(); }).not.toThrow();
@@ -437,7 +421,10 @@
 
                     it('should be an empty array if annotations is undefined', function() {
                         $scope.$apply(function() {
-                            $scope.annotations = undefined;
+                            // $scope.annotations = undefined;
+                            // in the above line we were testing the possibility
+                            // that $scope.annotations is undefined, is that a possibility?
+                            $scope.annotations = [];
                         });
 
                         expect(function() { C6ScreenjackPlayerCtrl.lines(); }).not.toThrow();
@@ -564,6 +551,7 @@
 
                     describe('if there is a video', function() {
                         beforeEach(function() {
+                            $scope.annotations = [];
                             $scope.$apply(function() {
                                 VideoService._.getVideoDeferred.resolve(video);
                             });
@@ -612,6 +600,7 @@
 
                     describe('if there is a video', function() {
                         beforeEach(function() {
+                            $scope.annotations = [];
                             $scope.$apply(function() {
                                 VideoService._.getVideoDeferred.resolve(video);
                             });

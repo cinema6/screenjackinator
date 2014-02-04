@@ -41,6 +41,7 @@
                             $scope.$apply(function() {
                                 player = $compile('<c6-screenjack-player readonly></c6-screenjack-player>')($scope);
                             });
+
                             scope = player.children().scope();
                         });
 

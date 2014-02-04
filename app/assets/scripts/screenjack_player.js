@@ -10,8 +10,7 @@
                     nodeClicked: function(node) {
                         this.jumpTo(node.annotation);
                     }.bind(this)
-                },
-                _playDisablers = [];
+                };
 
             function playVoices() {
                 VoiceTrackService.play();
@@ -42,6 +41,10 @@
                 $scope.$emit.apply($scope, args);
             }
 
+            function isFetching() {
+                return $scope.annotations.map(function(val) {return val && val._fetching;}).indexOf(true) > -1;
+            }
+
             VideoService.listenOn($scope);
             VideoService.bindTo(
                 'video',
@@ -56,23 +59,6 @@
                 this.controlsNodes.invalidate();
                 syncVoiceTrackService(c6Video);
             }.bind(this));
-
-            $scope.$on('fetching', function(event, annotation) {
-                if(annotation._fetching) {
-                    _playDisablers.push(annotation.text);
-                } else {
-                    angular.forEach(_playDisablers, function (val, key) {
-                        if(angular.equals(annotation.text, val)) {
-                            _playDisablers.splice(key, 1);
-                        }
-                    });
-                }
-                if(_playDisablers.length === 0) {
-                    VideoService.enablePlay();
-                } else {
-                    VideoService.disablePlay();
-                }
-            });
 
             $scope.$on('c6Bubble:show', function(event, annotation) {
                 if (!video || !annotation.sfx) { return; }
@@ -152,9 +138,10 @@
                 return ((currentTime >= start) && (currentTime <= end));
             };
 
-            this.getPlayDisablers = function() {
-                return _playDisablers;
-            };
+            $scope.$watch(isFetching, function(newVal) {
+                var cb = newVal ? VideoService.disablePlay : VideoService.enablePlay;
+                cb();
+            });
 
             $scope.Ctrl = this;
         }])
@@ -225,10 +212,6 @@
 
                         scope.enterEdit();
                         scope.$digest();
-                    });
-
-                    scope.$watch('annotation._fetching', function() {
-                        scope.$emit('fetching', scope.annotation);
                     });
 
                     scope.$watch('show', function(show) {
