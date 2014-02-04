@@ -69,6 +69,38 @@
                 expect(spy).not.toHaveBeenCalled();
             });
 
+            describe('when fetching', function() {
+                var line,
+                    scope;
+
+                beforeEach(function() {
+                    $scope.annotation = {
+                        _fetching: false,
+                        text: "Test Annotation"
+                    };
+
+                    $scope.$apply(function() {
+                        line = $compile('<c6-line annotation="annotation"></c6-line>')($scope);
+                    });
+
+                    scope = line.children().scope();
+
+                    spyOn(scope, '$emit');
+                });
+
+                it('should $emit "fetching" when annotation._fetching changes state', function() {
+                    $scope.$apply(function() {
+                        $scope.annotation._fetching = true;
+                    });
+                    expect(scope.$emit).toHaveBeenCalledWith('fetching', $scope.annotation);
+                    $scope.$apply(function() {
+                        $scope.annotation._fetching = false;
+                    });
+                    expect(scope.$emit).toHaveBeenCalledWith('fetching', $scope.annotation);
+                });
+
+            });
+
             describe('attributes', function() {
                 describe('show', function() {
                     var line,

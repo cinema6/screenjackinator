@@ -152,6 +152,10 @@
                 return ((currentTime >= start) && (currentTime <= end));
             };
 
+            this.getPlayDisablers = function() {
+                return _playDisablers;
+            }
+
             $scope.Ctrl = this;
         }])
 

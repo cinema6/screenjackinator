@@ -188,20 +188,6 @@
                             });
                         });
                     });
-
-                    // describe('isPlayable()', function() {
-                    //     it('should return false if any playDisablers are not resolved', function() {
-                    //         VideoService.disablePlay('Test Annotation Text');
-                    //         expect(_private.playDisablers.length).toBe(1);
-                    //         expect(_private.isPlayable()).toBe(false);
-                    //     });
-
-                    //     it('should return true if all playDisablers are resolved', function() {
-                    //         VideoService.enablePlay('Test Annotation Text');
-                    //         expect(_private.playDisablers.length).toBe(0);
-                    //         expect(_private.isPlayable()).toBe(true);
-                    //     });
-                    // });
                 });
 
                 describe('properties', function() {
@@ -215,6 +201,12 @@
                     describe('videoDeferreds', function() {
                         it('should be an object', function() {
                             expect(angular.isObject(_private.videoDeferreds)).toBe(true);
+                        });
+                    });
+
+                    describe('isPlayable', function(){
+                        it('should be true by default', function() {
+                            expect(_private.isPlayable).toBe(true);
                         });
                     });
                 });
@@ -616,24 +608,19 @@
                         });
                     });
 
-                    // describe('disablePlay(identifier)', function() {
-                    //     it('should add an identifier to the array of playDisablers', function() {
-                    //         VideoService.disablePlay('Test Identifier');
-                    //         VideoService.disablePlay({test: "disable with an object"});
-                    //         expect(_private.playDisablers[0]).toBe('Test Identifier');
-                    //         expect(_private.playDisablers[1]).toEqual({test: "disable with an object"});
-                    //     });
-                    // });
+                    describe('disablePlay(identifier)', function() {
+                        it('should set _private.isPlayable to false', function() {
+                            VideoService.disablePlay();
+                            expect(_private.isPlayable).toBe(false);
+                        });
+                    });
 
-                    // describe('enablePlay(identifier)', function() {
-                    //     it('should remove an identifier form the array of playDisablers', function() {
-                    //         VideoService.enablePlay('Test Identifier');
-                    //         VideoService.enablePlay({test: "disable with an object"});
-                    //         expect(_private.playDisablers[0]).toBeUndefined();
-                    //         expect(_private.playDisablers[1]).toBeUndefined();
-                    //         expect(_private.playDisablers.length).toBe(0);
-                    //     });
-                    // });
+                    describe('enablePlay(identifier)', function() {
+                        it('should set _private.isPlayable to true', function() {
+                            VideoService.enablePlay();
+                            expect(_private.isPlayable).toBe(true);
+                        });
+                    });
                 });
             });
         });

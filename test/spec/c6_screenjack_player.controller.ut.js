@@ -66,7 +66,9 @@
                                 }),
                             _: {
                                 getVideoDeferred: $q.defer()
-                            }
+                            },
+                            disablePlay: jasmine.createSpy('VideoService.disablePlay()'),
+                            enablePlay: jasmine.createSpy('VideoService.enablePlay()')
                         };
 
                         return VideoService;
@@ -189,6 +191,26 @@
                     args = $scope.$emit.mostRecentCall.args;
 
                     expect($scope.$emit).toHaveBeenCalledWith('c6Annotation:editdone', args[1], args[2]);
+                });
+            });
+
+            describe('when "fetching" is $emitted', function() {
+                it('should add the annotation text to the disabler array if fetching is true', function() {
+                    $scope.$emit('fetching', { _fetching : true , text : "Test Annotation" });
+                    expect(C6ScreenjackPlayerCtrl.getPlayDisablers()[0]).toEqual('Test Annotation');
+                });
+                it('should remove the annotation text from the disable array if fetching is false', function() {
+                    $scope.$emit('fetching', { _fetching : false , text : "Test Annotation" });
+                    expect(C6ScreenjackPlayerCtrl.getPlayDisablers()[0]).toBeUndefined();
+                });
+                it('should enable play button if disabler array is empty', function() {
+                    $scope.$emit('fetching', { _fetching : true , text : "Test Annotation" });
+                    $scope.$emit('fetching', { _fetching : false , text : "Test Annotation" });
+                    expect(VideoService.enablePlay).toHaveBeenCalled();
+                });
+                it('should disable play button if disabler array is not empty', function() {
+                    $scope.$emit('fetching', { _fetching : true , text : "Test Annotation" });
+                    expect(VideoService.disablePlay).toHaveBeenCalled();
                 });
             });
 
