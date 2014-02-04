@@ -345,7 +345,7 @@
                         $scope.$apply(function() {
                             annotations = $scope.annotations = [
                                 {
-                                    type: 'popup',
+                                    type: 'popup'
                                 },
                                 {
                                     type: 'tts'
