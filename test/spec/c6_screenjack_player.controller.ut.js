@@ -197,7 +197,6 @@
             describe('after it gets the video', function() {
                 beforeEach(function() {
                     spyOn(C6ScreenjackPlayerCtrl.controlsNodes, 'invalidate');
-                    $scope.annotations = [];
                     $scope.$apply(function() {
                         VideoService._.getVideoDeferred.resolve(video);
                     });
@@ -296,7 +295,6 @@
                     var annotation;
 
                     beforeEach(function() {
-                        $scope.annotations = [];
                         annotation = {
                             sfx: {
                                 play: jasmine.createSpy('annotation.sfx.play()')
@@ -374,10 +372,7 @@
 
                     it('should be an empty array if annotations is undefined', function() {
                         $scope.$apply(function() {
-                            //$scope.annotations = undefined;
-                            // in the above line we were testing the possibility
-                            // that $scope.annotations is undefined, is that a possibility?
-                            $scope.annotations = [];
+                            $scope.annotations = undefined;
                         });
 
                         expect(function() { C6ScreenjackPlayerCtrl.bubbles(); }).not.toThrow();
@@ -421,10 +416,7 @@
 
                     it('should be an empty array if annotations is undefined', function() {
                         $scope.$apply(function() {
-                            // $scope.annotations = undefined;
-                            // in the above line we were testing the possibility
-                            // that $scope.annotations is undefined, is that a possibility?
-                            $scope.annotations = [];
+                            $scope.annotations = undefined;
                         });
 
                         expect(function() { C6ScreenjackPlayerCtrl.lines(); }).not.toThrow();
@@ -551,7 +543,6 @@
 
                     describe('if there is a video', function() {
                         beforeEach(function() {
-                            $scope.annotations = [];
                             $scope.$apply(function() {
                                 VideoService._.getVideoDeferred.resolve(video);
                             });
@@ -600,7 +591,6 @@
 
                     describe('if there is a video', function() {
                         beforeEach(function() {
-                            $scope.annotations = [];
                             $scope.$apply(function() {
                                 VideoService._.getVideoDeferred.resolve(video);
                             });

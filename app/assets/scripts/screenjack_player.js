@@ -42,7 +42,7 @@
             }
 
             function isFetching() {
-                return $scope.annotations.map(function(val) {return val && val._fetching;}).indexOf(true) > -1;
+                return $scope.annotations && $scope.annotations.map(function(val) {return val._fetching;}).indexOf(true) > -1;
             }
 
             VideoService.listenOn($scope);
