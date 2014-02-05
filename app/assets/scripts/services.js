@@ -176,6 +176,8 @@
 
                 this._haveMP3For = null;
 
+                this._fetching = null;
+
                 this.trackVirginity();
             };
             _private.Annotation.prototype = new _private.Model({});
@@ -202,6 +204,7 @@
 
                     function resolve() {
                         $rootScope.$apply(function() {
+                            self._fetching = false;
                             deferred.resolve(self);
                         });
                         cleanUp();
@@ -224,10 +227,12 @@
                 }
 
                 if (this._haveMP3For === this.text) {
+                    this._fetching = false;
                     return $q.when(this);
                 }
 
                 this._haveMP3For = this.text;
+                this._fetching = true;
 
                 return DubService.getMP3(this.text, options)
                     .then(waitForVoiceBox);
@@ -337,6 +342,7 @@
 
             _private.antilisteners = [];
             _private.videoDeferreds = {};
+            _private.isPlayable = true;
 
             _private.handleVideoReady = function(event, video) {
                 var readyState = video.player.readyState;
@@ -369,6 +375,14 @@
                 });
 
                 return deferred.promise;
+            };
+
+            this.disablePlay = function() {
+                _private.isPlayable = false;
+            };
+
+            this.enablePlay = function() {
+                _private.isPlayable = true;
             };
 
             this.listenOn = function(scope) {
@@ -429,7 +443,11 @@
                                 }
                             });
 
-                        delegate.play = video.player.play.bind(video.player);
+                        delegate.play = function() {
+                            if(_private.isPlayable) {
+                                video.player.play();
+                            }
+                        };
                         delegate.pause = video.player.pause.bind(video.player);
                         delegate.seekStart = function() {
                             wasPlaying = !video.player.paused;
@@ -602,9 +620,10 @@
                             duration = voiceBox.duration,
                             targetEnd = (targetTime + duration),
                             shouldBePlaying = (time >= targetTime && time < targetEnd),
-                            isPlaying = (!voiceBox.paused && !voiceBox.ended);
+                            isPlaying = (!voiceBox.paused && !voiceBox.ended),
+                            wasPlaying = voiceBox.ended;
 
-                        if (shouldBePlaying && !isPlaying) {
+                        if (shouldBePlaying && !isPlaying && !wasPlaying) {
                             voiceBox.play();
                         }
                     });

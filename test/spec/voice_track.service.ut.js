@@ -268,13 +268,16 @@
                                 function tick(time) {
                                     annotations.forEach(function(annotation) {
                                         var voiceBox = annotation._voiceBox,
-                                            currentTime = Math.min((time - annotation.timestamp), voiceBox.duration);
+                                            shouldPlay = (time >= annotation.timestamp) && (time < (annotation.timestamp + voiceBox.duration));
 
-                                        if (!voiceBox.paused) {
-                                            voiceBox.currentTime = currentTime;
+                                        if(!shouldPlay) {
+                                            voiceBox.paused = true;
                                         }
-
-                                        if (currentTime === voiceBox.duration) { voiceBox.ended = true; }
+                                        if(!voiceBox.paused) {
+                                            if(!shouldPlay) {
+                                                voiceBox.ended = true;
+                                            }
+                                        }
                                     });
 
                                     VoiceTrackService.tick(time);
@@ -309,23 +312,23 @@
                                 assertPlayCount([1, 0, 0]);
 
                                 tick(14);
-                                assertPaused([false, true, true]);
+                                assertPaused([true, true, true]);
                                 assertPlayCount([1, 0, 0]);
 
                                 tick(15.5);
-                                assertPaused([false, false, true]);
+                                assertPaused([true, false, true]);
                                 assertPlayCount([1, 1, 0]);
 
                                 tick(35);
-                                assertPaused([false, false, true]);
+                                assertPaused([true, true, true]);
                                 assertPlayCount([1, 1, 0]);
 
                                 tick(40);
-                                assertPaused([false, false, false]);
+                                assertPaused([true, true, false]);
                                 assertPlayCount([1, 1, 1]);
 
                                 tick(10);
-                                assertPaused([false, false, false]);
+                                assertPaused([false, true, true]);
                                 assertPlayCount([2, 1, 1]);
                             });
                         });

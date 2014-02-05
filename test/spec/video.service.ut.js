@@ -203,6 +203,12 @@
                             expect(angular.isObject(_private.videoDeferreds)).toBe(true);
                         });
                     });
+
+                    describe('isPlayable', function(){
+                        it('should be true by default', function() {
+                            expect(_private.isPlayable).toBe(true);
+                        });
+                    });
                 });
             });
 
@@ -599,6 +605,20 @@
                             it('should not create a new deferred object', function() {
                                 expect($q.defer).not.toHaveBeenCalled();
                             });
+                        });
+                    });
+
+                    describe('disablePlay(identifier)', function() {
+                        it('should set _private.isPlayable to false', function() {
+                            VideoService.disablePlay();
+                            expect(_private.isPlayable).toBe(false);
+                        });
+                    });
+
+                    describe('enablePlay(identifier)', function() {
+                        it('should set _private.isPlayable to true', function() {
+                            VideoService.enablePlay();
+                            expect(_private.isPlayable).toBe(true);
                         });
                     });
                 });

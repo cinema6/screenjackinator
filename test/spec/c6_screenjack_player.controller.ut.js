@@ -66,7 +66,9 @@
                                 }),
                             _: {
                                 getVideoDeferred: $q.defer()
-                            }
+                            },
+                            disablePlay: jasmine.createSpy('VideoService.disablePlay()'),
+                            enablePlay: jasmine.createSpy('VideoService.enablePlay()')
                         };
 
                         return VideoService;
@@ -195,7 +197,6 @@
             describe('after it gets the video', function() {
                 beforeEach(function() {
                     spyOn(C6ScreenjackPlayerCtrl.controlsNodes, 'invalidate');
-
                     $scope.$apply(function() {
                         VideoService._.getVideoDeferred.resolve(video);
                     });

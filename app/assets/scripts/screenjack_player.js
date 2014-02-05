@@ -41,6 +41,10 @@
                 $scope.$emit.apply($scope, args);
             }
 
+            function isFetching() {
+                return $scope.annotations && $scope.annotations.map(function(val) {return val._fetching;}).indexOf(true) > -1;
+            }
+
             VideoService.listenOn($scope);
             VideoService.bindTo(
                 'video',
@@ -133,6 +137,11 @@
 
                 return ((currentTime >= start) && (currentTime <= end));
             };
+
+            $scope.$watch(isFetching, function(newVal) {
+                var cb = newVal ? VideoService.disablePlay : VideoService.enablePlay;
+                cb();
+            });
 
             $scope.Ctrl = this;
         }])
