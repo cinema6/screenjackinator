@@ -3,8 +3,9 @@
 
     angular.module('c6.screenjackinator')
         .controller('ExperienceController', ['$scope', 'VideoService', 'c6Computed',
-        function                            ( $scope ,  VideoService ,  c          ) {
-            var self = this;
+        function                            ( $scope ,  VideoService ,  c6Computed ) {
+            var self = this,
+                c = c6Computed($scope);
 
             function handleVideoEvents(video) {
                 video.on('timeupdate', angular.noop);
@@ -22,8 +23,8 @@
             this.showWelcome = true;
             this.showWizard = false;
 
-            this.annotations = c($scope, function(annotations) {
-                return annotations || null;
+            c(this, 'annotations', function() {
+                return ($scope.AppCtrl && $scope.AppCtrl.project && $scope.AppCtrl.project.annotations) ? $scope.AppCtrl.project.annotations : null;
             }, ['AppCtrl.project.annotations']);
 
             this.preview = function(annotation) {

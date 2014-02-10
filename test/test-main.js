@@ -53,8 +53,8 @@
                 tweenmax: libUrl('gsap/1.11.2-0-g79f8c87/TweenMax.min'),
                 timelinemax: libUrl('gsap/1.11.2-0-g79f8c87/TimelineMax.min'),
                 uirouter: libUrl('ui-router/0.2.0-0-g818b0d6/angular-ui-router'),
-                c6ui: libUrl('c6ui/v2.1.0-0-g235a9de/c6uilib'),
-                c6log: libUrl('c6ui/v2.1.0-0-g235a9de/c6log'),
+                c6ui: libUrl('c6ui/v2.2.1-0-g89204c8/c6uilib'),
+                c6log: libUrl('c6ui/v2.2.1-0-g89204c8/c6log'),
                 templates: '/base/.tmp/templates'
             },
 

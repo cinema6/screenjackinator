@@ -330,7 +330,7 @@
 
                 describe('annotations()', function() {
                     it('should be null if the AppCtrl has no project', function() {
-                        expect(ExperienceCtrl.annotations()).toBe(null);
+                        expect(ExperienceCtrl.annotations).toBe(null);
                     });
 
                     it('should be a reference to the annotations if there is a project', function() {
@@ -340,7 +340,7 @@
                             };
                         });
 
-                        expect(ExperienceCtrl.annotations()).toBe(AppCtrl.project.annotations);
+                        expect(ExperienceCtrl.annotations).toBe(AppCtrl.project.annotations);
                     });
                 });
             });

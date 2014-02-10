@@ -84,25 +84,20 @@
                 .useDubAt(c6Defines.kDubUrl);
         }])
         .controller('AppController', ['$scope','$log', 'cinema6', 'gsap', '$http', 'c6UrlMaker', 'ProjectService', 'VideoService', '$q', 'fail', 'c6Computed', 'VoiceTrackService',
-        function                     ( $scope , $log ,  cinema6 ,  gsap ,  $http ,  c6UrlMaker ,  ProjectService ,  VideoService ,  $q ,  fail ,  c          ,  VoiceTrackService ) {
-            var self = this;
+        function                     ( $scope , $log ,  cinema6 ,  gsap ,  $http ,  c6UrlMaker ,  ProjectService ,  VideoService ,  $q ,  fail ,  c6Computed ,  VoiceTrackService ) {
+            var self = this,
+                c = c6Computed($scope);
 
             $log.info('AppCtlr loaded.');
 
             VideoService.listenOn($scope);
 
-            this.videoSrc = c($scope, function(src) {
-                return src && c6UrlMaker(src, 'video');
+            c(this, 'videoSrc', function() {
+                return ($scope.AppCtrl && $scope.AppCtrl.project && $scope.AppCtrl.project.src) ? ($scope.AppCtrl.project.src && c6UrlMaker($scope.AppCtrl.project.src, 'video')) : null;
             }, ['AppCtrl.project.src']);
 
-            this.stylesheets = c($scope, function(styles) {
-                if (!styles) {
-                    return [];
-                }
-
-                return styles.map(function(style) {
-                    return style.stylesheet;
-                });
+            c(this, 'stylesheets', function() {
+                return ($scope.AppCtrl && $scope.AppCtrl.project && $scope.AppCtrl.project.styles) ? ($scope.AppCtrl.project.styles.map(function(style) { return style.stylesheet; })) : [];
             }, ['AppCtrl.project.styles']);
 
             function createProject(results) {
