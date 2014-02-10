@@ -1,15 +1,17 @@
 <section class="experience__group" id="experience">
-    <section ng-if="ExperienceCtrl.showWelcome" ng-include="'assets/views/partials/welcome.html'"></section>
-    <section ng-if="ExperienceCtrl.showWizard" ng-controller="WizardController" ng-include="'assets/views/partials/wizard.html'"></section>
-    <nav class="sidebar__group">
-        <ul>
-            <li ng-repeat="annotation in ExperienceCtrl.annotations()">
-                <a href="" ng-click="ExperienceCtrl.jumpTo(annotation)">{{annotation.text}}</a>
-                <button ng-click="ExperienceCtrl.preview(annotation)">Preview</button>
-            </li>
-        </ul>
-        <button ng-click="ExperienceCtrl.startWizard()">Help</button>
-    </nav>
+    <!--<section ng-if="ExperienceCtrl.showWelcome" ng-include="'assets/views/partials/welcome.html'"></section>
+    <section ng-if="ExperienceCtrl.showWizard" ng-controller="WizardController" ng-include="'assets/views/partials/wizard.html'"></section>-->
+    <section class="appbar__group">
+        <!-- appbar directive start-->
+        <input class="appbar__title" type="text" name="project-title" placeholder="My Screenjack Title">
+            <button class="appbar__save-title-btn" title="OK">OK</button>
+        <button class="appbar__toggle appbar__stats" title="Stats"><span class="ir">Stats</span></button>
+        <button class="appbar__toggle appbar__settings" title="Settings"><span class="ir">Settings</span></button>
+        <button class="appbar__button appbar__preview-btn" title="Preview">Preview</button>
+        <button class="appbar__button appbar__savepub-btn" title="Save &amp; Publish">Save &amp; Publish</button>
+        <!-- appbar directive end-->
+    </section>
+    
     <c6-screenjack-player
         class="video__group"
         c6-vertical-center="top"
@@ -17,4 +19,8 @@
         src="{{AppCtrl.videoSrc()}}"
         annotations="ExperienceCtrl.annotations()">
     </c6-screenjack-player>
+
+    <section class="video-controls__group">
+        <!-- controls directive -->
+    </section>
 </section>

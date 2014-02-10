@@ -1,0 +1,125 @@
+/*  ==========================================================================
+    experience styles
+    ========================================================================== */
+    body {
+        margin:0; background-color: #000; font-family: 'MuseoSans', Arial, Helvetica, sans-serif;
+    }
+    a {
+        text-decoration: none;
+    }
+    .experience__group {
+        position: absolute; top: 0; bottom: 0; left: 0; right: 0;
+    }
+    .ir {
+        background-color: transparent;
+        border: 0; width:0; height:0;
+        overflow: hidden; display: block; position: absolute;
+    }
+
+    @font-face {
+        font-family: 'MuseoSans';
+        src: url('museosans-300-webfont.eot');
+        src: url('museosans-300-webfont.eot?#iefix') format('embedded-opentype'),
+             url('museosans-300-webfont.woff') format('woff'),
+             url('museosans-300-webfont.svg#museo_sans300') format('svg'),
+             url('museosans-300-webfont.ttf') format('truetype');
+        font-weight: 300;
+        font-style: normal;
+    }
+
+     @font-face {
+        font-family: 'MuseoSans';
+        src: url('museosans-100-webfont.eot');
+        src: url('museosans-100-webfont.eot?#iefix') format('embedded-opentype'),
+             url('museosans-100-webfont.woff') format('woff'),
+             url('museosans-100-webfont.svg#museo_sans100') format('svg'),
+             url('museosans-100-webfont.ttf') format('truetype');
+        font-weight: 100;
+        font-style: normal;
+    }
+
+     @font-face {
+        font-family: 'MuseoSans';
+        src: url('museosans-100italic-webfont.eot');
+        src: url('museosans-100italic-webfont.eot?#iefix') format('embedded-opentype'),
+             url('museosans-100italic-webfont.woff') format('woff'),
+             url('museosans-100italic-webfont.svg#museo_sans100_italic') format('svg'),
+             url('museosans-100italic-webfont.ttf') format('truetype');
+        font-weight: 100;
+        font-style: italic;
+    }
+
+/*  ==========================================================================
+    app bar styles
+    ========================================================================== */
+    .appbar__group {
+        position: absolute; top: 0; width: 100%; height: 3.375em; z-index: 2; background-color: #f1efed;
+    }
+        .appbar__title {
+            position: absolute; font-size: 0.875em; width: 23.57143em; height: 2.143em; left: 1em; top: 0.714em;
+            font-family: 'MuseoSans', Arial, Helvetica, sans-serif; font-weight: 100; font-style: normal;
+            background: url(../img/input__edit-icon--default.png) #e5e3e1 no-repeat 0.714em center;
+            border: 1px dashed #828180; padding-left: 2.42857em; color: #72706f;
+        }
+            .appbar__title:focus {
+                background: url(../img/input__edit-icon--focus.png) #d3dfc3 no-repeat 0.714em center;
+                border: 1px dashed #568e20; color: #4e7712;
+            }
+            .appbar__save-title-btn {
+                display: none;
+            }
+                .appbar__save-title-btn--focus {
+                    position: absolute; font-size: 0.5625em; border: 0; padding: 0; 
+                    background-color: #74ad21; width: 3.11em; height: 2.667em; top: 1.667em; left: 38.44em;
+                    font-family: 'MuseoSans', Arial, Helvetica, sans-serif; font-weight: 300; color: #fff;
+                    text-transform: uppercase; letter-spacing: 0.05em; border-radius: 3px; cursor: pointer;
+                }
+            .appbar__toggle {
+                position: absolute; font-size: 1em; width: 3.375em; height: 3.375em;
+                border: 0; padding: 0; cursor: pointer;
+            }
+                .appbar__stats {
+                    background: url(../img/stats-btn.png) no-repeat left center; left: 23.9375em;
+                }
+                .appbar__settings {
+                    background: url(../img/settings-btn.png) no-repeat left center; left: 27.5em;
+                }
+                .appbar__stats--active {
+                    background: url(../img/stats-btn.png) no-repeat right center; left: 23.9375em;
+                }
+                .appbar__settings--active {
+                    background: url(../img/settings-btn.png) no-repeat right center; left: 27.5em;
+                }
+            .appbar__button {
+                position: absolute; font-size: 0.75em; top: 0.833em; top: 10px; padding: 0.75em 0; border: 0;
+                font-family: 'MuseoSans', Arial, Helvetica, sans-serif; font-weight: 300; color: #fff;
+                text-transform: uppercase; letter-spacing: 0.05em; border-radius: 3px; cursor: pointer;
+            }
+                .appbar__preview-btn {
+                    right: 12.5em; width: 8.33em; background-color: #afaca9;
+                }
+                .appbar__savepub-btn {
+                    right: 0.875em; width: 10.833em; background-color: #9ac352;
+                }
+
+/*  ==========================================================================
+    stage styles
+    ========================================================================== */
+    .stage__group {
+        position: absolute; width: 100%; top: 50%; margin-top: -25%;
+    }
+        .stage__video {
+            margin: 2.75em 0; width: 100%;
+        }
+
+/*  ==========================================================================
+    annotation styles
+    ========================================================================== */
+
+
+/*  ==========================================================================
+    controls styles
+    ========================================================================== */
+    .video-controls__group {
+        position: absolute; bottom: 0; width: 100%; height: 5.875em; z-index: 2; background-color: #f9f7f5;
+    }

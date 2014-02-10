@@ -1,0 +1,30 @@
+/*  ==========================================================================
+    app bar styles
+    ========================================================================== */
+    .appbar__stats:hover {
+    	background: url(../img/stats-btn.png) no-repeat center center;
+    }
+
+    .appbar__settings:hover {
+    	background: url(../img/settings-btn.png) no-repeat center center;
+    }
+
+    .appbar__preview-btn {
+    	transition: background 0.10s;
+    }
+	    .appbar__preview-btn:hover {
+	    	background-color: #c8c6c4; 
+	    }
+	    .appbar__preview-btn:active {
+	    	background-color: #959391;
+	    }
+
+	.appbar__savepub-btn {
+    	transition: background 0.10s;
+    }
+	    .appbar__savepub-btn:hover {
+	    	background-color: #b2d96d;
+	    }
+	    .appbar__savepub-btn:active {
+	    	background-color: #7ea539;
+	    }
