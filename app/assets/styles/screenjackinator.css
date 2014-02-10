@@ -106,10 +106,10 @@
     stage styles
     ========================================================================== */
     .stage__group {
-        position: absolute; width: 100%; top: 50%; margin-top: -25%;
+        width: 100%; height: 100%;
     }
         .stage__video {
-            margin: 2.75em 0; width: 100%;
+            position: absolute; margin: 2.75em 0; width: 100%; top: 50%; margin-top: -25%;
         }
 
 /*  ==========================================================================
@@ -118,8 +118,132 @@
 
 
 /*  ==========================================================================
-    controls styles
+    controls styles (overwrites styles in c6ui/src/controls)
     ========================================================================== */
-    .video-controls__group {
-        position: absolute; bottom: 0; width: 100%; height: 5.875em; z-index: 2; background-color: #f9f7f5;
+    .controls__group {
+        position: absolute; bottom: 0; width: 100%; height: 5.875em; z-index: 2; background-color: #f9f7f5; font-size: 1em;
     }
+        /* ---- play/pause styles ---- */
+        .controls__btnPlayPause {
+            width: 7.625em; height: 3em; left: 50%; top: 2.375em; margin-left: -3.8125em;
+            background: #9ccd47; box-shadow: none;
+        -moz-transition:background 0.1s; -webkit-transition:background 0.1s; -o-transition:background 0.1s; transition:background 0.1s;
+
+        }
+            .controls__btnPlay-icon {
+                background: url(../img/icon_play.svg) no-repeat center center; background-size: 10%; opacity: 1;
+            }
+
+            .controls__btnPause-icon {
+                background: url(../img/icon_pause.svg) no-repeat center center; background-size: 20%; opacity: 1;
+            }
+
+    /* ---- seek styles ---- */
+        .controls__seek {
+            width: 100%; margin: 0 !important;
+            background: none; border: 0; border-radius: 0;
+            box-shadow: none;
+        }
+            .controls__slider {
+                position: absolute; margin: 0 !important; top: 0.375em; left: 0.375em; right: 0.375em; height: 1.125em; cursor: pointer;
+                background: #bab9b7; border: none; border-radius: 3px;
+            }
+            .controls__slider-active {
+                height: 1.125em; background: #a8cc3a; border-radius: 3px;
+            }
+                .controls__slider-shadow {
+                    display: none;
+                }
+                .controls__slider-buffer {
+                    display: none;
+                }
+
+            .controls__playhead {
+                height: 1.25em; width: 0.3125em; margin: -0.0625em 0 0 -0.1875em; 
+                background: #676664; box-shadow: none; border-radius: 3px;
+            }
+
+    /* ---- volume styles ---- */
+        .volume__btn {
+            position: absolute; right: 22px; top: 0; height: 100%; width: 58px;
+            background: #1c1d1f; border-radius: 3px; box-shadow: none; display: none;
+        }
+
+            .volume__btnVolume-icon {
+                background: url(../img/icon_volume.svg) no-repeat center center; background-size: 36%;
+                display: block; height: 100%; width: 100%; opacity: 0.3; border: 0; cursor: pointer; padding: 0; position: absolute; top: 0;
+            }
+
+                .volume__btnVolume-high {
+                    background: url(../img/icon_volume-high.svg) no-repeat center center; background-size: 36%;
+                    height: 100%; width: 100%; cursor: pointer; position: absolute; top: 0;
+                }
+
+                .volume__btnVolume-med {
+                    background: url(../img/icon_volume-med.svg) no-repeat center center; background-size: 36%;
+                    height: 100%; width: 100%; cursor: pointer; position: absolute; top: 0;
+                }
+
+                .volume__btnVolume-low {
+                    background: url(../img/icon_volume-low.svg) no-repeat center center; background-size: 36%;
+                    height: 100%; width: 100%; cursor: pointer; position: absolute; top: 0;
+                }
+
+                .volume__btnVolume-mute {
+                    background: url(../img/icon_volume-mute.svg) no-repeat center center; background-size: 36%;
+                    height: 100%; width: 100%; cursor: pointer; position: absolute; top: 0;
+                }
+
+        .volume__box {
+            position: absolute; right: 20%; bottom: 150%;
+            width: 60%; height: 94px; 
+            background: #1c1d1f; border-radius: 3px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.6);
+        }
+            .volume__box:after {
+                top: 100%; position: absolute;
+                border: solid transparent; content: " "; 
+                border-color: rgba(28, 29, 31, 0); border-top-color: #1c1d1f;
+                border-width: 10px; left: 50%; margin-left: -10px; 
+            }
+
+            .volume__slider {
+                position: relative; top: 6%; left:7px;
+                width: 4px; height: 66px; cursor: pointer;
+                background: #131415; border: #1c1d1f solid 8px;
+            }
+                .volume__slider-active {
+                    position: absolute; width: 4px; bottom: 0; background: #1c529c; z-index: 2;
+                }
+            .volume__playhead {
+                height: 12px; width: 12px; position: absolute; margin: 0 0 -6px -4px; bottom: 50%;
+                background: #a4a4a4; box-shadow: 0 1px 0 rgba(0, 0, 0, 0.2); border-radius: 6px; cursor: pointer; z-index: 10;
+            }
+
+    /* ---- bubbles ---- */
+        .controls__scene {
+            height: 0.625em; top: 0; margin: 0.25em 0 0 0;
+        }
+
+            .controls__scene-btn { /* width should be dynamic!!! */
+                height: 100%; width: 50px; margin: 0; border-radius: 2px; background: #000; opacity: 0.25;
+            }
+
+            .controls__caption-bottom {
+                display: none;
+            }
+
+            .controls__caption-top {
+                display: none;
+            }
+
+    /* ---- timestamps (not in original c6ui) ---- */
+        .controls__timestamps {
+            position: absolute; font-size: 0.625em; bottom: 5.875em; left: 0.375em; right: 0.375em; z-index: 3; height: 8px;
+        }
+            .controls__start-time {
+                position: absolute; color: #64821b; left: 0; line-height: 1;
+            }
+            .controls__end-time {
+                position: absolute; color: #6d6d6d; right: 0; line-height: 1;
+            }

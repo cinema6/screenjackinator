@@ -7,8 +7,6 @@
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width; initial-scale=1.0">
         <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
-        <link rel="stylesheet" href="assets/styles/screenjackinator.css">
-        <link rel="stylesheet" href="assets/styles/screenjackinator--hover.css">
 
         <link class="custom-styles" rel="stylesheet" ng-repeat="href in AppCtrl.stylesheets()" ng-href="{{href}}">
 
@@ -75,6 +73,8 @@
                 }
                 body.appendChild(requireScript(requireJS, 'assets/scripts/main'));
                 head.appendChild(stylesheet(libUrl('c6ui/v2.1.0-0-g235a9de/css/c6uilib.min.css')));
+                head.appendChild(stylesheet('assets/styles/screenjackinator.css'));
+                head.appendChild(stylesheet('assets/styles/screenjackinator--hover.css'));
             }());
         </script>
     </body>

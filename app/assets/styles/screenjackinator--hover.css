@@ -10,7 +10,7 @@
     }
 
     .appbar__preview-btn {
-    	transition: background 0.10s;
+    	transition: background 0.1s;
     }
 	    .appbar__preview-btn:hover {
 	    	background-color: #c8c6c4; 
@@ -20,7 +20,7 @@
 	    }
 
 	.appbar__savepub-btn {
-    	transition: background 0.10s;
+    	transition: background 0.1s;
     }
 	    .appbar__savepub-btn:hover {
 	    	background-color: #b2d96d;
@@ -28,3 +28,33 @@
 	    .appbar__savepub-btn:active {
 	    	background-color: #7ea539;
 	    }
+
+/*  ==========================================================================
+    controls styles
+    ========================================================================== */
+
+    /* ---- play/pause styles ---- */
+    .controls__btnPlayPause:hover {
+    	background: #b5e266;
+    }
+
+	/* ---- seek styles ---- */
+	.controls__btnReturn-icon:hover {
+		opacity: 1;
+	}
+
+	.controls__btnFullscreen-icon:hover {
+		opacity: 1;
+	}
+
+
+	/* ---- volume styles ---- */
+	.volume__btn:hover {
+		background: #313437;
+	}
+
+		.volume__btnVolume-icon:hover {
+			opacity: 1;
+		}
+
+	
