@@ -1,28 +1,28 @@
 <!-- The video will move to this plane as soon as the experience is started -->
-<div class="stage__group video__player--active">
+<div class="video__group" resize>
     <video c6-video class="stage__video" id="video" c6-src="src"></video>
-    <div class="controls__container">
-        <div class="controls__timestamps">
-            <span class="controls__start-time">0:24</span>
-            <span class="controls__end-time">1:52</span>
-        </div>
-        <c6-controls controller="Ctrl.controlsController" delegate="Ctrl.controlsDelegate" nodes="Ctrl.controlsNodes()"></c6-controls>
-    </div>
+    <ul class="video__annotations">
+        <li ng-repeat="annotation in Ctrl.bubbles()">
+            <c6-bubble annotation="annotation"
+                show="Ctrl.annotationIsActive(annotation)"
+                editable="!readOnly">
+            </c6-bubble>
+        </li>
+        <li ng-show="!readOnly"
+            class="tts__group"
+            ng-repeat="annotation in Ctrl.lines()">
+            <c6-line annotation="annotation"
+                class="tts__text"
+                editable="'true'"
+                show="Ctrl.annotationIsActive(annotation)">
+            </c6-line>
+        </li>
+    </ul>
 </div>
-<ul class="video__annotations">
-    <li ng-repeat="annotation in Ctrl.bubbles()">
-        <c6-bubble annotation="annotation"
-            show="Ctrl.annotationIsActive(annotation)"
-            editable="!readOnly">
-        </c6-bubble>
-    </li>
-    <li ng-show="!readOnly"
-        class="line__wrapper"
-        ng-repeat="annotation in Ctrl.lines()">
-        <c6-line annotation="annotation"
-            class="line__item"
-            editable="'true'"
-            show="Ctrl.annotationIsActive(annotation)">
-        </c6-line>
-    </li>
-</ul>
+<div class="controls__container">
+    <div class="controls__timestamps">
+        <span class="controls__start-time">##:##</span>
+        <span class="controls__end-time">##:##</span>
+    </div>
+    <c6-controls controller="Ctrl.controlsController" delegate="Ctrl.controlsDelegate" nodes="Ctrl.controlsNodes()"></c6-controls>
+</div>

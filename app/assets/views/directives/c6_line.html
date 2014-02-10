@@ -1,8 +1,12 @@
-<span ng-style="{visibility: (editing ? 'hidden' : 'visible')}">{{annotation.text}}</span>
-<form ng-show="editing" ng-class="{'line__invalid': invalid}">
-    <input type="text" ng-model="annotation.text">
-    <button name="listen" ng-click="$event.stopPropagation(); listen();" ng-disabled="fetching">Listen</button>
-    <div class="line__loading" ng-show="fetching">Loading...</div>
-    <button name="save" ng-click="$event.stopPropagation(); saveChanges();">Save</button>
-    <button name="cancel" ng-click="$event.stopPropagation(); discardChanges();">X</button>
-</form>
+<div class="tts__box">
+	<span ng-style="{display: (editing ? 'none' : 'inline')}">{{annotation.text}}</span>
+	<form ng-show="editing" ng-class="{'line__invalid': invalid}">
+	    <input placeholder="Type your dialogue here." type="text" ng-model="annotation.text" class="tts__input">
+	    <button name="listen" ng-click="$event.stopPropagation(); listen();" ng-disabled="fetching" class="tts__listen-btn"><span class="ir">Listen</span></button>
+	    <div class="line__loading" ng-show="fetching">Loading...</div>
+	    <button name="save" ng-click="$event.stopPropagation(); saveChanges();" class="tts__save-btn">Save</button>
+	    <button name="cancel" ng-click="$event.stopPropagation(); discardChanges();" class="tts__cancel-btn"><span class="ir">Cancel</span></button>
+	</form>
+</div>
+<button class="tts__arrow tts__next-arrow" title="Next"><span class="ir">Next</span></button>
+<button class="tts__arrow tts__prev-arrow" title="Go Back"><span class="ir">Go Back</span></button>

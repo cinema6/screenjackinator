@@ -106,16 +106,76 @@
     stage styles
     ========================================================================== */
     .stage__group {
-        width: 100%; height: 100%;
+        position: absolute; top: 3.375em; bottom: 0; width: 100%;
+    }
+    .video__group {
+        position: absolute; width: 1280px; height: 548px;
     }
         .stage__video {
-            position: absolute; margin: 2.75em 0; width: 100%; top: 50%; margin-top: -25%;
+            position: absolute; width: 100%;
         }
 
 /*  ==========================================================================
     annotation styles
     ========================================================================== */
+    .video__annotations {
+        position: absolute; width: 100%; height: 100%; 
+        margin: 0; padding: 0; list-style-type: none;
+    }
 
+    .tts__group {
+        position: absolute; bottom: 0; width: 100%; text-align: center; 
+    }
+
+        .tts__arrow {
+            position: absolute; font-size: 0.5em; width: 7em; height: 6.25em; bottom: 4em; cursor: pointer; padding: 0; border: 0;
+        }
+            .tts__next-arrow {
+                right: 7%; background: url(../img/bubble-nav__next.png) no-repeat center center;
+            }
+            .tts__prev-arrow {
+                left: 7%; background: url(../img/bubble-nav__prev.png) no-repeat center center
+            }
+
+        .tts__box {
+            position: absolute; font-size: 1.5em; left: 14%; width: 72%; padding: 1.25em 0; bottom: 0.41667em;
+            background: url(../img/tts__edit-icon.png) rgba(14, 81, 5, 0.46) no-repeat 0.375em 0.375em; 
+            border: 1px dashed rgba(99, 148, 28, 0.8); border-radius: 3px; 
+        }
+            /* play mode */
+            .tts__text {
+                color: #dff0c1; font-weight: 100;
+            }
+
+            /* edit mode */
+            .tts__input {
+                color: #fff; font-weight: 100; background: none; border: 0;
+                font-size: 1em; font-family: 'MuseoSans', Arial, Helvetica, sans-serif; font-weight: 100; font-style: normal;
+                width: 100%; text-align: center;
+            }
+            .tts__listen-btn {
+                position: absolute; font-size: 0.75em; right: 0.778em; top: 50%; margin-top: -1.8335em;
+                height: 3.667em; width: 3.667em; border: 0; border-radius: 3px;
+                background: url(../img/tts__listen-btn--default.png) #71a91a no-repeat center center; cursor: pointer; 
+            }
+            .tts__save-btn {
+                position: absolute; font-size: 0.625em; left: 50%; bottom: -4em; 
+                margin-left: -4.1875em; padding: 0.85em 3em; border: 0; border-radius: 3px;
+                font-family: 'MuseoSans', Arial, Helvetica, sans-serif; font-weight: 300; color: #fff;
+                text-transform: uppercase; letter-spacing: 0.05em; cursor: pointer; background-color: #a6cb34;
+            }
+            .tts__cancel-btn {
+                position: absolute; font-size: 0.75em; right: 0; top: -1em; height: 0.5em; width: 3.556em; border: 0;
+                background: url(../img/tts__cancel-btn.png) no-repeat center center; cursor: pointer;
+            }
+
+    .line__loading {
+        display:inline;
+    }
+
+    .line__invalid {
+        background-color: red;
+    }
 
 /*  ==========================================================================
     controls styles (overwrites styles in c6ui/src/controls)

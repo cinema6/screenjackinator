@@ -15,9 +15,9 @@
 	    .appbar__preview-btn:hover {
 	    	background-color: #c8c6c4; 
 	    }
-	    .appbar__preview-btn:active {
+	    /*.appbar__preview-btn:active {
 	    	background-color: #959391;
-	    }
+	    }*/
 
 	.appbar__savepub-btn {
     	transition: background 0.1s;
@@ -25,9 +25,25 @@
 	    .appbar__savepub-btn:hover {
 	    	background-color: #b2d96d;
 	    }
-	    .appbar__savepub-btn:active {
+	    /*.appbar__savepub-btn:active {
 	    	background-color: #7ea539;
-	    }
+	    }*/
+
+/*  ==========================================================================
+    annotation styles
+    ========================================================================== */
+	.tts__save-btn {
+		transition: background 0.1s;
+	}
+		.tts__save-btn:hover {
+			background-color: #c1e359;
+		}
+	.tts__listen-btn {
+		transition: background 0.1s;
+	}
+		.tts__listen-btn:hover {
+			background-color: #8cc436;
+		}
 
 /*  ==========================================================================
     controls styles
