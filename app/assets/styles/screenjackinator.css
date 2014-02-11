@@ -16,6 +16,14 @@
         overflow: hidden; display: block; position: absolute;
     }
 
+    ::-moz-selection {
+        background: #b3ff3e; text-shadow: none; color:#000;
+    }
+
+    ::selection {
+        background: #b3ff3e; text-shadow: none; color:#000;
+    }
+
     @font-face {
         font-family: 'MuseoSans';
         src: url('museosans-300-webfont.eot');
@@ -69,7 +77,7 @@
                 display: none;
             }
                 .appbar__save-title-btn--focus {
-                    position: absolute; font-size: 0.5625em; border: 0; padding: 0; 
+                    position: absolute; display: block; font-size: 0.5625em; border: 0; padding: 0; 
                     background-color: #74ad21; width: 3.11em; height: 2.667em; top: 1.667em; left: 38.44em;
                     font-family: 'MuseoSans', Arial, Helvetica, sans-serif; font-weight: 300; color: #fff;
                     text-transform: uppercase; letter-spacing: 0.05em; border-radius: 3px; cursor: pointer;
@@ -185,7 +193,7 @@
             }
 
     .line__loading {
-        display:inline; /* div element inside form */
+        position: absolute; color: #fff; display:inline; /* div element inside form */
     }
 
     .line__invalid {

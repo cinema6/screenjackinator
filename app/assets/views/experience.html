@@ -2,20 +2,42 @@
     <!--<section ng-if="ExperienceCtrl.showWelcome" ng-include="'assets/views/partials/welcome.html'"></section>
     <section ng-if="ExperienceCtrl.showWizard" ng-controller="WizardController" ng-include="'assets/views/partials/wizard.html'"></section>-->
     
+    <!-- appbar directive start-->
     <section class="appbar__group">
-        <!-- appbar directive start-->
-        <input class="appbar__title" type="text" name="project-title" placeholder="My Screenjack Title">
-            <button class="appbar__save-title-btn" title="OK">OK</button>
+        <input class="appbar__title" type="text" name="project-title" id="project-title" placeholder="My Screenjack Title">
+            <button class="appbar__save-title-btn" title="OK" id="project-title-okbtn">OK</button>
         <button class="appbar__toggle appbar__stats" title="Stats"><span class="ir">Stats</span></button>
         <button class="appbar__toggle appbar__settings" title="Settings"><span class="ir">Settings</span></button>
         <button class="appbar__button appbar__preview-btn" title="Preview">Preview</button>
         <button class="appbar__button appbar__savepub-btn" title="Save &amp; Publish">Save &amp; Publish</button>
-        <!-- appbar directive end-->
     </section>
-    
+    <!-- appbar directive end-->
+
     <c6-screenjack-player
         class="stage__group"
         src="{{AppCtrl.videoSrc()}}"
         annotations="ExperienceCtrl.annotations()">
     </c6-screenjack-player>
 </section>
+
+<script>
+    var toggleTitleOk = function () {
+        var titleInput$ = $('#project-title'),
+            okBtn$ = $('#project-title-okbtn'),
+            okFocusClass = 'appbar__save-title-btn--focus'; 
+
+        // Show OK Button
+        titleInput$.click(function() {
+            if (!okBtn$.hasClass(okFocusClass)) {
+                okBtn$.addClass(okFocusClass);
+            };
+        });
+
+        // Hide OK Button
+        $(document).mouseup(function(e) {
+            if (!titleInput$.is(e.target) && okBtn$.hasClass(okFocusClass)) {
+                okBtn$.toggleClass(okFocusClass);
+            };
+        });
+    }(); 
+</script>

@@ -1,5 +1,5 @@
 <div class="tts__box">
-	<span class="tts__text" ng-style="{display: (editing ? 'none' : 'inline')}">{{annotation.text}}</span>
+	<span class="tts__text" ng-style="{display: (editing ? 'none' : 'inline')}">&ldquo;{{annotation.text}}&rdquo;</span>
 	<form ng-show="editing" ng-class="{'line__invalid': invalid}">
 	    <input placeholder="Type your dialogue here." type="text" ng-model="annotation.text" class="tts__input">
 	    <small class="tts__remaining-charas">## Characters Remaining</small>
