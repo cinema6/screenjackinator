@@ -89,26 +89,137 @@
                 .appbar__stats {
                     background: url(../img/stats-btn.png) no-repeat left center; left: 23.9375em;
                 }
+                    .appbar__stats--active {
+                        background: url(../img/stats-btn.png) no-repeat right center; left: 23.9375em;
+                    }
                 .appbar__settings {
                     background: url(../img/settings-btn.png) no-repeat left center; left: 27.5em;
                 }
-                .appbar__stats--active {
-                    background: url(../img/stats-btn.png) no-repeat right center; left: 23.9375em;
-                }
-                .appbar__settings--active {
-                    background: url(../img/settings-btn.png) no-repeat right center; left: 27.5em;
-                }
-            .appbar__button {
-                position: absolute; font-size: 0.75em; top: 0.833em; top: 10px; padding: 0.75em 0; border: 0;
-                font-family: 'MuseoSans', Arial, Helvetica, sans-serif; font-weight: 300; color: #fff;
-                text-transform: uppercase; letter-spacing: 0.05em; border-radius: 3px; cursor: pointer;
+                    .appbar__settings--active {
+                        background: url(../img/settings-btn.png) no-repeat right center; left: 27.5em;
+                    }
+            .appbar__dropdown {
+                position: absolute; top: 3.375em; margin: 0; padding: 1em 1.625em;
+                border-bottom-right-radius: 3px; border-bottom-left-radius: 3px;
+                background-color: #757473; list-style: none;
             }
-                .appbar__preview-btn {
-                    right: 12.5em; width: 8.33em; background-color: #afaca9;
+                /* css arrow */
+                .appbar__dropdown:after {
+                    position: absolute; bottom: 100%; left: 7.5%; height: 0; width: 0;
+                    border: solid transparent; content: " "; pointer-events: none;
+                    border-color: rgba(117, 116, 115, 0); border-bottom-color: #757473;
+                    border-width: 7px; margin-left: -7px;
                 }
-                .appbar__savepub-btn {
-                    right: 0.875em; width: 10.833em; background-color: #9ac352;
+                .appbar__dropdown-hdr {
+                    font-size: 0.75em; font-weight: 300; text-transform: uppercase; color: #9ccd47; margin: 0 0 0.625em 0;
                 }
+
+                /* settings dropdown */
+                .settings__menu {
+                    left:27.5em;
+                }
+                .settings__menu--hide {
+                    display: none;
+                }
+                    .settings__quality, .settings__privacy {
+                        margin-bottom: 1.25em; 
+                    }
+                    .settings__quality-btn {
+                        font-size: 0.875em; padding: 0.71428em 0; width: 7em;
+                        background-color: #acaba9; color: #fff;
+                        border-radius: 3px; border: 0;
+                        font-family: 'MuseoSans', Arial, Helvetica, sans-serif; font-weight: 300;
+                        cursor: pointer; margin-right: 0.42857em;
+                    }
+                        .settings__quality-btn:last-of-type {
+                            margin-right: 0;
+                        }
+                        .settings__quality-btn--active {
+                            background-color: #9ccd47; cursor: default;
+                        }
+                        .settings__hd-label {
+                            position: absolute; font-size: 0.5em; top: 4.75em; right: 2.5em; padding: 0.25em 0.5em;
+                            border-radius: 3px; background: #e0dfdf; font-style: italic; color: #5d5d5d;
+                        }
+
+                    .settings__desc-input {
+                        font-size: 0.875em; padding: 0.5em; width: 94%; margin-bottom: 1em;
+                        background-color: #7c7b7a; border: 1px dashed #bfbebc; border-radius: 3px; color: #fff;
+                        font-family: 'MuseoSans', Arial, Helvetica, sans-serif; font-weight: 100; 
+                    }
+                        .settings__desc-input:focus {
+                            border: 1px dashed #bfbebc;
+                        }
+
+                    .settings__btn {
+                        font-size: 0.875em; border: 0; border-radius: 3px; text-transform: uppercase; width: 13.714em; height: 3em;
+                        font-family: 'MuseoSans', Arial, Helvetica, sans-serif; font-weight: 300;
+                        cursor: pointer; margin: 0 0 0.64285em 4.357em;
+                    }
+                        .settings__save-btn {
+                            background-color: #9ccd47; color: #fff; 
+                        }
+                        .settings__delete-btn {
+                            background-color: #f1efed; color: #74ad21;
+                        }
+                .appbar__button {
+                    position: absolute; font-size: 0.75em; top: 0.833em; top: 10px; padding: 0.75em 0; border: 0;
+                    font-family: 'MuseoSans', Arial, Helvetica, sans-serif; font-weight: 300; color: #fff;
+                    text-transform: uppercase; letter-spacing: 0.05em; border-radius: 3px; cursor: pointer;
+                }
+                    .appbar__preview-btn {
+                        right: 12.5em; width: 8.33em; background-color: #afaca9;
+                    }
+                    .appbar__savepub-btn {
+                        right: 0.875em; width: 10.833em; background-color: #9ac352;
+                    }
+
+                /* stats dropdown */
+                .stats__menu {
+                   left: 23.9375em; 
+                }
+                .stats__menu--hide {
+                    display: none;
+                }
+                    .stats__number {
+                        color: #9ccd47;
+                    }
+                    .stats__total {
+                        font-size: 2em; font-weight: 300; color: #fff; text-align: center; padding: 0.125em 0;
+                        border-top: 1px solid #a1a09e; border-bottom: 1px solid #a1a09e; margin: 12px 0 8px;
+                    }
+                        .stats__stacked-text {
+                            font-size: 0.375em; text-transform: uppercase; line-height: 1.25em; font-weight: 300;
+                            display: inline-block; width: 5em; text-align: center;
+                        }
+                    .stats__substat {
+                        font-size: 0.875em; font-weight: 300; color: #fff; text-align: center;
+                    }
+                    .stats__more-stats {
+                        text-align: center; margin: 0 0 -0.5em 0;   
+                    }
+                        .stats__link {
+                            font-size: 0.625em; text-transform: uppercase; color: #9ccd47; text-decoration: underline;
+                        }
+                        .stats__next-arrow {
+                            margin-left: 0.25em;
+                        }
+
+
+    @media screen and (max-width: 762px){
+        .appbar__title {
+            width: 16.5em;
+        }
+            .appbar__save-title-btn--focus {
+                left: 27.5em;
+            }
+        .appbar__stats {
+            left: 17.8125em;
+        }
+        .appbar__settings {
+            left: 21.375em;
+        }
+    }
 
 /*  ==========================================================================
     stage styles
@@ -141,10 +252,10 @@
             position: absolute; font-size: 0.5em; width: 7em; height: 6.25em; bottom: 4em; cursor: pointer; padding: 0; border: 0;
         }
             .tts__next-arrow {
-                right: 7%; background: url(../img/bubble-nav__next.png) no-repeat center center;
+                left: 88%; background: url(../img/bubble-nav__next.png) no-repeat center center;
             }
             .tts__prev-arrow {
-                left: 7%; background: url(../img/bubble-nav__prev.png) no-repeat center center
+                right: 88%; background: url(../img/bubble-nav__prev.png) no-repeat center center
             }
 
         .tts__box {
@@ -198,6 +309,18 @@
 
     .line__invalid {
         background-color: red; /* this is styling to put on the form */
+    }
+
+    @media screen and (max-width: 768px) {
+        .tts__box {
+            padding: 0.75em 0; bottom: 0.75em;
+        }
+        .tts__save-btn {
+            bottom: -3.5em;
+        }
+        .tts__listen-btn {
+            right: 0.19em;
+        }
     }
 
 /*  ==========================================================================

@@ -9,38 +9,39 @@
     	background: url(../img/settings-btn.png) no-repeat center center;
     }
 
-    .appbar__preview-btn {
+    .appbar__preview-btn, .appbar__savepub-btn, .settings__quality-btn,
+    .settings__save-btn, .settings__delete-btn {
     	transition: background 0.1s;
     }
 	    .appbar__preview-btn:hover {
 	    	background-color: #c8c6c4; 
 	    }
-	    /*.appbar__preview-btn:active {
-	    	background-color: #959391;
-	    }*/
-
-	.appbar__savepub-btn {
-    	transition: background 0.1s;
-    }
 	    .appbar__savepub-btn:hover {
 	    	background-color: #b2d96d;
 	    }
-	    /*.appbar__savepub-btn:active {
-	    	background-color: #7ea539;
-	    }*/
+		.settings__quality-btn:hover {
+			background-color: #c4c2bf;
+		}
+		.settings__quality-btn--active:hover {
+			background-color: #9ccd47;
+		}
+		.settings__save-btn:hover {
+			background-color: #b9eb64;
+		}
+		.settings__delete-btn:hover {
+			background-color: #fff;
+		}
+
 
 /*  ==========================================================================
     annotation styles
     ========================================================================== */
-	.tts__save-btn {
+	.tts__save-btn, .tts__listen-btn {
 		transition: background 0.1s;
 	}
 		.tts__save-btn:hover {
 			background-color: #c1e359;
 		}
-	.tts__listen-btn {
-		transition: background 0.1s;
-	}
 		.tts__listen-btn:hover {
 			background-color: #8cc436;
 		}
@@ -55,14 +56,9 @@
     }
 
 	/* ---- seek styles ---- */
-	.controls__btnReturn-icon:hover {
+	.controls__btnReturn-icon:hover, .controls__btnFullscreen-icon:hover {
 		opacity: 1;
 	}
-
-	.controls__btnFullscreen-icon:hover {
-		opacity: 1;
-	}
-
 
 	/* ---- volume styles ---- */
 	.volume__btn:hover {
