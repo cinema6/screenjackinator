@@ -1,7 +1,8 @@
 <div class="tts__box">
-	<span ng-style="{display: (editing ? 'none' : 'inline')}">{{annotation.text}}</span>
+	<span class="tts__text" ng-style="{display: (editing ? 'none' : 'inline')}">{{annotation.text}}</span>
 	<form ng-show="editing" ng-class="{'line__invalid': invalid}">
 	    <input placeholder="Type your dialogue here." type="text" ng-model="annotation.text" class="tts__input">
+	    <small class="tts__remaining-charas">## Characters Remaining</small>
 	    <button name="listen" ng-click="$event.stopPropagation(); listen();" ng-disabled="fetching" class="tts__listen-btn"><span class="ir">Listen</span></button>
 	    <div class="line__loading" ng-show="fetching">Loading...</div>
 	    <button name="save" ng-click="$event.stopPropagation(); saveChanges();" class="tts__save-btn">Save</button>

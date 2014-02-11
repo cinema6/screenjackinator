@@ -126,7 +126,6 @@
     .tts__group {
         position: absolute; bottom: 0; width: 100%; text-align: center; 
     }
-
         .tts__arrow {
             position: absolute; font-size: 0.5em; width: 7em; height: 6.25em; bottom: 4em; cursor: pointer; padding: 0; border: 0;
         }
@@ -144,7 +143,7 @@
         }
             /* play mode */
             .tts__text {
-                color: #dff0c1; font-weight: 100;
+                color: #dff0c1; font-weight: 100; cursor: pointer;
             }
 
             /* edit mode */
@@ -153,28 +152,41 @@
                 font-size: 1em; font-family: 'MuseoSans', Arial, Helvetica, sans-serif; font-weight: 100; font-style: normal;
                 width: 100%; text-align: center;
             }
+            .tts__remaining-charas {
+                position: absolute; font-size: 0.41667em; bottom: 0; left: 50%; margin-left: -6.9em;
+                color: #6e9c25; text-transform: uppercase; opacity: 0.8;
+            }
             .tts__listen-btn {
                 position: absolute; font-size: 0.75em; right: 0.778em; top: 50%; margin-top: -1.8335em;
                 height: 3.667em; width: 3.667em; border: 0; border-radius: 3px;
                 background: url(../img/tts__listen-btn--default.png) #71a91a no-repeat center center; cursor: pointer; 
             }
+                .tts__listen-btn--disabled {
+                    opacity: 0.12;
+                }
+                .tts__listen-btn--playing {
+                    background: url(../img/tts__listen-btn--stop.png) #71a91a no-repeat center center;
+                }
             .tts__save-btn {
                 position: absolute; font-size: 0.625em; left: 50%; bottom: -4em; 
                 margin-left: -4.1875em; padding: 0.85em 3em; border: 0; border-radius: 3px;
                 font-family: 'MuseoSans', Arial, Helvetica, sans-serif; font-weight: 300; color: #fff;
                 text-transform: uppercase; letter-spacing: 0.05em; cursor: pointer; background-color: #a6cb34;
             }
+                .tts__save-btn--disabled {
+                    opacity: 0.2;
+                }
             .tts__cancel-btn {
                 position: absolute; font-size: 0.75em; right: 0; top: -1em; height: 0.5em; width: 3.556em; border: 0;
                 background: url(../img/tts__cancel-btn.png) no-repeat center center; cursor: pointer;
             }
 
     .line__loading {
-        display:inline;
+        display:inline; /* div element inside form */
     }
 
     .line__invalid {
-        background-color: red;
+        background-color: red; /* this is styling to put on the form */
     }
 
 /*  ==========================================================================
@@ -187,15 +199,13 @@
         .controls__btnPlayPause {
             width: 7.625em; height: 3em; left: 50%; top: 2.375em; margin-left: -3.8125em;
             background: #9ccd47; box-shadow: none;
-        -moz-transition:background 0.1s; -webkit-transition:background 0.1s; -o-transition:background 0.1s; transition:background 0.1s;
-
         }
             .controls__btnPlay-icon {
                 background: url(../img/icon_play.svg) no-repeat center center; background-size: 10%; opacity: 1;
             }
 
             .controls__btnPause-icon {
-                background: url(../img/icon_pause.svg) no-repeat center center; background-size: 20%; opacity: 1;
+                background: url(../img/icon_pause.svg) no-repeat center center; background-size: 14%; opacity: 1;
             }
 
     /* ---- seek styles ---- */
@@ -300,10 +310,11 @@
     /* ---- timestamps (not in original c6ui) ---- */
         .controls__timestamps {
             position: absolute; font-size: 0.625em; bottom: 5.875em; left: 0.375em; right: 0.375em; z-index: 3; height: 8px;
+            background: url(../img/timeline__markers-tile.png) repeat-x top center;
         }
             .controls__start-time {
-                position: absolute; color: #64821b; left: 0; line-height: 1;
+                position: absolute; color: #64821b; left: 0; line-height: 1; background-color: #f9f7f5; padding-right: 0.5em;
             }
             .controls__end-time {
-                position: absolute; color: #6d6d6d; right: 0; line-height: 1;
+                position: absolute; color: #6d6d6d; right: 0; line-height: 1; background-color: #f9f7f5; padding-left: 0.5em;
             }
