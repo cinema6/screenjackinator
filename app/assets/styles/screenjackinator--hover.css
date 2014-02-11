@@ -2,71 +2,87 @@
     app bar styles
     ========================================================================== */
     .appbar__stats:hover {
-    	background: url(../img/stats-btn.png) no-repeat center center;
+        background: url(../img/stats-btn.png) no-repeat center center;
     }
 
     .appbar__settings:hover {
-    	background: url(../img/settings-btn.png) no-repeat center center;
+        background: url(../img/settings-btn.png) no-repeat center center;
     }
 
     .appbar__preview-btn, .appbar__savepub-btn, .settings__quality-btn,
-    .settings__save-btn, .settings__delete-btn {
-    	transition: background 0.1s;
+    .settings__save-btn, .settings__delete-btn, .appbar__save-title-btn--focus {
+        transition: background 0.1s;
     }
-	    .appbar__preview-btn:hover {
-	    	background-color: #c8c6c4; 
-	    }
-	    .appbar__savepub-btn:hover {
-	    	background-color: #b2d96d;
-	    }
-		.settings__quality-btn:hover {
-			background-color: #c4c2bf;
-		}
-		.settings__quality-btn--active:hover {
-			background-color: #9ccd47;
-		}
-		.settings__save-btn:hover {
-			background-color: #b9eb64;
-		}
-		.settings__delete-btn:hover {
-			background-color: #fff;
-		}
+        .appbar__preview-btn:hover {
+            background-color: #c8c6c4; 
+        }
+        .appbar__savepub-btn:hover {
+            background-color: #b2d96d;
+        }
+        .settings__quality-btn:hover {
+            background-color: #c4c2bf;
+        }
+        .settings__quality-btn--active:hover {
+            background-color: #9ccd47;
+        }
+        .settings__save-btn:hover {
+            background-color: #b9eb64;
+        }
+        .settings__delete-btn:hover {
+            background-color: #fff;
+        }
+        .appbar__save-title-btn--focus:hover {
+            background-color: #88be39;
+        }
+
+        .stats__link {
+            transition: color 0.1s;
+        }
+            .stats__link:hover {
+                color: #e2fab8;
+            }
+
 
 
 /*  ==========================================================================
     annotation styles
     ========================================================================== */
-	.tts__save-btn, .tts__listen-btn {
-		transition: background 0.1s;
-	}
-		.tts__save-btn:hover {
-			background-color: #c1e359;
-		}
-		.tts__listen-btn:hover {
-			background-color: #8cc436;
-		}
+    .tts__save-btn, .tts__listen-btn,.tts__prev-arrow, .tts__next-arrow {
+        transition: background 0.1s;
+    }
+        .tts__save-btn:hover {
+            background-color: #c1e359;
+        }
+        .tts__listen-btn:hover {
+            background-color: #8cc436;
+        }
+        .tts__prev-arrow:hover, .tts__next-arrow:hover {
+            background-color: #ddeac0;
+        }
 
 /*  ==========================================================================
     controls styles
     ========================================================================== */
 
     /* ---- play/pause styles ---- */
-    .controls__btnPlayPause:hover {
-    	background: #b5e266;
+    .controls__btnPlayPause {
+        transition: background 0.1s;
+    }
+        .controls__btnPlayPause:hover {
+            background: #b5e266;
+        }
+
+    /* ---- seek styles ---- */
+    .controls__btnReturn-icon:hover, .controls__btnFullscreen-icon:hover {
+        opacity: 1;
     }
 
-	/* ---- seek styles ---- */
-	.controls__btnReturn-icon:hover, .controls__btnFullscreen-icon:hover {
-		opacity: 1;
-	}
+    /* ---- volume styles ---- */
+    .volume__btn:hover {
+        background: #313437;
+    }
 
-	/* ---- volume styles ---- */
-	.volume__btn:hover {
-		background: #313437;
-	}
+        .volume__btnVolume-icon:hover {
+            opacity: 1;
+        }
 
-		.volume__btnVolume-icon:hover {
-			opacity: 1;
-		}
-
-	

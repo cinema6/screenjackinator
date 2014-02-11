@@ -252,10 +252,12 @@
             position: absolute; font-size: 0.5em; width: 7em; height: 6.25em; bottom: 4em; cursor: pointer; padding: 0; border: 0;
         }
             .tts__next-arrow {
-                left: 88%; background: url(../img/bubble-nav__next.png) no-repeat center center;
+                left: 88%; background: url(../img/bubble-nav__next.png) no-repeat center center; border-radius: 3px;
+                background-color: #f9f7f5;
             }
             .tts__prev-arrow {
-                right: 88%; background: url(../img/bubble-nav__prev.png) no-repeat center center
+                right: 88%; background: url(../img/bubble-nav__prev.png) no-repeat center center; border-radius: 3px;
+                background-color: #f9f7f5;
             }
 
         .tts__box {
