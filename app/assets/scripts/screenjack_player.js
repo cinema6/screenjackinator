@@ -85,6 +85,18 @@
                     .off('timeupdate', tickVoices);
             });
 
+            $scope.$on('next', function(event, annotation) {
+                if($scope.annotations[annotation.id+1]) {
+                    this.jumpTo($scope.annotations[annotation.id+1]);
+                }
+            }.bind(this));
+
+            $scope.$on('prev', function(event, annotation) {
+                if($scope.annotations[annotation.id-1]) {
+                    this.jumpTo($scope.annotations[annotation.id-1]);
+                }
+            }.bind(this));
+
             this.controlsController = controlsController;
             this.controlsDelegate = controlsDelegate;
             this.controlsNodes = c($scope, function(annotations) {
@@ -138,6 +150,14 @@
                 return ((currentTime >= start) && (currentTime <= end));
             };
 
+            this.disablePrev = function(annotation) {
+                return (annotation.id === 0);
+            };
+
+            this.disableNext = function(annotation) {
+                return (annotation.id === $scope.annotations.length - 1);
+            };
+
             $scope.$watch(isFetching, function(newVal) {
                 var cb = newVal ? VideoService.disablePlay : VideoService.enablePlay;
                 cb();
@@ -170,13 +190,23 @@
                 scope: {
                     editable: '=',
                     show: '=',
-                    annotation: '='
+                    annotation: '=',
+                    disableprev: '=',
+                    disablenext: '='
                 },
                 link: function(scope, element) {
                     var preEditText = null;
 
                     scope.fetching = false;
                     scope.invalid = false;
+
+                    scope.next = function() {
+                        scope.$emit('next', scope.annotation);
+                    };
+
+                    scope.prev = function() {
+                        scope.$emit('prev', scope.annotation);
+                    };
 
                     scope.listen = function() {
                         scope.fetching = true;
