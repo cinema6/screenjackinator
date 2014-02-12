@@ -79,7 +79,7 @@
 
     /* ---- volume styles ---- */
     .volume__btn:hover {
-        background: #313437;
+        background: none;
     }
 
         .volume__btnVolume-icon:hover {
