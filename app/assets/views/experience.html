@@ -2,6 +2,8 @@
     <!--<section ng-if="ExperienceCtrl.showWelcome" ng-include="'assets/views/partials/welcome.html'"></section>
     <section ng-if="ExperienceCtrl.showWizard" ng-controller="WizardController" ng-include="'assets/views/partials/wizard.html'"></section>-->
     
+
+
     <!-- appbar directive start-->
     <section class="appbar__group">
         <input class="appbar__title" type="text" name="project-title" id="project-title" placeholder="My Screenjack Title">
@@ -49,6 +51,9 @@
     </c6-screenjack-player>
 </section>
 
+
+
+<!-- these scripts should be moved somewhere more approperiate, and intergated with angular if possible -->
 <script>
     var toggleTitleOk = function () {
         var input$ = $('#project-title'),
