@@ -14,7 +14,9 @@
                 ng-repeat="annotation in Ctrl.lines()">
                 <c6-line annotation="annotation"
                     editable="'true'"
-                    show="Ctrl.annotationIsActive(annotation)">
+                    show="Ctrl.annotationIsActive(annotation)"
+                    disableprev="Ctrl.disablePrev(annotation)"
+                    disablenext="Ctrl.disableNext(annotation)">
                 </c6-line>
             </li>
         </ul>
