@@ -288,6 +288,10 @@
                 .tts__listen-btn--disabled {
                     opacity: 0.12;
                 }
+                .tts__listen-btn--loading {
+                    background: url(../img/tts__listen-btn--loading.png) rgba(113, 169, 26, 0.23) no-repeat center center;
+                    cursor: default;
+                }
                 .tts__listen-btn--playing {
                     background: url(../img/tts__listen-btn--stop.png) #71a91a no-repeat center center;
                 }
