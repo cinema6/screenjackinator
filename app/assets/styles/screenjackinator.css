@@ -291,6 +291,24 @@
                 .tts__listen-btn--playing {
                     background: url(../img/tts__listen-btn--stop.png) #71a91a no-repeat center center;
                 }
+                .tts__listen-popup {
+                    position: absolute; height: 1.45833em; right: 0; bottom: -2.125em;
+                    background: #4e7c08; border-radius: 3px;
+                }
+                    .tts__listen-popup--hidden {
+                        display:none;
+                    }
+                    .tts__listen-arrow {
+                        position:absolute; height: 0.20833em; width: 0.375em; left: 3.3333em; top: -0.20833em;
+                        background: url(../img/tts__listen-arrow.png) no-repeat center center; 
+                    }
+                    .tts__listen-timestamp {
+                        position: absolute; font-size: 0.41667em; padding: 1em 1.2em; 
+                        background-color: #669817; color: #fff; border-radius: 3px 0 0 3px;
+                    }
+                    .tts__listen-soundwave {
+                        display: inline-block; margin: 0.08333em 0 0 1.875em;
+                    }
             .tts__save-btn {
                 position: absolute; font-size: 0.625em; left: 50%; bottom: -4em; 
                 margin-left: -4.1875em; padding: 0.85em 3em; border: 0; border-radius: 3px;
