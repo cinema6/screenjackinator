@@ -7,19 +7,14 @@
     a {
         text-decoration: none;
     }
-    .experience__group {
-        position: absolute; top: 0; bottom: 0; left: 0; right: 0;
-    }
     .ir {
         background-color: transparent;
         border: 0; width:0; height:0;
         overflow: hidden; display: block; position: absolute;
     }
-
     ::-moz-selection {
         background: #b3ff3e; text-shadow: none; color:#000;
     }
-
     ::selection {
         background: #b3ff3e; text-shadow: none; color:#000;
     }
@@ -34,8 +29,7 @@
         font-weight: 300;
         font-style: normal;
     }
-
-     @font-face {
+    @font-face {
         font-family: 'MuseoSans';
         src: url('museosans-100-webfont.eot');
         src: url('museosans-100-webfont.eot?#iefix') format('embedded-opentype'),
@@ -45,8 +39,7 @@
         font-weight: 100;
         font-style: normal;
     }
-
-     @font-face {
+    @font-face {
         font-family: 'MuseoSans';
         src: url('museosans-100italic-webfont.eot');
         src: url('museosans-100italic-webfont.eot?#iefix') format('embedded-opentype'),
@@ -55,6 +48,10 @@
              url('museosans-100italic-webfont.ttf') format('truetype');
         font-weight: 100;
         font-style: italic;
+    }
+
+    .experience__group {
+        position: absolute; top: 0; bottom: 0; left: 0; right: 0;
     }
 
 /*  ==========================================================================
