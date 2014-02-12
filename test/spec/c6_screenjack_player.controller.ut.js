@@ -196,7 +196,6 @@
 
             describe('after it gets the video', function() {
                 beforeEach(function() {
-                    // spyOn(C6ScreenjackPlayerCtrl.controlsNodes, 'invalidate');
                     $scope.$apply(function() {
                         VideoService._.getVideoDeferred.resolve(video);
                     });
@@ -208,10 +207,6 @@
                     expect(video.on).toHaveBeenCalledWith('timeupdate', jasmine.any(Function));
                     expect(video.on).toHaveBeenCalledWith('ended', jasmine.any(Function));
                 });
-
-                // it('should invalidate the controlsNodes() property', function() {
-                //     expect(C6ScreenjackPlayerCtrl.controlsNodes.invalidate).toHaveBeenCalled();
-                // });
 
                 describe('when "play" is fired', function() {
                     beforeEach(function() {
@@ -482,7 +477,7 @@
                         });
                     });
 
-                    xdescribe('if there are annotations and a video', function() {
+                    describe('if there are annotations and a video', function() {
                         beforeEach(function() {
                             var annotations = [
                                 {
