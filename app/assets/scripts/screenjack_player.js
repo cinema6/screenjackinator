@@ -3,14 +3,17 @@
 
     angular.module('c6.screenjackinator')
         .controller('C6ScreenjackPlayerController', ['$scope', 'VideoService', 'VoiceTrackService', 'c6Computed',
-        function                                    ( $scope ,  VideoService ,  VoiceTrackService ,  c          ) {
+        function                                    ( $scope ,  VideoService ,  VoiceTrackService ,  c6Computed ) {
             var video,
                 controlsController = {},
                 controlsDelegate = {
                     nodeClicked: function(node) {
                         this.jumpTo(node.annotation);
                     }.bind(this)
-                };
+                },
+                c = c6Computed($scope);
+
+            this.controlsNodes = [];
 
             function playVoices() {
                 VoiceTrackService.play();
@@ -56,7 +59,26 @@
             VideoService.getVideo('video').then(function(c6Video) {
                 video = c6Video;
 
-                this.controlsNodes.invalidate();
+                c(this, 'controlsNodes', function() {
+                    var nodes = [];
+
+                    if (!$scope.annotations || !video) {
+                        return nodes;
+                    }
+
+                    angular.forEach($scope.annotations, function(annotation, index) {
+                        // TODO: fix text property
+                        nodes.push({
+                            style: 'scene',
+                            position: (annotation.timestamp / video.player.duration) * 100,
+                            text: (index + 1).toString(),
+                            annotation: annotation
+                        });
+                    });
+
+                    return nodes;
+                }, ['annotations']);
+
                 syncVoiceTrackService(c6Video);
             }.bind(this));
 
@@ -87,33 +109,15 @@
 
             this.controlsController = controlsController;
             this.controlsDelegate = controlsDelegate;
-            this.controlsNodes = c($scope, function(annotations) {
-                var nodes = [];
 
-                if (!annotations || !video) {
-                    return nodes;
-                }
-
-                angular.forEach(annotations, function(annotation, index) {
-                    nodes.push({
-                        style: 'scene',
-                        position: (annotation.timestamp / video.player.duration) * 100,
-                        text: (index + 1).toString(),
-                        annotation: annotation
-                    });
-                });
-
-                return nodes;
-            }, ['annotations']);
-
-            this.bubbles = c($scope, function(annotations) {
-                return (annotations || []).filter(function(annotation) {
+            c(this, 'bubbles', function() {
+                return ($scope.annotations || []).filter(function(annotation) {
                     return annotation.type === 'popup';
                 });
             }, ['annotations']);
 
-            this.lines = c($scope, function(annotations) {
-                return (annotations || []).filter(function(annotation) {
+            c(this, 'lines', function() {
+                return ($scope.annotations || []).filter(function(annotation) {
                     return (annotation.type === 'tts');
                 });
             }, ['annotations']);

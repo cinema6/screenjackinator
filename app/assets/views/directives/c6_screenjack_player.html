@@ -3,10 +3,10 @@
     <video c6-video id="video" c6-src="src"></video>
 </div>
 <div class="controls__container">
-    <c6-controls controller="Ctrl.controlsController" delegate="Ctrl.controlsDelegate" nodes="Ctrl.controlsNodes()"></c6-controls>
+    <c6-controls controller="Ctrl.controlsController" delegate="Ctrl.controlsDelegate" nodes="Ctrl.controlsNodes"></c6-controls>
 </div>
 <ul class="video__annotations">
-    <li ng-repeat="annotation in Ctrl.bubbles()">
+    <li ng-repeat="annotation in Ctrl.bubbles">
         <c6-bubble annotation="annotation"
             show="Ctrl.annotationIsActive(annotation)"
             editable="!readOnly">
@@ -14,7 +14,7 @@
     </li>
     <li ng-show="!readOnly"
         class="line__wrapper"
-        ng-repeat="annotation in Ctrl.lines()">
+        ng-repeat="annotation in Ctrl.lines">
         <c6-line annotation="annotation"
             class="line__item"
             editable="'true'"
