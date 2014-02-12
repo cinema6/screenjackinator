@@ -57,7 +57,7 @@
                     "timestamp": 33,
                     "duration": 4,
                     "text": "This is the final test.",
-                    "maxChars": 15
+                    "maxChars": 25
                 }
             ],
             "defaults": {
@@ -115,7 +115,7 @@
                     "timestamp": 33,
                     "duration": 4,
                     "text": "This is the final test.",
-                    "maxChars": 15
+                    "maxChars": 25
                 }
             ],
             "defaults": {

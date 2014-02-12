@@ -4,7 +4,7 @@
     
     <!-- appbar directive start-->
     <section class="appbar__group">
-        <input class="appbar__title" type="text" name="project-title" id="project-title" placeholder="My Screenjack Title">
+        <input class="appbar__title" type="text" name="project-title" id="project-title" placeholder="My Screenjack Title" ng-model="AppCtrl.experience.title">
             <button class="appbar__save-title-btn" title="OK" id="project-title-okbtn">OK</button>
         <button class="appbar__toggle appbar__stats" title="Stats" id="stats-toggle"><span class="ir">Stats</span></button>
             <ul class="appbar__dropdown stats__menu stats__menu--hide" id="stats-menu">
@@ -32,7 +32,7 @@
                 </li>
                 <li class="settings__description">
                     <h2 class="appbar__dropdown-hdr">Description</h2>
-                    <textarea class="settings__desc-input" name="description" placeholder="Tell use what your project is about." rows="4"></textarea>
+                    <textarea class="settings__desc-input" name="description" placeholder="Tell use what your project is about." rows="4" ng-model="AppCtrl.experience.summary"></textarea>
                 </li>
                 <li><button class="settings__btn settings__save-btn">Save Settings</button></li>
                 <li><button class="settings__btn settings__delete-btn">Delete Project</button></li>

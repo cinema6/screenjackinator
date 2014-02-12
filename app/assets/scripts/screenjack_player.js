@@ -97,6 +97,11 @@
                 }
             }.bind(this));
 
+            $scope.$on('stopListening', function(event, annotation) {
+                VoiceTrackService.tick(annotation.timestamp);
+                pauseVoices();
+            }.bind(this));
+
             this.controlsController = controlsController;
             this.controlsDelegate = controlsDelegate;
             this.controlsNodes = c($scope, function(annotations) {
@@ -200,6 +205,17 @@
                     scope.fetching = false;
                     scope.invalid = false;
 
+                    scope.listenIsPlaying = false;
+                    scope.listening = false;
+
+                    scope.saveDisabled = function() {
+                        return scope.annotation.text.length === 0;
+                    };
+
+                    scope.listenDisabled = function() {
+                        return scope.annotation.text.length === 0 || scope.fetching;
+                    };
+
                     scope.next = function() {
                         scope.$emit('next', scope.annotation);
                     };
@@ -209,14 +225,37 @@
                     };
 
                     scope.listen = function() {
-                        scope.fetching = true;
-
-                        scope.annotation.getMP3().then(function() {
-                            scope.fetching = false;
-                            scope.invalid = !scope.annotation.isValid();
-                            if(!scope.invalid) { scope.annotation.speak(); }
-                        });
+                        if(!scope.listening) {
+                            scope.listening = true;
+                        } else {
+                            scope.listening = false;
+                        }
                     };
+
+                    scope.$watch('listening', function(listening, wasListening) {
+                        if(listening && !wasListening) {
+                            scope.fetching = true;
+
+                            scope.annotation.getMP3().then(function() {
+                                scope.fetching = false;
+                                scope.listening = true;
+                                scope.invalid = !scope.annotation.isValid();
+
+                                if(!scope.invalid) {
+                                    scope.listenIsPlaying = true;
+                                    scope.annotation.speak().then(function() {
+                                        scope.listenIsPlaying = false;
+                                        scope.listening = false;
+                                    });
+                                }
+                            });
+                        }
+
+                        if(!listening && wasListening) {
+                            scope.listenIsPlaying = false;
+                            scope.$emit('stopListening', scope.annotation);
+                        }
+                    });
 
                     scope.discardChanges = function() {
                         scope.annotation.text = preEditText;
