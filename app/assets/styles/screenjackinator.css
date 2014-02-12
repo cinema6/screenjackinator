@@ -371,7 +371,7 @@
 
     /* ---- volume styles ---- */
     .volume__btn {
-        position: absolute; font-size: 1em; right: 8em; top: 3.25em; height: 0.8125em; width: 1em;
+        position: absolute; font-size: 1em; right: 8em; top: 3.5em; height: 0.8125em; width: 1em;
         background: none; border-radius: 0; box-shadow: none; 
     }
 
