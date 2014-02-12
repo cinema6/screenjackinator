@@ -71,7 +71,7 @@
                         nodes.push({
                             style: 'scene',
                             position: (annotation.timestamp / video.player.duration) * 100,
-                            // text: (index + 1).toString(),
+                            text: (index + 1).toString(),
                             annotation: annotation
                         });
                     });
