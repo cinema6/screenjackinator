@@ -67,7 +67,6 @@
                     }
 
                     angular.forEach($scope.annotations, function(annotation, index) {
-                        // TODO: fix text property
                         nodes.push({
                             style: 'scene',
                             position: (annotation.timestamp / video.player.duration) * 100,
@@ -159,13 +158,13 @@
                 return ((currentTime >= start) && (currentTime <= end));
             };
 
-            this.disablePrev = function(annotation) {
-                return (annotation.id === 0);
-            };
+            // this.disablePrev = function(annotation) {
+            //     return (annotation.id === 0);
+            // };
 
-            this.disableNext = function(annotation) {
-                return (annotation.id === $scope.annotations.length - 1);
-            };
+            // this.disableNext = function(annotation) {
+            //     return (annotation.id === $scope.annotations.length - 1);
+            // };
 
             $scope.$watch(isFetching, function(newVal) {
                 var cb = newVal ? VideoService.disablePlay : VideoService.enablePlay;
@@ -191,8 +190,8 @@
             };
         }])
 
-        .directive('c6Line', ['c6UrlMaker',
-        function             ( c6UrlMaker ) {
+        .directive('c6Line', ['c6UrlMaker', 'c6Computed',
+        function             ( c6UrlMaker, c6computed ) {
             return {
                 restrict: 'E',
                 templateUrl: c6UrlMaker('views/directives/c6_line.html'),
@@ -204,7 +203,8 @@
                     disablenext: '='
                 },
                 link: function(scope, element) {
-                    var preEditText = null;
+                    var preEditText = null,
+                        c = c6computed(scope);
 
                     scope.fetching = false;
                     scope.invalid = false;
@@ -212,13 +212,13 @@
                     scope.listenIsPlaying = false;
                     scope.listening = false;
 
-                    scope.saveDisabled = function() {
-                        return scope.annotation.text.length === 0;
-                    };
+                    c(scope, 'isListenable', function() {
+                        return scope && scope.annotation && scope.annotation.text && scope.annotation.text.length !== 0 && !scope.fetching;
+                    }, ['annotation.text']);
 
-                    scope.listenDisabled = function() {
-                        return scope.annotation.text.length === 0 || scope.fetching;
-                    };
+                    c(scope, 'isEmpty', function() {
+                        return scope && scope.annotation && scope.annotation.text && scope.annotation.text.length === 0;
+                    }, ['annotation.text']);
 
                     scope.next = function() {
                         scope.$emit('next', scope.annotation);
