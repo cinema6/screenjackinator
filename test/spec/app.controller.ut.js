@@ -231,7 +231,7 @@
 
             describe('@public', function() {
                 describe('properties', function() {
-                    describe('videoSrc()', function() {
+                    describe('videoSrc', function() {
                         beforeEach(function() {
                             AppCtrl.project = {
                                 src: null
@@ -239,19 +239,19 @@
                         });
 
                         it('should be the full video url', function() {
-                            expect(AppCtrl.videoSrc()).toBe(null);
+                            expect(AppCtrl.videoSrc).toBe(null);
 
                             $scope.$apply(function() { AppCtrl.project.src = 'foo.mp4'; });
-                            expect(AppCtrl.videoSrc()).toBe('assets/media/foo.mp4');
+                            expect(AppCtrl.videoSrc).toBe('assets/media/foo.mp4');
 
                             $scope.$apply(function() { AppCtrl.project.src = 'not_over.mp4'; });
-                            expect(AppCtrl.videoSrc()).toBe('assets/media/not_over.mp4');
+                            expect(AppCtrl.videoSrc).toBe('assets/media/not_over.mp4');
                         });
                     });
 
-                    describe('stylesheets()', function() {
+                    describe('stylesheets', function() {
                         it('should be an empty array if there is no project/styles', function() {
-                            var stylesheets = AppCtrl.stylesheets();
+                            var stylesheets = AppCtrl.stylesheets;
 
                             expect(angular.isArray(stylesheets)).toBe(true);
                             expect(stylesheets.length).toBe(0);
@@ -275,7 +275,7 @@
                                     ]
                                 };
                             });
-                            stylesheets = AppCtrl.stylesheets();
+                            stylesheets = AppCtrl.stylesheets;
 
                             expect(stylesheets.length).toBe(3);
                             expect(stylesheets[0]).toBe('assets/collateral/test/foo/style.css');
