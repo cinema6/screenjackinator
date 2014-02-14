@@ -99,23 +99,23 @@
                 {
                     "type": "tts",
                     "timestamp": 5,
-                    "duration": 2,
+                    "duration": 10,
                     "text": "What's up?!",
-                    "maxChars": 15
+                    "maxChars": 45
                 },
                 {
                     "type": "tts",
                     "timestamp": 12,
-                    "duration": 2,
+                    "duration": 10,
                     "text": "How are you?!",
-                    "maxChars": 15
+                    "maxChars": 45
                 },
                 {
                     "type": "tts",
                     "timestamp": 33,
-                    "duration": 4,
+                    "duration": 10,
                     "text": "This is the final test.",
-                    "maxChars": 25
+                    "maxChars": 45
                 }
             ],
             "defaults": {
