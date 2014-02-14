@@ -24,7 +24,6 @@
             }
 
             function tickVoices(event, video) {
-                // window.console.log('tick:',video.player.currentTime);
                 VoiceTrackService.tick(video.player.currentTime);
                 updateTimestamp(video.player.currentTime, video.player.duration);
             }
@@ -148,25 +147,6 @@
                 pauseVoices();
             }.bind(this));
 
-            // function showAudioRemainingTime(voiceBox) {
-            //     window.console.log(arguments);
-            //     // $scope.audioTimeRemaining = convertTimestamp(parseInt(voiceBox.duration - voiceBox.currentTime, 10));
-            // }
-
-            // $scope.$on('playAnnotation', function(event, voiceBox) {
-            //     // window.console.log('playAnnotation event');
-            //     voiceBox.addEventListener('timeupdate', function showAudioRemainingTime() {
-            //         $scope.audioTimeRemaining = convertTimestamp(parseInt(voiceBox.duration - voiceBox.currentTime, 10));
-            //         window.console.log($scope.audioTimeRemaining);
-            //     });
-            // });
-
-            // $scope.$on('endAudioAnnotation', function(event, voiceBox) {
-            //     voiceBox.removeEventListener('timeupdate', function showAudioRemainingTime() {
-            //         $scope.audioTimeRemaining = convertTimestamp(parseInt(voiceBox.duration - voiceBox.currentTime, 10));
-            //     });
-            // });
-
             this.controlsController = controlsController;
             this.controlsDelegate = controlsDelegate;
 
@@ -256,8 +236,6 @@
                     scope.listenIsPlaying = false;
                     scope.listening = false;
 
-                    scope.audioTimeRemaining = '00:00';
-
                     c(scope, 'isListenable', function() {
                         return scope && scope.annotation && scope.annotation.text && scope.annotation.text.length !== 0 && !scope.fetching;
                     }, ['annotation.text']);
@@ -294,25 +272,53 @@
                         }
                     };
 
-                    // function showAudioRemainingTime() {
-                    //     scope.annotation.audioTimeRemaining = convertTimestamp(parseInt(scope.annotation._voiceBox.duration - scope.annotation._voiceBox.currentTime, 10));
-                    //     window.console.log(scope.annotation.audioTimeRemaining);
-                    // }
+                    c(scope, 'audioTimeRemaining', function() {
+                        window.console.log(scope.annotation._voiceBox.currentTime);
+                        return scope && scope.annotation && scope.annotation._voiceBox && scope.annotation._voiceBox.currentTime;
+                    }, ['annotation._voiceBox.currentTime']);
 
                     scope.$watch('listening', function(listening, wasListening) {
                         if(listening && !wasListening) {
                             scope.fetching = true;
 
+
                             scope.annotation.getMP3().then(function() {
-                                // window.console.log(self);
-                                // scope.$emit('playAnnotation', self._voiceBox);
-                                // scope.annotation._voiceBox.addEventListener('timeupdate', showAudioRemainingTime);
-                                // scope.audioTimeRemaining = '00:00';
-                                scope.annotation._voiceBox.ontimeupdate = function() {
-                                    scope.audioTimeRemaining = convertTimestamp(parseInt(scope.annotation._voiceBox.duration - scope.annotation._voiceBox.currentTime, 10));
-                                    window.console.log(scope.audioTimeRemaining);
-                                };
-                                // scope.audioTimeRemaining = '20';
+
+                                // function scopepreserver(event, newAnnotation) {
+                                //     return function () {
+                                //         //do something with audio
+                                //         window.console.log(arguments);
+                                //         scope.audioTimeRemaining = convertTimestamp(parseInt(newAnnotation._voiceBox.duration - newAnnotation._voiceBox.currentTime, 10));
+                                //     };
+                                // }
+                                // function myfunction() {
+                                //     newAnnotation._voiceBox.ontimeupdate = scopepreserver(event, newAnnotation);
+                                // }
+                                // myfunction();
+
+
+
+
+                                // function myfunction() {
+                                //     // var paras = document.getElementsByTagName('p');
+                                //     // var spans = document.getElementsByTagName('span');
+                                //     // var newAnno = newAnnotation;
+                                //     // var anotherAnno = newAnnotation;
+
+                                //     newAnnotation._voiceBox.ontimeupdate = (function (a) {
+                                //         return function () {
+                                //             //do something with a and b
+                                            
+                                //             scope.audioTimeRemaining = a._voiceBox.currentTime;
+                                //             window.console.log(scope.audioTimeRemaining);
+                                //             // window.console.log(scope.annotation); // add .audioTimeRemaining here!
+                                //             // window.console.log(a._voiceBox.currentTime);
+                                //             // window.console.log('a', a._voiceBox.duration);
+                                //         };
+                                //     })(newAnnotation);
+                                    
+                                // }
+                                // myfunction();
 
                                 scope.fetching = false;
                                 scope.listening = true;
@@ -331,9 +337,6 @@
                         if(!listening && wasListening) {
                             scope.listenIsPlaying = false;
                             scope.$emit('stopListening', scope.annotation);
-                            // scope.annotation._voiceBox.removeEventListener('timeupdate', showAudioRemainingTime);
-                            // scope.annotation._voiceBox.ontimeupdate = null;
-                            // scope.$emit('endAudioAnnotation', scope.annotation._voiceBox);
                         }
                     });
 
