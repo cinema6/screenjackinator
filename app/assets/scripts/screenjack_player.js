@@ -31,6 +31,7 @@
             function updateTimestamp(time, duration) {
                 var currTime = convertTimestamp(parseInt(time, 10)),
                     remainTime = convertTimestamp(parseInt(duration - time, 10));
+
                 if($scope.videoTime !== currTime) {
                     $scope.videoTime = currTime;
                 }
@@ -39,16 +40,17 @@
                 }
             }
 
+            // helper function that should probably go in a service
             function convertTimestamp(timestamp) {
-                function pad(digit) {
-                    return digit < 10 ? '0' + digit : '' + digit;
-                }
-                var minutes, seconds;
+                var minutes, seconds,
+                    pad = function(digit) {
+                        return digit < 10 ? '0' + digit : '' + digit;
+                    };
+
                 minutes = parseInt(timestamp / 60, 10);
-                seconds = timestamp - (60*minutes);
+                seconds = timestamp - (60 * minutes);
 
                 return pad(minutes) + ':' + pad(seconds);
-
             }
 
             function syncVoiceTrackService(video) {
@@ -182,14 +184,6 @@
                 return ((currentTime >= start) && (currentTime <= end));
             };
 
-            // this.disablePrev = function(annotation) {
-            //     return (annotation.id === 0);
-            // };
-
-            // this.disableNext = function(annotation) {
-            //     return (annotation.id === $scope.annotations.length - 1);
-            // };
-
             $scope.$watch(isFetching, function(newVal) {
                 var cb = newVal ? VideoService.disablePlay : VideoService.enablePlay;
                 cb();
@@ -232,28 +226,28 @@
 
                     scope.fetching = false;
                     scope.invalid = false;
-
-                    scope.listenIsPlaying = false;
                     scope.listening = false;
+                    scope.listenIsPlaying = false;
 
                     c(scope, 'isListenable', function() {
                         return scope && scope.annotation && scope.annotation.text && scope.annotation.text.length !== 0 && !scope.fetching;
-                    }, ['annotation.text']);
+                    }, ['annotation.text', 'fetching']);
 
                     c(scope, 'isEmpty', function() {
-                        return scope && scope.annotation && scope.annotation.text && scope.annotation.text.length === 0;
+                        return scope && scope.annotation && ('text' in scope.annotation) && scope.annotation.text.length === 0;
                     }, ['annotation.text']);
 
+                    // helper function that should probably go in a service
                     function convertTimestamp(timestamp) {
-                        function pad(digit) {
-                            return digit < 10 ? '0' + digit : '' + digit;
-                        }
-                        var minutes, seconds;
+                        var minutes, seconds,
+                            pad = function(digit) {
+                                return digit < 10 ? '0' + digit : '' + digit;
+                            };
+
                         minutes = parseInt(timestamp / 60, 10);
-                        seconds = timestamp - (60*minutes);
+                        seconds = timestamp - (60 * minutes);
 
                         return pad(minutes) + ':' + pad(seconds);
-
                     }
 
                     function setAudioTimer() {
@@ -261,36 +255,6 @@
                             scope.audioTimeRemaining = convertTimestamp(parseInt(scope.annotation._voiceBox.duration - scope.annotation._voiceBox.currentTime, 10));
                         });
                     }
-
-                    // var audioEventHandler = {};
-
-                    // var handleAudioTimer = function(event, audioAnno) {
-                    //     scope.audioTimeRemaining = convertTimestamp(parseInt(audioAnno._voiceBox.duration - audioAnno._voiceBox.currentTime, 10));
-                    // };
-
-                    // var handleAudioEvent = function(event) {
-                    //     var eventName = event.type,
-                    //         handler = audioEventHandler[eventName];
-                    //     scope.$apply(handler(event, scope.annotation));
-                    // };
-
-                    // function addAudioEvent() {
-                    //     scope.annotation._voiceBox.on = function(event, handler) {
-                    //         var audio = this;
-                    //         audioEventHandler[event] = handler;
-                    //         audio.addEventListener(event, handleAudioEvent, false);
-                    //     };
-                    //     scope.annotation._voiceBox.on('timeupdate', handleAudioTimer);
-                    // }
-
-                    // function removeAudioEvent() {
-                    //     scope.annotation._voiceBox.off = function(event, handler) {
-                    //         var audio = this;
-                    //         delete audioEventHandler[event];
-                    //         audio.removeEventListener(event, handleAudioEvent, false);
-                    //     };
-                    //     scope.annotation._voiceBox.off('timeupdate', handleAudioTimer);
-                    // }
 
                     scope.next = function() {
                         scope.$emit('next', scope.annotation);
@@ -301,27 +265,18 @@
                     };
 
                     scope.listen = function() {
+                        // right now the listen button is disabled during fetching
+                        // but there's css for loading now, so maybe we should just do this:
+                        // if(scope.fetching) { return; }
+                        // so that the button keeps the loading indicator but doesn't do anything
+
                         if(!scope.listening) {
-                            scope.listening = true;
-                        } else {
-                            scope.listening = false;
-                        }
-                    };
-
-                    scope.$watch('listening', function(listening, wasListening) {
-                        if(listening && !wasListening) {
                             scope.fetching = true;
-
-
                             scope.annotation.getMP3().then(function() {
-
-                                scope.annotation._voiceBox.addEventListener('timeupdate', setAudioTimer);
-                                // addAudioEvent();
-
                                 scope.fetching = false;
                                 scope.listening = true;
                                 scope.invalid = !scope.annotation.isValid();
-
+                                scope.annotation._voiceBox.addEventListener('timeupdate', setAudioTimer);
                                 if(!scope.invalid) {
                                     scope.listenIsPlaying = true;
                                     scope.annotation.speak().then(function() {
@@ -330,15 +285,13 @@
                                     });
                                 }
                             });
-                        }
-
-                        if(!listening && wasListening) {
-                            scope.annotation._voiceBox.removeEventListener('timeupdate', setAudioTimer);
-                            // removeAudioEvent();
+                        } else {
                             scope.listenIsPlaying = false;
+                            scope.listening = false;
+                            scope.annotation._voiceBox.removeEventListener('timeupdate', setAudioTimer);
                             scope.$emit('stopListening', scope.annotation);
                         }
-                    });
+                    };
 
                     scope.discardChanges = function() {
                         scope.annotation.text = preEditText;

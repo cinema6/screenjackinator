@@ -149,7 +149,7 @@
                     });
 
                     it('should show the text span', function() {
-                        expect(line.find('span').css('visibility')).toBe('visible');
+                        expect(line.find('span').css('display')).toBe('inline');
                     });
 
                     it('should $emit c6Line:editdone when leaving edit mode', function() {
@@ -190,7 +190,7 @@
                     });
 
                     it('should hide the text span', function() {
-                        expect(line.find('span').css('visibility')).toBe('hidden');
+                        expect(line.find('span').css('display')).toBe('none');
                     });
 
                     it('should $emit c6Line:editstart', function() {
@@ -211,11 +211,20 @@
                                 return this.text === 'Initial Text';
                             },
                             isValid: function() {},
+                            _voiceBox: {
+                                addEventListener: jasmine.createSpy('annotation._voiceBox.addEventListener()')
+                                    .andCallFake(function(){}),
+                                removeEventListener: jasmine.createSpy('annotation._voiceBox.addEventListener()')
+                                    .andCallFake(function(){})
+                            },
                             getMP3: jasmine.createSpy('annotation.getMP3()')
                                 .andCallFake(function() {
                                     return $scope.annotation._.getMP3Deferred.promise;
                                 }),
-                            speak: jasmine.createSpy('annotation.speak()'),
+                            speak: jasmine.createSpy('annotation.speak()')
+                                .andCallFake(function() {
+                                    return $scope.annotation._.getMP3Deferred.promise;
+                                }),
                             _: {
                                 getMP3Deferred: $q.defer()
                             }
@@ -366,7 +375,7 @@
                             expect(listen.attr('disabled')).toBeDefined();
                         });
 
-                        it('should show loading... indicator', function() {
+                        it('should show indicate fetching state', function() {
                             expect(scope.fetching).toBe(true);
                         });
 
@@ -374,49 +383,46 @@
                             expect($scope.annotation.getMP3).toHaveBeenCalled();
                         });
 
-                        describe('after getting the MP3', function() {
+                        describe('after getting the MP3 with valid MP3', function() {
                             beforeEach(function() {
+                                spyOn($scope.annotation, 'isValid').andReturn(true);
+
                                 $scope.$apply(function() {
                                     $scope.annotation._.getMP3Deferred.resolve($scope.annotation);
                                 });
+
+                                listen = line.find('form button[name=listen]');
+                                listen.click();
                             });
 
-                            it('should hide loading... indicator', function() {
+                            it('should exit fetching state', function() {
                                 expect(scope.fetching).toBe(false);
                             });
 
-                            describe('with valid MP3', function() {
-                                beforeEach(function() {
-                                    spyOn($scope.annotation, 'isValid').andReturn(true);
-
-                                    listen = line.find('form button[name=listen]');
-                                    listen.click();
-                                });
-
-                                it('should not add invalid css class to form element', function() {
-                                    expect(scope.invalid).toBe(false);
-                                });
-
-                                it('should speak the line', function() {
-                                    expect($scope.annotation.speak).toHaveBeenCalled();
-                                });
+                            it('should not add invalid css class to form element', function() {
+                                expect(scope.invalid).toBe(false);
                             });
 
-                            describe('with invalid MP3', function() {
-                                beforeEach(function() {
-                                    spyOn($scope.annotation, 'isValid').andReturn(false);
+                            it('should speak the line', function() {
+                                expect($scope.annotation.speak).toHaveBeenCalled();
+                            });
+                        });
 
-                                    listen = line.find('form button[name=listen]');
-                                    listen.click();
-                                });
+                        describe('after getting the MP3 with invalid MP3', function() {
+                            beforeEach(function() {
+                                spyOn($scope.annotation, 'isValid').andReturn(false);
+                                $scope.annotation._.getMP3Deferred.resolve($scope.annotation);
 
-                                it('should add invalid css class to form element', function() {
-                                    expect(scope.invalid).toBe(true);
-                                });
+                                listen = line.find('form button[name=listen]');
+                                listen.click();
+                            });
 
-                                it('should not speak the line', function() {
-                                    expect($scope.annotation.speak).not.toHaveBeenCalled();
-                                });
+                            it('should add invalid css class to form element', function() {
+                                expect(scope.invalid).toBe(true);
+                            });
+
+                            it('should not speak the line', function() {
+                                expect($scope.annotation.speak).not.toHaveBeenCalled();
                             });
                         });
                     });
@@ -443,7 +449,8 @@
                     });
 
                     it('should display the text', function() {
-                        expect(line.find('span').text()).toBe('Hey!');
+                        // window.console.log(line.find('span')[0].innerHTML);
+                        expect(line.find('span')[0].innerHTML).toBe('“Hey!”');
                     });
 
                     it('should bind the text to a textfield', function() {
