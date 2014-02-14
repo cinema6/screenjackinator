@@ -99,7 +99,7 @@
                 {
                     "type": "tts",
                     "timestamp": 5,
-                    "duration": 10,
+                    "duration": 6,
                     "text": "What's up?!",
                     "maxChars": 45
                 },
