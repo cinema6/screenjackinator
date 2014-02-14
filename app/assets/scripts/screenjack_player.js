@@ -24,7 +24,32 @@
             }
 
             function tickVoices(event, video) {
+                // window.console.log('tick:',video.player.currentTime);
                 VoiceTrackService.tick(video.player.currentTime);
+                updateTimestamp(video.player.currentTime, video.player.duration);
+            }
+
+            function updateTimestamp(time, duration) {
+                var currTime = convertTimestamp(parseInt(time, 10)),
+                    remainTime = convertTimestamp(parseInt(duration - time, 10));
+                if($scope.videoTime !== currTime) {
+                    $scope.videoTime = currTime;
+                }
+                if($scope.videoRemainingTime !== remainTime) {
+                    $scope.videoRemainingTime = remainTime;
+                }
+            }
+
+            function convertTimestamp(timestamp) {
+                function pad(digit) {
+                    return digit < 10 ? '0' + digit : '' + digit;
+                }
+                var minutes, seconds;
+                minutes = parseInt(timestamp / 60, 10);
+                seconds = timestamp - (60*minutes);
+
+                return pad(minutes) + ':' + pad(seconds);
+
             }
 
             function syncVoiceTrackService(video) {
@@ -123,6 +148,25 @@
                 pauseVoices();
             }.bind(this));
 
+            // function showAudioRemainingTime(voiceBox) {
+            //     window.console.log(arguments);
+            //     // $scope.audioTimeRemaining = convertTimestamp(parseInt(voiceBox.duration - voiceBox.currentTime, 10));
+            // }
+
+            // $scope.$on('playAnnotation', function(event, voiceBox) {
+            //     // window.console.log('playAnnotation event');
+            //     voiceBox.addEventListener('timeupdate', function showAudioRemainingTime() {
+            //         $scope.audioTimeRemaining = convertTimestamp(parseInt(voiceBox.duration - voiceBox.currentTime, 10));
+            //         window.console.log($scope.audioTimeRemaining);
+            //     });
+            // });
+
+            // $scope.$on('endAudioAnnotation', function(event, voiceBox) {
+            //     voiceBox.removeEventListener('timeupdate', function showAudioRemainingTime() {
+            //         $scope.audioTimeRemaining = convertTimestamp(parseInt(voiceBox.duration - voiceBox.currentTime, 10));
+            //     });
+            // });
+
             this.controlsController = controlsController;
             this.controlsDelegate = controlsDelegate;
 
@@ -212,6 +256,8 @@
                     scope.listenIsPlaying = false;
                     scope.listening = false;
 
+                    scope.audioTimeRemaining = '00:00';
+
                     c(scope, 'isListenable', function() {
                         return scope && scope.annotation && scope.annotation.text && scope.annotation.text.length !== 0 && !scope.fetching;
                     }, ['annotation.text']);
@@ -219,6 +265,18 @@
                     c(scope, 'isEmpty', function() {
                         return scope && scope.annotation && scope.annotation.text && scope.annotation.text.length === 0;
                     }, ['annotation.text']);
+
+                    function convertTimestamp(timestamp) {
+                        function pad(digit) {
+                            return digit < 10 ? '0' + digit : '' + digit;
+                        }
+                        var minutes, seconds;
+                        minutes = parseInt(timestamp / 60, 10);
+                        seconds = timestamp - (60*minutes);
+
+                        return pad(minutes) + ':' + pad(seconds);
+
+                    }
 
                     scope.next = function() {
                         scope.$emit('next', scope.annotation);
@@ -236,11 +294,26 @@
                         }
                     };
 
+                    // function showAudioRemainingTime() {
+                    //     scope.annotation.audioTimeRemaining = convertTimestamp(parseInt(scope.annotation._voiceBox.duration - scope.annotation._voiceBox.currentTime, 10));
+                    //     window.console.log(scope.annotation.audioTimeRemaining);
+                    // }
+
                     scope.$watch('listening', function(listening, wasListening) {
                         if(listening && !wasListening) {
                             scope.fetching = true;
 
                             scope.annotation.getMP3().then(function() {
+                                // window.console.log(self);
+                                // scope.$emit('playAnnotation', self._voiceBox);
+                                // scope.annotation._voiceBox.addEventListener('timeupdate', showAudioRemainingTime);
+                                // scope.audioTimeRemaining = '00:00';
+                                scope.annotation._voiceBox.ontimeupdate = function() {
+                                    scope.audioTimeRemaining = convertTimestamp(parseInt(scope.annotation._voiceBox.duration - scope.annotation._voiceBox.currentTime, 10));
+                                    window.console.log(scope.audioTimeRemaining);
+                                };
+                                // scope.audioTimeRemaining = '20';
+
                                 scope.fetching = false;
                                 scope.listening = true;
                                 scope.invalid = !scope.annotation.isValid();
@@ -258,6 +331,9 @@
                         if(!listening && wasListening) {
                             scope.listenIsPlaying = false;
                             scope.$emit('stopListening', scope.annotation);
+                            // scope.annotation._voiceBox.removeEventListener('timeupdate', showAudioRemainingTime);
+                            // scope.annotation._voiceBox.ontimeupdate = null;
+                            // scope.$emit('endAudioAnnotation', scope.annotation._voiceBox);
                         }
                     });
 
