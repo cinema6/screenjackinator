@@ -479,6 +479,7 @@
         position: absolute; height: 100%; width: 100%; z-index: 9001;
         background-color: rgba(0, 0, 0, 0.52); 
     }
+        /* loading and saving notifications */
         .alert__box {
             margin: 0 auto; height: 7.25em; width: 7.25em; border-radius: 3px; text-align: center;
             background-color: rgba(153, 204, 73, 0.7); 
@@ -489,3 +490,38 @@
             .alert__img {
                 margin: 22px 34px 0 34px;
             }
+            .alert__spinner {
+                animation:spin 1.45s infinite linear; -webkit-animation:spin 1.45s infinite linear;
+            }
+
+        /* warning modals */
+        .warning__box {
+            background-color: #f9f7f5; border-radius: 3px; text-align: center; 
+            padding: 1.429em 0;
+        }
+            .warning__box--discard {
+                position: absolute; margin-left: -10em; left: 50%; width: 20em;
+            }
+            .warning__box--watch-again {
+                position: absolute; margin-left: -7.8125em; left: 50%; width: 15.625em;
+            }
+            .warning__img {
+                margin: 0 2em 0.75em 2em;
+            }
+            .warning__text {
+                color: #797776; margin: 0.375em 0;
+            }
+            .warning__btn {
+                font-size: 0.875em; width: 19.714em; height: 2.857em; margin: 0.429em 0 0 0;
+                font-family: 'MuseoSans', Arial, Helvetica, sans-serif; font-weight: 300; color: #fff;
+                border: 0; border-radius: 3px; padding: 0; cursor: pointer;
+            }   
+                .warning__btn--small {
+                    width: 15.256em;
+                }
+                .warning__btn--confirm {
+                    background-color: #9ccd47;
+                }
+                .warning__btn--cancel {
+                    background-color: #afaca9;
+                }

@@ -89,3 +89,15 @@
             opacity: 1;
         }
 
+/*  ==========================================================================
+    alert styles
+    ========================================================================== */
+    .warning__btn {
+        transition: background 0.1s;
+    }
+        .warning__btn--confirm:hover {
+            background-color: #b5e266;
+        }
+        .warning__btn--cancel:hover {
+            background-color: #c8c6c4;
+        }
