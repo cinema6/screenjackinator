@@ -297,7 +297,7 @@
                     scope.listen = function() {
                         // right now the listen button is disabled during fetching
                         // but there's css for loading now, so maybe we should just do this:
-                        // if(scope.fetching) { return; }
+                        if(scope.fetching) { return; }
                         // so that the button keeps the loading indicator but doesn't do anything
 
                         if(!scope.listening) {
