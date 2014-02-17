@@ -277,6 +277,9 @@
                 position: absolute; font-size: 0.41667em; bottom: 0; left: 50%; margin-left: -6.9em;
                 color: #6e9c25; text-transform: uppercase; opacity: 0.8;
             }
+                .tts__remaining-charas--error {
+                    color: #fc2b09; font-weight: 300;
+                }
             .tts__listen-btn {
                 position: absolute; font-size: 0.75em; right: 0.778em; top: 50%; margin-top: -1.8335em;
                 height: 3.667em; width: 3.667em; border: 0; border-radius: 3px;
@@ -337,10 +340,6 @@
                 position: absolute; font-size: 0.75em; right: 0; top: -1em; height: 0.5em; width: 3.556em; border: 0;
                 background: url(../img/tts__cancel-btn.png) no-repeat center center; cursor: pointer;
             }
-
-    .line__loading {
-        position: absolute; color: #fff; display:inline; /* div element inside form */
-    }
 
     .line__invalid {
         background-color: red; /* this is styling to put on the form */
