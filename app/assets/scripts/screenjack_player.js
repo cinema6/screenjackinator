@@ -3,14 +3,17 @@
 
     angular.module('c6.screenjackinator')
         .controller('C6ScreenjackPlayerController', ['$scope', 'VideoService', 'VoiceTrackService', 'c6Computed',
-        function                                    ( $scope ,  VideoService ,  VoiceTrackService ,  c          ) {
+        function                                    ( $scope ,  VideoService ,  VoiceTrackService ,  c6Computed ) {
             var video,
                 controlsController = {},
                 controlsDelegate = {
                     nodeClicked: function(node) {
                         this.jumpTo(node.annotation);
                     }.bind(this)
-                };
+                },
+                c = c6Computed($scope);
+
+            this.controlsNodes = [];
 
             function playVoices() {
                 VoiceTrackService.play();
@@ -22,6 +25,32 @@
 
             function tickVoices(event, video) {
                 VoiceTrackService.tick(video.player.currentTime);
+                updateTimestamp(video.player.currentTime, video.player.duration);
+            }
+
+            function updateTimestamp(time, duration) {
+                var currTime = convertTimestamp(parseInt(time, 10)),
+                    remainTime = convertTimestamp(parseInt(duration - time, 10));
+
+                if($scope.videoTime !== currTime) {
+                    $scope.videoTime = currTime;
+                }
+                if($scope.videoRemainingTime !== remainTime) {
+                    $scope.videoRemainingTime = remainTime;
+                }
+            }
+
+            // helper function that should probably go in a service
+            function convertTimestamp(timestamp) {
+                var minutes, seconds,
+                    pad = function(digit) {
+                        return digit < 10 ? '0' + digit : '' + digit;
+                    };
+
+                minutes = parseInt(timestamp / 60, 10);
+                seconds = timestamp - (60 * minutes);
+
+                return pad(minutes) + ':' + pad(seconds);
             }
 
             function syncVoiceTrackService(video) {
@@ -56,7 +85,25 @@
             VideoService.getVideo('video').then(function(c6Video) {
                 video = c6Video;
 
-                this.controlsNodes.invalidate();
+                c(this, 'controlsNodes', function() {
+                    var nodes = [];
+
+                    if (!$scope.annotations || !video) {
+                        return nodes;
+                    }
+
+                    angular.forEach($scope.annotations, function(annotation, index) {
+                        nodes.push({
+                            style: 'scene',
+                            position: (annotation.timestamp / video.player.duration) * 100,
+                            text: (index + 1).toString(),
+                            annotation: annotation
+                        });
+                    });
+
+                    return nodes;
+                }, ['annotations']);
+
                 syncVoiceTrackService(c6Video);
             }.bind(this));
 
@@ -104,33 +151,15 @@
 
             this.controlsController = controlsController;
             this.controlsDelegate = controlsDelegate;
-            this.controlsNodes = c($scope, function(annotations) {
-                var nodes = [];
 
-                if (!annotations || !video) {
-                    return nodes;
-                }
-
-                angular.forEach(annotations, function(annotation, index) {
-                    nodes.push({
-                        style: 'scene',
-                        position: (annotation.timestamp / video.player.duration) * 100,
-                        text: (index + 1).toString(),
-                        annotation: annotation
-                    });
-                });
-
-                return nodes;
-            }, ['annotations']);
-
-            this.bubbles = c($scope, function(annotations) {
-                return (annotations || []).filter(function(annotation) {
+            c(this, 'bubbles', function() {
+                return ($scope.annotations || []).filter(function(annotation) {
                     return annotation.type === 'popup';
                 });
             }, ['annotations']);
 
-            this.lines = c($scope, function(annotations) {
-                return (annotations || []).filter(function(annotation) {
+            c(this, 'lines', function() {
+                return ($scope.annotations || []).filter(function(annotation) {
                     return (annotation.type === 'tts');
                 });
             }, ['annotations']);
@@ -153,14 +182,6 @@
                 currentTime = video.player.currentTime;
 
                 return ((currentTime >= start) && (currentTime <= end));
-            };
-
-            this.disablePrev = function(annotation) {
-                return (annotation.id === 0);
-            };
-
-            this.disableNext = function(annotation) {
-                return (annotation.id === $scope.annotations.length - 1);
             };
 
             $scope.$watch(isFetching, function(newVal) {
@@ -187,8 +208,8 @@
             };
         }])
 
-        .directive('c6Line', ['c6UrlMaker',
-        function             ( c6UrlMaker ) {
+        .directive('c6Line', ['c6UrlMaker', 'c6Computed',
+        function             ( c6UrlMaker, c6computed ) {
             return {
                 restrict: 'E',
                 templateUrl: c6UrlMaker('views/directives/c6_line.html'),
@@ -200,21 +221,40 @@
                     disablenext: '='
                 },
                 link: function(scope, element) {
-                    var preEditText = null;
+                    var preEditText = null,
+                        c = c6computed(scope);
 
                     scope.fetching = false;
                     scope.invalid = false;
-
-                    scope.listenIsPlaying = false;
                     scope.listening = false;
+                    scope.listenIsPlaying = false;
 
-                    scope.saveDisabled = function() {
-                        return scope.annotation.text.length === 0;
-                    };
+                    c(scope, 'isListenable', function() {
+                        return scope && scope.annotation && scope.annotation.text && scope.annotation.text.length !== 0 && !scope.fetching;
+                    }, ['annotation.text', 'fetching']);
 
-                    scope.listenDisabled = function() {
-                        return scope.annotation.text.length === 0 || scope.fetching;
-                    };
+                    c(scope, 'isEmpty', function() {
+                        return scope && scope.annotation && ('text' in scope.annotation) && scope.annotation.text.length === 0;
+                    }, ['annotation.text']);
+
+                    // helper function that should probably go in a service
+                    function convertTimestamp(timestamp) {
+                        var minutes, seconds,
+                            pad = function(digit) {
+                                return digit < 10 ? '0' + digit : '' + digit;
+                            };
+
+                        minutes = parseInt(timestamp / 60, 10);
+                        seconds = timestamp - (60 * minutes);
+
+                        return pad(minutes) + ':' + pad(seconds);
+                    }
+
+                    function setAudioTimer() {
+                        scope.$apply(function() {
+                            scope.audioTimeRemaining = convertTimestamp(parseInt(scope.annotation._voiceBox.duration - scope.annotation._voiceBox.currentTime, 10));
+                        });
+                    }
 
                     scope.next = function() {
                         scope.$emit('next', scope.annotation);
@@ -225,22 +265,18 @@
                     };
 
                     scope.listen = function() {
+                        // right now the listen button is disabled during fetching
+                        // but there's css for loading now, so maybe we should just do this:
+                        // if(scope.fetching) { return; }
+                        // so that the button keeps the loading indicator but doesn't do anything
+
                         if(!scope.listening) {
-                            scope.listening = true;
-                        } else {
-                            scope.listening = false;
-                        }
-                    };
-
-                    scope.$watch('listening', function(listening, wasListening) {
-                        if(listening && !wasListening) {
                             scope.fetching = true;
-
                             scope.annotation.getMP3().then(function() {
                                 scope.fetching = false;
                                 scope.listening = true;
                                 scope.invalid = !scope.annotation.isValid();
-
+                                scope.annotation._voiceBox.addEventListener('timeupdate', setAudioTimer);
                                 if(!scope.invalid) {
                                     scope.listenIsPlaying = true;
                                     scope.annotation.speak().then(function() {
@@ -249,13 +285,13 @@
                                     });
                                 }
                             });
-                        }
-
-                        if(!listening && wasListening) {
+                        } else {
                             scope.listenIsPlaying = false;
+                            scope.listening = false;
+                            scope.annotation._voiceBox.removeEventListener('timeupdate', setAudioTimer);
                             scope.$emit('stopListening', scope.annotation);
                         }
-                    });
+                    };
 
                     scope.discardChanges = function() {
                         scope.annotation.text = preEditText;
