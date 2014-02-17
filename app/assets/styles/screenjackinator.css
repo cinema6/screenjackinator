@@ -7,19 +7,14 @@
     a {
         text-decoration: none;
     }
-    .experience__group {
-        position: absolute; top: 0; bottom: 0; left: 0; right: 0;
-    }
     .ir {
         background-color: transparent;
         border: 0; width:0; height:0;
         overflow: hidden; display: block; position: absolute;
     }
-
     ::-moz-selection {
         background: #b3ff3e; text-shadow: none; color:#000;
     }
-
     ::selection {
         background: #b3ff3e; text-shadow: none; color:#000;
     }
@@ -34,8 +29,7 @@
         font-weight: 300;
         font-style: normal;
     }
-
-     @font-face {
+    @font-face {
         font-family: 'MuseoSans';
         src: url('museosans-100-webfont.eot');
         src: url('museosans-100-webfont.eot?#iefix') format('embedded-opentype'),
@@ -45,8 +39,7 @@
         font-weight: 100;
         font-style: normal;
     }
-
-     @font-face {
+    @font-face {
         font-family: 'MuseoSans';
         src: url('museosans-100italic-webfont.eot');
         src: url('museosans-100italic-webfont.eot?#iefix') format('embedded-opentype'),
@@ -55,6 +48,10 @@
              url('museosans-100italic-webfont.ttf') format('truetype');
         font-weight: 100;
         font-style: italic;
+    }
+
+    .experience__group {
+        position: absolute; top: 0; bottom: 0; left: 0; right: 0;
     }
 
 /*  ==========================================================================
@@ -288,6 +285,10 @@
                 .tts__listen-btn--disabled {
                     opacity: 0.12;
                 }
+                .tts__listen-btn--loading {
+                    background: url(../img/tts__listen-btn--loading.png) rgba(113, 169, 26, 0.23) no-repeat center center;
+                    cursor: default;
+                }
                 .tts__listen-btn--playing {
                     background: url(../img/tts__listen-btn--stop.png) #71a91a no-repeat center center;
                 }
@@ -456,3 +457,21 @@
         .controls__end-time {
             position: absolute; color: #6d6d6d; right: 0; line-height: 1; background-color: #f9f7f5; padding-left: 0.5em;
         }
+
+/*  ==========================================================================
+    alert styles
+    ========================================================================== */
+    .alert__group {
+        position: absolute; height: 100%; width: 100%; z-index: 9001;
+        background-color: rgba(0, 0, 0, 0.52); 
+    }
+        .alert__box {
+            margin: 0 auto; height: 7.25em; width: 7.25em; border-radius: 3px; text-align: center;
+            background-color: rgba(153, 204, 73, 0.7); 
+        }
+            .alert__text {
+                font-size: 0.875em; color: #fff; text-transform: uppercase;
+            }
+            .alert__img {
+                margin: 22px 34px 0 34px;
+            }

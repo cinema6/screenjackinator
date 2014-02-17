@@ -2,6 +2,15 @@
     <!--<section ng-if="ExperienceCtrl.showWelcome" ng-include="'assets/views/partials/welcome.html'"></section>
     <section ng-if="ExperienceCtrl.showWizard" ng-controller="WizardController" ng-include="'assets/views/partials/wizard.html'"></section>-->
     
+    <!-- save & loading directive or partial -->
+    <!--<section class="alert__group">
+        <div c6-vertical-center resize class="alert__box">
+            <img class="alert__img" src="assets/img/alerts__spinner.png">
+            <span class="alert__text">Loading</span>
+        </div>
+    </section>-->
+    <!-- end save & loading -->
+
     <!-- appbar directive start-->
     <section class="appbar__group">
         <input class="appbar__title" type="text" name="project-title" id="project-title" placeholder="My Screenjack Title" ng-model="AppCtrl.experience.title">
@@ -49,6 +58,9 @@
     </c6-screenjack-player>
 </section>
 
+
+
+<!-- these scripts should be moved somewhere more approperiate, and intergated with angular if possible -->
 <script>
     var toggleTitleOk = function () {
         var input$ = $('#project-title'),
