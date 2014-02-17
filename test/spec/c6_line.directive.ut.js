@@ -440,7 +440,8 @@
                             position: {
                                 top: '50%',
                                 left: '10%'
-                            }
+                            },
+                            isValid: jasmine.createSpy('annotation.isValid()').andReturn(true)
                         };
 
                         $scope.$apply(function() {
