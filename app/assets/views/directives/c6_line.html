@@ -1,7 +1,7 @@
 <div class="tts__box">
 	<span class="tts__text" ng-style="{display: (editing ? 'none' : 'inline')}">&ldquo;{{annotation.text}}&rdquo;</span>
 	<form ng-show="editing" ng-class="{'line__invalid': invalid}">
-	    <input placeholder="Type your dialogue here." type="text" ng-model="annotation.text" maxlength="{{annotation.maxChars}}" class="tts__input">
+	    <input placeholder="Type your dialogue here." type="text" ng-model="annotation.text" maxlength="{{annotation.maxChars}}" class="tts__input" onclick="this.select();">
 	    <small ng-class="{'tts__remaining-charas--error': annotation.maxChars==annotation.text.length}" class="tts__remaining-charas">{{annotation.maxChars-annotation.text.length}} Characters Remaining</small>
 	    <button name="listen" ng-click="$event.stopPropagation(); listen();" ng-disabled="!isListenable" ng-class="{'tts__listen-btn--loading': fetching, 'tts__listen-btn--playing': listenIsPlaying, 'tts__listen-btn--disabled': !isListenable}" class="tts__listen-btn"><span class="ir">Listen</span></button>
 	    	<div ng-class="{'tts__listen-popup--hidden': !listenIsPlaying}" class="tts__listen-popup">
@@ -16,3 +16,4 @@
 </div>
 <button ng-hide="disablenext" class="tts__arrow tts__next-arrow" ng-click="$event.stopPropagation(); next();" title="Next"><span class="ir">Next</span></button>
 <button ng-hide="disableprev" class="tts__arrow tts__prev-arrow" ng-click="$event.stopPropagation(); prev();" title="Go Back"><span class="ir">Go Back</span></button>
+
