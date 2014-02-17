@@ -304,7 +304,7 @@
                         background: url(../img/tts__listen-arrow.png) no-repeat center center; 
                     }
                     .tts__listen-timestamp {
-                        position: absolute; font-size: 0.41667em; padding: 1em 1.2em; 
+                        position: absolute; font-size: 0.41667em; padding: 1em 1.2em; width: 2.8em;
                         background-color: #669817; color: #fff; border-radius: 3px 0 0 3px;
                     }
                     .tts__listen-soundwave {
