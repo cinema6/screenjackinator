@@ -230,8 +230,23 @@
                     scope.listening = false;
                     scope.listenIsPlaying = false;
                     scope.audioTimeRemaining = '00:00';
+                    scope.errorMessage = '';
 
+                    c(scope, 'errorMessage', function() {
+                        var remaining;
+                        if(scope && scope.annotation && scope.invalid) {
+                            return 'Dialogue too long! Max time is ' + scope.annotation.duration + ' seconds';
+                        }
+                        if(scope && scope.annotation && ('text' in scope.annotation) ) {
+                            remaining = scope.annotation.maxChars - scope.annotation.text.length;
+                            return remaining === 0 ? ('No more space! Max characters: ' + scope.annotation.maxChars) : remaining + ' Characters Remaining';
+                        }
+                        // return scope && scope.annotation && scope
+                    }, ['annotation.text', 'invalid']);
 
+                    c(scope, 'isSavable', function() {
+                        return scope && scope.annotation && ('text' in scope.annotation) && (scope.annotation.text.length !== 0) && scope.annotation.isValid();
+                    }, ['annotation.text', 'annotation.isValid()']);
 
                     c(scope, 'isListenable', function() {
                         return scope && scope.annotation && scope.annotation.text && scope.annotation.text.length !== 0 && !scope.fetching;
@@ -289,10 +304,10 @@
                             scope.fetching = true;
                             scope.annotation.getMP3().then(function() {
                                 scope.fetching = false;
-                                scope.listening = true;
                                 scope.invalid = !scope.annotation.isValid();
                                 scope.annotation._voiceBox.addEventListener('timeupdate', setAudioTimer);
                                 if(!scope.invalid) {
+                                    scope.listening = true;
                                     scope.listenIsPlaying = true;
                                     scope.annotation.speak().then(function() {
                                         scope.listenIsPlaying = false;
