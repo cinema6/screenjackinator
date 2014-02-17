@@ -283,7 +283,7 @@
                 background: url(../img/tts__listen-btn--default.png) #71a91a no-repeat center center; cursor: pointer; 
             }
                 .tts__listen-btn--disabled {
-                    /*opacity: 0.12;*/
+                    opacity: 0.12;
                 }
                 .tts__listen-btn--loading {
                     background: rgba(113, 169, 26, 0.23); cursor: default;
