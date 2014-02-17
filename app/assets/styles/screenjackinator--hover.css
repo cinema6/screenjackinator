@@ -56,6 +56,9 @@
         .tts__listen-btn:hover {
             background-color: #8cc436;
         }
+        .tts__listen-btn--loading:hover {
+            background-color: rgba(113, 169, 26, 0.23); 
+        }
         .tts__prev-arrow:hover, .tts__next-arrow:hover {
             background-color: #ddeac0;
         }

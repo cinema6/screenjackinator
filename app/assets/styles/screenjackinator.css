@@ -7,19 +7,14 @@
     a {
         text-decoration: none;
     }
-    .experience__group {
-        position: absolute; top: 0; bottom: 0; left: 0; right: 0;
-    }
     .ir {
         background-color: transparent;
         border: 0; width:0; height:0;
         overflow: hidden; display: block; position: absolute;
     }
-
     ::-moz-selection {
         background: #b3ff3e; text-shadow: none; color:#000;
     }
-
     ::selection {
         background: #b3ff3e; text-shadow: none; color:#000;
     }
@@ -34,8 +29,7 @@
         font-weight: 300;
         font-style: normal;
     }
-
-     @font-face {
+    @font-face {
         font-family: 'MuseoSans';
         src: url('museosans-100-webfont.eot');
         src: url('museosans-100-webfont.eot?#iefix') format('embedded-opentype'),
@@ -45,8 +39,7 @@
         font-weight: 100;
         font-style: normal;
     }
-
-     @font-face {
+    @font-face {
         font-family: 'MuseoSans';
         src: url('museosans-100italic-webfont.eot');
         src: url('museosans-100italic-webfont.eot?#iefix') format('embedded-opentype'),
@@ -55,6 +48,10 @@
              url('museosans-100italic-webfont.ttf') format('truetype');
         font-weight: 100;
         font-style: italic;
+    }
+
+    .experience__group {
+        position: absolute; top: 0; bottom: 0; left: 0; right: 0;
     }
 
 /*  ==========================================================================
@@ -280,6 +277,9 @@
                 position: absolute; font-size: 0.41667em; bottom: 0; left: 50%; margin-left: -6.9em;
                 color: #6e9c25; text-transform: uppercase; opacity: 0.8;
             }
+                .tts__remaining-charas--error {
+                    color: #fc2b09; font-weight: 300;
+                }
             .tts__listen-btn {
                 position: absolute; font-size: 0.75em; right: 0.778em; top: 50%; margin-top: -1.8335em;
                 height: 3.667em; width: 3.667em; border: 0; border-radius: 3px;
@@ -288,6 +288,24 @@
                 .tts__listen-btn--disabled {
                     opacity: 0.12;
                 }
+                .tts__listen-btn--loading {
+                    background: rgba(113, 169, 26, 0.23); cursor: default;
+                }
+                    /* spinner animation */
+                    .tts__listen-spinner {
+                        position: absolute; right: 1.5em; top: 50%; margin-top: -0.541667em; height: 1.0833em; width: 1.0833em; 
+                        background: url(../img/tts__spinner.png) no-repeat center center;
+                        animation:spin 1.35s infinite linear; -webkit-animation:spin 1.35s infinite linear;
+                    }
+                        @keyframes spin {
+                            from {transform:rotate(0deg);}
+                            to {transform:rotate(360deg);}
+                        }
+                        @-webkit-keyframes spin {
+                            from {-webkit-transform:rotate(0deg);}
+                            to {-webkit-transform:rotate(360deg);}
+                        }
+
                 .tts__listen-btn--playing {
                     background: url(../img/tts__listen-btn--stop.png) #71a91a no-repeat center center;
                 }
@@ -303,7 +321,7 @@
                         background: url(../img/tts__listen-arrow.png) no-repeat center center; 
                     }
                     .tts__listen-timestamp {
-                        position: absolute; font-size: 0.41667em; padding: 1em 1.2em; 
+                        position: absolute; font-size: 0.41667em; padding: 1em 1.2em; width: 2.8em;
                         background-color: #669817; color: #fff; border-radius: 3px 0 0 3px;
                     }
                     .tts__listen-soundwave {
@@ -322,10 +340,6 @@
                 position: absolute; font-size: 0.75em; right: 0; top: -1em; height: 0.5em; width: 3.556em; border: 0;
                 background: url(../img/tts__cancel-btn.png) no-repeat center center; cursor: pointer;
             }
-
-    .line__loading {
-        position: absolute; color: #fff; display:inline; /* div element inside form */
-    }
 
     .line__invalid {
         background-color: red; /* this is styling to put on the form */
@@ -456,3 +470,21 @@
         .controls__end-time {
             position: absolute; color: #6d6d6d; right: 0; line-height: 1; background-color: #f9f7f5; padding-left: 0.5em;
         }
+
+/*  ==========================================================================
+    alert styles
+    ========================================================================== */
+    .alert__group {
+        position: absolute; height: 100%; width: 100%; z-index: 9001;
+        background-color: rgba(0, 0, 0, 0.52); 
+    }
+        .alert__box {
+            margin: 0 auto; height: 7.25em; width: 7.25em; border-radius: 3px; text-align: center;
+            background-color: rgba(153, 204, 73, 0.7); 
+        }
+            .alert__text {
+                font-size: 0.875em; color: #fff; text-transform: uppercase;
+            }
+            .alert__img {
+                margin: 22px 34px 0 34px;
+            }
