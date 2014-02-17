@@ -286,9 +286,23 @@
                     opacity: 0.12;
                 }
                 .tts__listen-btn--loading {
-                    background: url(../img/tts__listen-btn--loading.png) rgba(113, 169, 26, 0.23) no-repeat center center;
-                    cursor: default;
+                    background: rgba(113, 169, 26, 0.23); cursor: default;
                 }
+                    /* spinner animation */
+                    .tts__listen-spinner {
+                        position: absolute; right: 1.5em; top: 50%; margin-top: -0.541667em; height: 1.0833em; width: 1.0833em; 
+                        background: url(../img/tts__spinner.png) no-repeat center center;
+                        animation:spin 1.35s infinite linear; -webkit-animation:spin 1.35s infinite linear;
+                    }
+                        @keyframes spin {
+                            from {transform:rotate(0deg);}
+                            to {transform:rotate(360deg);}
+                        }
+                        @-webkit-keyframes spin {
+                            from {-webkit-transform:rotate(0deg);}
+                            to {-webkit-transform:rotate(360deg);}
+                        }
+
                 .tts__listen-btn--playing {
                     background: url(../img/tts__listen-btn--stop.png) #71a91a no-repeat center center;
                 }

@@ -4,12 +4,12 @@
 	    <input placeholder="Type your dialogue here." type="text" ng-model="annotation.text" maxlength="{{annotation.maxChars}}" class="tts__input" onclick="this.select();">
 	    <small ng-class="{'tts__remaining-charas--error': annotation.maxChars==annotation.text.length}" class="tts__remaining-charas">{{annotation.maxChars-annotation.text.length}} Characters Remaining</small>
 	    <button name="listen" ng-click="$event.stopPropagation(); listen();" ng-disabled="!isListenable" ng-class="{'tts__listen-btn--loading': fetching, 'tts__listen-btn--playing': listenIsPlaying, 'tts__listen-btn--disabled': !isListenable}" class="tts__listen-btn"><span class="ir">Listen</span></button>
+	    	<div class="tts__listen-spinner" ng-show="fetching">&nbsp;</div>
 	    	<div ng-class="{'tts__listen-popup--hidden': !listenIsPlaying}" class="tts__listen-popup">
 	    		<span class="tts__listen-timestamp">{{audioTimeRemaining}}</span>
 	    		<img class="tts__listen-soundwave" src="assets/img/placeholder-soundwave.png">
 	    		<div class="tts__listen-arrow">&nbsp;</div>
 	    	</div>
-	    <!--<div class="line__loading" ng-show="fetching">Loading...</div>-->
 	    <button name="save" ng-disabled="isEmpty" ng-click="$event.stopPropagation(); saveChanges();" ng-class="{'tts__save-btn--disabled': isEmpty}" class="tts__save-btn">Save</button>
 	    <button name="cancel" ng-click="$event.stopPropagation(); discardChanges();" class="tts__cancel-btn"><span class="ir">Cancel</span></button>
 	</form>
