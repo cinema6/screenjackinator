@@ -84,6 +84,7 @@
             );
             VideoService.getVideo('video').then(function(c6Video) {
                 video = c6Video;
+                updateTimestamp(video.player.currentTime, video.player.duration);
 
                 c(this, 'controlsNodes', function() {
                     var nodes = [];
@@ -208,8 +209,8 @@
             };
         }])
 
-        .directive('c6Line', ['c6UrlMaker', 'c6Computed',
-        function             ( c6UrlMaker, c6computed ) {
+        .directive('c6Line', ['c6UrlMaker', 'c6Computed', '$document',
+        function             ( c6UrlMaker, c6computed, $document ) {
             return {
                 restrict: 'E',
                 templateUrl: c6UrlMaker('views/directives/c6_line.html'),
@@ -228,6 +229,9 @@
                     scope.invalid = false;
                     scope.listening = false;
                     scope.listenIsPlaying = false;
+                    scope.audioTimeRemaining = '00:00';
+
+
 
                     c(scope, 'isListenable', function() {
                         return scope && scope.annotation && scope.annotation.text && scope.annotation.text.length !== 0 && !scope.fetching;
@@ -252,8 +256,19 @@
 
                     function setAudioTimer() {
                         scope.$apply(function() {
-                            scope.audioTimeRemaining = convertTimestamp(parseInt(scope.annotation._voiceBox.duration - scope.annotation._voiceBox.currentTime, 10));
+                            scope.audioTimeRemaining = convertTimestamp(parseInt(scope.annotation._voiceBox.currentTime, 10));
                         });
+                    }
+
+                    function outsideElementClick(event) {
+                        var isChild = element.has(event.target).length > 0;
+                        var isSelf = element[0] === event.target;
+                        var isInside = isChild || isSelf;
+                        if(!isInside) {
+                            scope.discardChanges();
+                            scope.$digest();
+                        }
+                        // window.console.log('click');
                     }
 
                     scope.next = function() {
@@ -333,10 +348,15 @@
 
                         preEditText = editing ? text : null;
 
+                        if(editing && !wasEditing) {
+                            $document.bind('click', outsideElementClick);
+                        }
+
                         if(wasEditing && !editing) {
                             if(!scope.annotation.isVirgin()) {
                                 element.addClass('modified-class');
                             }
+                            $document.unbind('click', outsideElementClick);
                         }
 
                         if (editing !== wasEditing) {
