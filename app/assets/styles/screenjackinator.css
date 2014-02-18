@@ -505,6 +505,10 @@
             .warning__box--watch-again {
                 margin-left: -7.8125em; width: 15.625em; text-align: center; 
             }
+            .warning__box--progress {
+                margin-left: -20.625em; width: 41.25em; text-align: center;
+                padding: 0.5em 0 1.25em;
+            }
             .warning__box--embed {
                 margin-left: -11.6875em; width: 20.875em; padding: 1.429em 1.25em; 
                 border-radius: 3px 3px 0 0; top: 50%; margin-top: -17.25em;
@@ -540,6 +544,16 @@
                 }
                 .warning__btn--cancel {
                     background-color: #afaca9;
+                }
+
+            .warning__progress-bar {
+                position: relative; width: 39.125em; height: 0.875em; margin: 0 auto;
+                border-radius: 3px; background-color: #cecbc8; overflow: hidden;
+            }
+                .warning__active-bar {
+                    position: absolute; height: 100%; width: 72%;
+                    font-size: 0.625em; color: #6f900f; background-color: #b2d54a;
+                    text-align: right; padding-right: 0.5em;
                 }
 
             .video-size__group {

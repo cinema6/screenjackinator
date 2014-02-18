@@ -4,29 +4,43 @@
     
     <!-- alert directive or partial -->
     <section class="alert__group">
-        <!--<div c6-vertical-center resize class="alert__box">
+        <!-- save & load
+        <div c6-vertical-center resize class="alert__box">
             <img class="alert__img alert__spinner" src="assets/img/alerts__spinner.png">
             <span class="alert__text">Loading</span>
         </div>-->
-        <!--<div c6-vertical-center resize class="warning__box warning__box--discard">
+
+        <!-- Discard Changes warning
+        <div c6-vertical-center resize class="warning__box warning__box--discard">
             <img src="assets/img/warning-icon.png">
             <p class="warning__text">You’re changes have not been saved.</p>
             <p class="warning__text">Discard your changes?</p>
             <button class="warning__btn warning__btn--confirm">Discard changes and continue.</button>
             <button class="warning__btn warning__btn--cancel">No, take me back.</button>
         </div>-->
-        <!--<div c6-vertical-center resize class="warning__box warning__box--watch-again">
+
+        <!-- Watch again warning
+        <div c6-vertical-center resize class="warning__box warning__box--watch-again">
             <img class="warning__img" src="assets/img/watch-again-icon.png">
             <button class="warning__btn warning__btn--small warning__btn--confirm">Watch Again?</button>
             <button class="warning__btn warning__btn--small warning__btn--cancel">Return to the Editor</button>
         </div>-->
 
-        <!--<div c6-vertical-center resize class="warning__box warning__box--discard">
+        <!-- Create project modal
+        <div c6-vertical-center resize class="warning__box warning__box--discard">
             <p class="warning__text">Create and render your project now?</p>
             <button class="warning__btn warning__btn--confirm">Yes, continue.</button>
             <button class="warning__btn warning__btn--cancel">No, go back.</button>
         </div>-->
 
+        <div c6-vertical-center resize class="warning__box warning__box--progress">
+            <p class="warning__text">Creating <em>2001: Space Odd-essy...</em></p>
+            <div class="warning__progress-bar">
+                <div class="warning__active-bar">72%</div>
+            </div>
+        </div>
+
+        <!-- embed modal 
         <div class="warning__box warning__box--embed">
             <h1 class="warning__title">Embed on your webpage</h1>
             <p class="warning__subtext">Select a video side and copy the provided code onto your website.</p>
@@ -42,12 +56,12 @@
                         <li class="video-size__hide video-size__option">1280&times;720</li>
                     </ul>
 
-                    <!--<select class="video-size__dropdown">
-                        <option class="video-size__option">560&times;315</option>
-                        <option class="video-size__option">640&times;360</option>
-                        <option class="video-size__option">856&times;480</option>
-                        <option class="video-size__option">1280&times;720</option>
-                    </select>-->
+                    <select title="video-size" hidden>
+                        <option>560&times;315</option>
+                        <option>640&times;360</option>
+                        <option>856&times;480</option>
+                        <option>1280&times;720</option>
+                    </select>
                 </div>
                 <textarea class="video-size__code" onclick="this.select()" title="embed-code" rows="0">&lt;iframe width=&ldquo;853&rdquo; height=&ldquo;480&rdquo; src=&ldquo;//www.cinema6.com/embed/GUNHbU7LnM4&rdquo; frameborder=&ldquo;0&rdquo; allowfullscreen&gt;&lt;/iframe&gt;</textarea>
             </form>
@@ -65,7 +79,9 @@
             <div class="warning__footer">
                 <button class="warning__btn warning__btn--small warning__btn--cancel"><span class="warning__caps">Done</span></button>
             </div>
-        </div>
+        </div>-->
+
+
     </section>
     <!-- end alert -->
 
