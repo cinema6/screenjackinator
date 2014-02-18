@@ -246,14 +246,14 @@
         position: absolute; bottom: 0; width: 100%; text-align: center; 
     }
         .tts__arrow {
-            position: absolute; font-size: 0.5em; width: 7em; height: 6.25em; bottom: 4em; cursor: pointer; padding: 0; border: 0;
+            position: absolute; font-size: 0.5em; width: 8.25em; height: 8.25em; bottom: 3.5em; cursor: pointer; padding: 0; border: 0;
         }
             .tts__next-arrow {
-                left: 88%; background: url(../img/bubble-nav__next.png) no-repeat center center; border-radius: 3px;
+                left: 89%; background: url(../img/bubble-nav__next.png) no-repeat center center; border-radius: 3px;
                 background-color: #f9f7f5;
             }
             .tts__prev-arrow {
-                right: 88%; background: url(../img/bubble-nav__prev.png) no-repeat center center; border-radius: 3px;
+                right: 89%; background: url(../img/bubble-nav__prev.png) no-repeat center center; border-radius: 3px;
                 background-color: #f9f7f5;
             }
 
@@ -346,6 +346,9 @@
     }
 
     @media screen and (max-width: 768px) {
+        .tts__arrow {
+            bottom: 3em;
+        }
         .tts__box {
             padding: 0.75em 0; bottom: 0.75em;
         }
