@@ -228,7 +228,6 @@
                     scope.fetching = false;
                     scope.invalid = false;
                     scope.listening = false;
-                    scope.listenIsPlaying = false;
                     scope.audioTimeRemaining = '00:00';
                     scope.errorMessage = '';
 
@@ -299,19 +298,19 @@
                             scope.fetching = true;
                             scope.annotation.getMP3().then(function() {
                                 scope.fetching = false;
+                                scope.listening = true;
                                 scope.invalid = !scope.annotation.isValid();
                                 scope.annotation._voiceBox.addEventListener('timeupdate', setAudioTimer);
                                 if(!scope.invalid) {
                                     scope.listening = true;
-                                    scope.listenIsPlaying = true;
+                                    // window.console.log(scope.listening);
                                     scope.annotation.speak().then(function() {
-                                        scope.listenIsPlaying = false;
+                                        scope.testthing = 'hello';
                                         scope.listening = false;
                                     });
                                 }
                             });
                         } else {
-                            scope.listenIsPlaying = false;
                             scope.listening = false;
                             scope.annotation._voiceBox.removeEventListener('timeupdate', setAudioTimer);
                             scope.$emit('stopListening', scope.annotation);
