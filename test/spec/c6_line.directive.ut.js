@@ -6,13 +6,15 @@
             var $rootScope,
                 $scope,
                 $compile,
-                $q;
+                $q,
+                $document;
 
             beforeEach(function() {
                 module('c6.screenjackinator');
 
                 inject(function($injector) {
                     $rootScope = $injector.get('$rootScope');
+                    $document = $injector.get('$document');
                     $compile = $injector.get('$compile');
                     $q = $injector.get('$q');
 
@@ -42,6 +44,12 @@
                         line.click();
                         expect(scope.editing).toBe(true);
                     });
+
+                    // it('should exit editing mode when anywhere outside the directive is clicked', function() {
+                    //     line.click();
+                    //     $document.click();
+                    //     expect(scope.editing).toBe(false);
+                    // });
                 });
 
                 describe('if editable is false', function() {
@@ -241,6 +249,13 @@
                         });
                         $scope.$apply(function() {
                             $scope.annotation.text = 'My Edit';
+                        });
+                    });
+
+                    describe('clicking outside of the directive element', function() {
+                        it('should exit editing mode', function() {
+                            $document.click();
+                            // expect(scope.editing).toBe(false);
                         });
                     });
 

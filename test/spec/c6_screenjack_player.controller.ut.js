@@ -330,6 +330,82 @@
                 });
             });
 
+            describe('when next is $emitted', function() {
+                beforeEach(function() {
+                    spyOn(C6ScreenjackPlayerCtrl, 'jumpTo');
+                    $scope.annotations = [
+                        {
+                            id:0
+                        },
+                        {
+                            id:1
+                        }
+                    ];
+                });
+
+                it('should go to next annotation if there is one', function(){
+                    $scope.$emit('next', $scope.annotations[0]);
+                    expect(C6ScreenjackPlayerCtrl.jumpTo).toHaveBeenCalledWith($scope.annotations[1]);
+                });
+
+                it('should not go to next annotation if there isn\'t one', function(){
+                    $scope.$emit('next', $scope.annotations[1]);
+                    expect(C6ScreenjackPlayerCtrl.jumpTo).not.toHaveBeenCalled();
+                });
+
+            });
+
+            describe('when prev is $emitted', function() {
+                beforeEach(function() {
+                    spyOn(C6ScreenjackPlayerCtrl, 'jumpTo');
+                    $scope.annotations = [
+                        {
+                            id:0
+                        },
+                        {
+                            id:1
+                        }
+                    ];
+                });
+
+                it('should go to previous annotation if there is one', function(){
+                    $scope.$emit('prev', $scope.annotations[1]);
+                    expect(C6ScreenjackPlayerCtrl.jumpTo).toHaveBeenCalledWith($scope.annotations[0]);
+                });
+
+                it('should not go to previous annotation if there isn\'t one', function(){
+                    $scope.$emit('prev', $scope.annotations[0]);
+                    expect(C6ScreenjackPlayerCtrl.jumpTo).not.toHaveBeenCalled();
+                });
+
+            });
+
+            describe('when stopListening is $emitted', function() {
+                beforeEach(function() {
+                    $scope.annotations = [
+                        {
+                            timestamp:5
+                        },
+                        {
+                            timestamp:10
+                        }
+                    ];
+
+                    $scope.$emit('stopListening', $scope.annotations[0]);
+                });
+
+                it('should go back to beginning of current annotation', function() {
+                    expect(VoiceTrackService.tick).toHaveBeenCalledWith(5);
+                    $scope.$emit('stopListening', $scope.annotations[1]);
+                    expect(VoiceTrackService.tick).toHaveBeenCalledWith(10);
+                });
+
+                it('should pause the voice track', function() {
+                    expect(VoiceTrackService.pause).toHaveBeenCalled();
+
+                });
+            });
+
             describe('properties', function() {
                 describe('bubbles', function() {
                     var annotations;
