@@ -333,7 +333,7 @@
                         background-color: #bab9b7; border-radius: 3px; overflow: hidden;
                     }
                         .listen-meter__active {
-                            width: 85%; /* width should be set dynamically, also when there is an error, it should stop at 100% - the width of the .listen-meter__limit-back */
+                            width: 85%; /* remove style once its dynamically set */
                             height: 100%; background-color: #a8cc3a; border-right: #9c9b98 1px solid;
                         }
                         .listen-meter__limit-back {
@@ -341,7 +341,7 @@
                             background: url(../img/warning-tile.png) repeat; border-left: #959492 1px solid;
                         }
                             .listen-meter__limit-active {
-                                width: 50%; /* width should be set dynamically*/
+                                width: 50%; /* remove style once its dynamically set */
                                 height: 100%; background: url(../img/warning-tile.png) repeat #ec301c;
                             }
                     
