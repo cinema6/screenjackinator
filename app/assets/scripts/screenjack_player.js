@@ -40,7 +40,7 @@
                 }
             }
 
-            // helper function that should probably go in a service
+            // TODO: move into a filter
             function convertTimestamp(timestamp) {
                 var minutes, seconds,
                     pad = function(digit) {
@@ -133,19 +133,19 @@
                     .off('timeupdate', tickVoices);
             });
 
-            $scope.$on('next', function(event, annotation) {
+            $scope.$on('c6Line:next', function(event, annotation) {
                 if($scope.annotations[annotation.id+1]) {
                     this.jumpTo($scope.annotations[annotation.id+1]);
                 }
             }.bind(this));
 
-            $scope.$on('prev', function(event, annotation) {
+            $scope.$on('c6Line:prev', function(event, annotation) {
                 if($scope.annotations[annotation.id-1]) {
                     this.jumpTo($scope.annotations[annotation.id-1]);
                 }
             }.bind(this));
 
-            $scope.$on('stopListening', function(event, annotation) {
+            $scope.$on('c6Line:stopListening', function(event, annotation) {
                 VoiceTrackService.tick(annotation.timestamp);
                 pauseVoices();
             }.bind(this));
@@ -228,7 +228,6 @@
                     scope.fetching = false;
                     scope.invalid = false;
                     scope.listening = false;
-                    scope.listenIsPlaying = false;
                     scope.audioTimeRemaining = '00:00';
                     scope.errorMessage = '';
 
@@ -241,7 +240,6 @@
                             remaining = scope.annotation.maxChars - scope.annotation.text.length;
                             return remaining === 0 ? ('No more space! Max characters: ' + scope.annotation.maxChars) : remaining + ' Characters Remaining';
                         }
-                        // return scope && scope.annotation && scope
                     }, ['annotation.text', 'invalid']);
 
                     c(scope, 'isSavable', function() {
@@ -249,14 +247,14 @@
                     }, ['annotation.text', 'annotation.isValid()']);
 
                     c(scope, 'isListenable', function() {
-                        return scope && scope.annotation && scope.annotation.text && scope.annotation.text.length !== 0 && !scope.fetching;
+                        return scope && scope.annotation && ('text' in scope.annotation) && scope.annotation.text.length !== 0 && !scope.fetching;
                     }, ['annotation.text', 'fetching']);
 
                     c(scope, 'isEmpty', function() {
                         return scope && scope.annotation && ('text' in scope.annotation) && scope.annotation.text.length === 0;
                     }, ['annotation.text']);
 
-                    // helper function that should probably go in a service
+                    // TODO: move into a filter
                     function convertTimestamp(timestamp) {
                         var minutes, seconds,
                             pad = function(digit) {
@@ -283,22 +281,18 @@
                             scope.discardChanges();
                             scope.$digest();
                         }
-                        // window.console.log('click');
                     }
 
                     scope.next = function() {
-                        scope.$emit('next', scope.annotation);
+                        scope.$emit('c6Line:next', scope.annotation);
                     };
 
                     scope.prev = function() {
-                        scope.$emit('prev', scope.annotation);
+                        scope.$emit('c6Line:prev', scope.annotation);
                     };
 
                     scope.listen = function() {
-                        // right now the listen button is disabled during fetching
-                        // but there's css for loading now, so maybe we should just do this:
                         if(scope.fetching) { return; }
-                        // so that the button keeps the loading indicator but doesn't do anything
 
                         if(!scope.listening) {
                             scope.fetching = true;
@@ -308,18 +302,15 @@
                                 scope.annotation._voiceBox.addEventListener('timeupdate', setAudioTimer);
                                 if(!scope.invalid) {
                                     scope.listening = true;
-                                    scope.listenIsPlaying = true;
                                     scope.annotation.speak().then(function() {
-                                        scope.listenIsPlaying = false;
                                         scope.listening = false;
                                     });
                                 }
                             });
                         } else {
-                            scope.listenIsPlaying = false;
                             scope.listening = false;
                             scope.annotation._voiceBox.removeEventListener('timeupdate', setAudioTimer);
-                            scope.$emit('stopListening', scope.annotation);
+                            scope.$emit('c6Line:stopListening', scope.annotation);
                         }
                     };
 
