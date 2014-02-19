@@ -318,23 +318,48 @@
                     background: url(../img/tts__listen-btn--stop.png) #71a91a no-repeat center center;
                 }
                 .tts__listen-popup {
-                    position: absolute; height: 1.45833em; right: 0; bottom: -2.125em;
-                    background: #4e7c08; border-radius: 3px;
+                    position: absolute; width: 9.375em; height: 1.5em; right: 0; bottom: -3em;
+                    font-size: 0.667em; padding: 0.5em; background: #f9f7f5; border-radius: 3px;
                 }
                     .tts__listen-popup--hidden {
                         display:none;
                     }
                     .tts__listen-arrow {
-                        position:absolute; height: 0.20833em; width: 0.375em; left: 3.3333em; top: -0.20833em;
+                        position:absolute; height: 0.3125em; width: 0.625em; right: 2.625em; top: -0.20833em;
                         background: url(../img/tts__listen-arrow.png) no-repeat center center; 
                     }
-                    .tts__listen-timestamp {
-                        position: absolute; font-size: 0.41667em; padding: 1em 1.2em; width: 2.8em;
-                        background-color: #669817; color: #fff; border-radius: 3px 0 0 3px;
+                    .listen-meter__back {
+                        position: relative; width: 9.375em; height: 0.6875em; 
+                        background-color: #bab9b7; border-radius: 3px; overflow: hidden;
                     }
-                    .tts__listen-soundwave {
-                        display: inline-block; margin: 0.08333em 0 0 1.875em;
+                        .listen-meter__active {
+                            width: 85%; /* width should be set dynamically, also when there is an error, it should stop at 100% - the width of the .listen-meter__limit-back */
+                            height: 100%; background-color: #a8cc3a; border-right: #9c9b98 1px solid;
+                        }
+                        .listen-meter__limit-back {
+                            position: absolute; height: 100%; width: 15%; top: 0; right: 0;
+                            background: url(../img/warning-tile.png) repeat; border-left: #959492 1px solid;
+                        }
+                            .listen-meter__limit-active {
+                                width: 50%; /* width should be set dynamically*/
+                                height: 100%; background: url(../img/warning-tile.png) repeat #ec301c;
+                            }
+                    
+                    .listen-meter__timestamps {
+                        font-size: 0.625em; margin-top: 0.2em; text-transform: uppercase;
                     }
+                        .tts__listen-current {
+                            float: left; color: #64821b;
+                        }
+                        .tts__listen-limit {
+                            float: right; color: #5e5e5e; font-style: italic;
+                        }
+
+                    .listen-meter__error {
+                        font-size: 0.625em; margin-top: 0.2em; text-transform: uppercase;
+                        color: #c21301; font-style: italic;
+                    }
+
             .tts__save-btn {
                 position: absolute; font-size: 0.625em; left: 50%; bottom: -4em; 
                 margin-left: -4.1875em; padding: 0.85em 3em; border: 0; border-radius: 3px;
