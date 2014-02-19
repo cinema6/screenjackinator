@@ -1,7 +1,7 @@
 <div class="tts__box">
 	<span class="tts__text" ng-style="{display: (editing ? 'none' : 'inline')}">&ldquo;{{annotation.text}}&rdquo;</span>
 	<form ng-show="editing">
-	    <input placeholder="Type your dialogue here." type="text" ng-model="annotation.text" maxlength="{{annotation.maxChars}}" class="tts__input" onclick="this.select();">
+	    <input placeholder="Type your dialogue here." type="text" ng-model="annotation.text" class="tts__input" onclick="this.select();">
 
 	    <!-- 'New Warning':
 	    	Remove the style attr on the <small>, and just show and hide the entire element when appopriate. 
@@ -10,7 +10,7 @@
 
 				* Remove the function where the user cannot type when they are over the character limit.
 		-->
-	    <small ng-class="{'tts__remaining-charas--error': invalid}" class="tts__warning" style="display:none;">
+	    <small ng-show="annotation.text.length > annotation.maxChars" class="tts__warning">
 	    	<img class="tts__warning-icon" src="assets/img/error-icon.png">
 	    	Careful, long dialogue can break audio time limit.
 	    </small>
@@ -43,7 +43,7 @@
 					Make sure to remove the style sttr on error element.
 	    		-->
 	    		<div class="listen-meter__timestamps">
-	    			<span class="tts__listen-current">{{audioTimeRemaining}}</span>
+	    			<span class="tts__listen-current">{{audioTimeRemaining | c6timestamp }}</span>
 
 	    			<!-- .tts__listen-limit should display a timestamp telling the user the total amount of time the mp3 can be. aka. 3 seconds = 0:03 -->
 	    			<span class="tts__listen-limit">Limit: #:##</span>

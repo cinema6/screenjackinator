@@ -29,29 +29,29 @@
             }
 
             function updateTimestamp(time, duration) {
-                var currTime = convertTimestamp(parseInt(time, 10)),
-                    remainTime = convertTimestamp(parseInt(duration - time, 10));
+                // var currTime = convertTimestamp(parseInt(time, 10)),
+                    // remainTime = convertTimestamp(parseInt(duration - time, 10));
 
-                if($scope.videoTime !== currTime) {
-                    $scope.videoTime = currTime;
-                }
-                if($scope.videoRemainingTime !== remainTime) {
-                    $scope.videoRemainingTime = remainTime;
-                }
+                // if($scope.videoTime !== currTime) {
+                $scope.videoTime = time;
+                // }
+                // if($scope.videoRemainingTime !== remainTime) {
+                $scope.videoRemainingTime = (duration - time);
+                // }
             }
 
             // TODO: move into a filter
-            function convertTimestamp(timestamp) {
-                var minutes, seconds,
-                    pad = function(digit) {
-                        return digit < 10 ? '0' + digit : '' + digit;
-                    };
+            // function convertTimestamp(timestamp) {
+            //     var minutes, seconds,
+            //         pad = function(digit) {
+            //             return digit < 10 ? '0' + digit : '' + digit;
+            //         };
 
-                minutes = parseInt(timestamp / 60, 10);
-                seconds = timestamp - (60 * minutes);
+            //     minutes = parseInt(timestamp / 60, 10);
+            //     seconds = timestamp - (60 * minutes);
 
-                return pad(minutes) + ':' + pad(seconds);
-            }
+            //     return pad(minutes) + ':' + pad(seconds);
+            // }
 
             function syncVoiceTrackService(video) {
                 video
@@ -255,21 +255,22 @@
                     }, ['annotation.text']);
 
                     // TODO: move into a filter
-                    function convertTimestamp(timestamp) {
-                        var minutes, seconds,
-                            pad = function(digit) {
-                                return digit < 10 ? '0' + digit : '' + digit;
-                            };
+                    // function convertTimestamp(timestamp) {
+                    //     var minutes, seconds,
+                    //         pad = function(digit) {
+                    //             return digit < 10 ? '0' + digit : '' + digit;
+                    //         };
 
-                        minutes = parseInt(timestamp / 60, 10);
-                        seconds = timestamp - (60 * minutes);
+                    //     minutes = parseInt(timestamp / 60, 10);
+                    //     seconds = timestamp - (60 * minutes);
 
-                        return pad(minutes) + ':' + pad(seconds);
-                    }
+                    //     return pad(minutes) + ':' + pad(seconds);
+                    // }
 
                     function setAudioTimer() {
                         scope.$apply(function() {
-                            scope.audioTimeRemaining = convertTimestamp(parseInt(scope.annotation._voiceBox.currentTime, 10));
+                            // scope.audioTimeRemaining = convertTimestamp(parseInt(scope.annotation._voiceBox.currentTime, 10));
+                            scope.audioTimeRemaining = scope.annotation._voiceBox.currentTime;
                         });
                     }
 
@@ -452,5 +453,25 @@
                     }, true);
                 }
             };
-        }]);
+        }])
+
+        .filter('c6timestamp', function() {
+            return function(timestamp) {
+                // add some functions and stuff and then return the value
+                // function convertTimestamp(timestamp) {
+                var minutes, seconds,
+                    pad = function(digit) {
+                        return digit < 10 ? '0' + digit : '' + digit;
+                    };
+
+                timestamp = parseInt(timestamp, 10);
+
+                minutes = parseInt(timestamp / 60, 10);
+                seconds = timestamp - (60 * minutes);
+
+                return pad(minutes) + ':' + pad(seconds);
+                // }
+                // return input ? '\u2713' : '\u2718';
+            };
+        });
 }());
