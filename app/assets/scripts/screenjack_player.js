@@ -40,7 +40,7 @@
                 }
             }
 
-            // helper function that should probably go in a service
+            // TODO: move into a filter
             function convertTimestamp(timestamp) {
                 var minutes, seconds,
                     pad = function(digit) {
@@ -133,19 +133,19 @@
                     .off('timeupdate', tickVoices);
             });
 
-            $scope.$on('next', function(event, annotation) {
+            $scope.$on('c6Line:next', function(event, annotation) {
                 if($scope.annotations[annotation.id+1]) {
                     this.jumpTo($scope.annotations[annotation.id+1]);
                 }
             }.bind(this));
 
-            $scope.$on('prev', function(event, annotation) {
+            $scope.$on('c6Line:prev', function(event, annotation) {
                 if($scope.annotations[annotation.id-1]) {
                     this.jumpTo($scope.annotations[annotation.id-1]);
                 }
             }.bind(this));
 
-            $scope.$on('stopListening', function(event, annotation) {
+            $scope.$on('c6Line:stopListening', function(event, annotation) {
                 VoiceTrackService.tick(annotation.timestamp);
                 pauseVoices();
             }.bind(this));
@@ -247,14 +247,14 @@
                     }, ['annotation.text', 'annotation.isValid()']);
 
                     c(scope, 'isListenable', function() {
-                        return scope && scope.annotation && scope.annotation.text && scope.annotation.text.length !== 0 && !scope.fetching;
+                        return scope && scope.annotation && ('text' in scope.annotation) && scope.annotation.text.length !== 0 && !scope.fetching;
                     }, ['annotation.text', 'fetching']);
 
                     c(scope, 'isEmpty', function() {
                         return scope && scope.annotation && ('text' in scope.annotation) && scope.annotation.text.length === 0;
                     }, ['annotation.text']);
 
-                    // helper function that should probably go in a service
+                    // TODO: move into a filter
                     function convertTimestamp(timestamp) {
                         var minutes, seconds,
                             pad = function(digit) {
@@ -284,11 +284,11 @@
                     }
 
                     scope.next = function() {
-                        scope.$emit('next', scope.annotation);
+                        scope.$emit('c6Line:next', scope.annotation);
                     };
 
                     scope.prev = function() {
-                        scope.$emit('prev', scope.annotation);
+                        scope.$emit('c6Line:prev', scope.annotation);
                     };
 
                     scope.listen = function() {
@@ -298,14 +298,11 @@
                             scope.fetching = true;
                             scope.annotation.getMP3().then(function() {
                                 scope.fetching = false;
-                                scope.listening = true;
                                 scope.invalid = !scope.annotation.isValid();
                                 scope.annotation._voiceBox.addEventListener('timeupdate', setAudioTimer);
                                 if(!scope.invalid) {
                                     scope.listening = true;
-                                    // window.console.log(scope.listening);
                                     scope.annotation.speak().then(function() {
-                                        scope.testthing = 'hello';
                                         scope.listening = false;
                                     });
                                 }
@@ -313,7 +310,7 @@
                         } else {
                             scope.listening = false;
                             scope.annotation._voiceBox.removeEventListener('timeupdate', setAudioTimer);
-                            scope.$emit('stopListening', scope.annotation);
+                            scope.$emit('c6Line:stopListening', scope.annotation);
                         }
                     };
 

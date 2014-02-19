@@ -387,13 +387,12 @@
                             listen.click();
                         });
 
-                        // it('should disable the listen button', function() {
-                        //     console.log(listen.attr('disabled'));
-                        //     expect(listen.attr('disabled')).toBeDefined();
-                        // });
-
-                        it('should show indicate fetching state', function() {
+                        it('should indicate fetching state', function() {
                             expect(scope.fetching).toBe(true);
+                        });
+
+                        it('should add the loading css class', function() {
+                            expect(listen.hasClass('tts__listen-btn--loading')).toBeDefined();
                         });
 
                         it('should get the MP3', function() {
@@ -417,7 +416,15 @@
                                 expect(scope.fetching).toBe(false);
                             });
 
-                            it('should not add invalid css class to form element', function() {
+                            it('should remove the loading css class', function() {
+                                expect(listen.hasClass('tts__listen-btn--loading')).toBe(false);
+                            });
+
+                            it('should add playing css class', function() {
+                                expect(listen.hasClass('tts__listen-btn--playing')).toBe(true);
+                            });
+
+                            it('should not indicate invalid mp3', function() {
                                 expect(scope.invalid).toBe(false);
                             });
 
@@ -442,6 +449,7 @@
                                     $scope.annotation._.speakDeferred.resolve($scope.annotation);
                                 });
                                 expect(scope.listening).toBe(false);
+                                expect(listen.hasClass('tts__listen-btn--playing')).toBe(false);
                             });
                         });
 
@@ -468,7 +476,7 @@
 
                             beforeEach(function() {
                                 stopListeningSpy = jasmine.createSpy('stopListening');
-                                $scope.$on('stopListening', stopListeningSpy);
+                                $scope.$on('c6Line:stopListening', stopListeningSpy);
                                 spyOn($scope.annotation, 'isValid').andReturn(true);
 
                                 $scope.$apply(function() {
@@ -513,7 +521,6 @@
                     });
 
                     it('should display the text', function() {
-                        // window.console.log(line.find('span')[0].innerHTML);
                         expect(line.find('span')[0].innerHTML).toBe('“Hey!”');
                     });
 
@@ -525,6 +532,232 @@
                         });
 
                         expect(line.find('form input[type=text]').val()).toBe('Foo!');
+                    });
+                });
+
+                describe('disableprev', function() {
+                    describe('when true', function() {
+                        var line;
+                        beforeEach(function() {
+                            $scope.$apply(function() {
+                                line = $compile('<c6-line disableprev="true" annotation="annotation"></c6-line>')($scope);
+                            });
+                        });
+
+                        it('should hide prev button', function() {
+                            expect(line.find('button.tts__prev-arrow').hasClass('ng-hide')).toBe(true);
+                        });
+                    });
+                    describe('when false', function() {
+                        var line;
+                        beforeEach(function() {
+                            $scope.$apply(function() {
+                                line = $compile('<c6-line disableprev="false" annotation="annotation"></c6-line>')($scope);
+                            });
+                        });
+                        it('should show prev button', function() {
+                            expect(line.find('button.tts__prev-arrow').hasClass('ng-hide')).toBe(false);
+                        });
+                    });
+                });
+
+                describe('disablenext', function() {
+                    describe('when true', function() {
+                        var line;
+                        beforeEach(function() {
+                            $scope.$apply(function() {
+                                line = $compile('<c6-line disablenext="true" annotation="annotation"></c6-line>')($scope);
+                            });
+                        });
+
+                        it('should hide prev button', function() {
+                            expect(line.find('button.tts__next-arrow').hasClass('ng-hide')).toBe(true);
+                        });
+                    });
+                    describe('when false', function() {
+                        var line;
+                        beforeEach(function() {
+                            $scope.$apply(function() {
+                                line = $compile('<c6-line disablenext="false" annotation="annotation"></c6-line>')($scope);
+                            });
+                        });
+                        it('should show prev button', function() {
+                            expect(line.find('button.tts__next-arrow').hasClass('ng-hide')).toBe(false);
+                        });
+                    });
+                });
+
+                describe('errorMessage', function() {
+                    var line,
+                        scope;
+                    beforeEach(function() {
+                        $scope.annotation = {
+                            text: 'Hey!',
+                            duration: 2,
+                            maxChars: 15,
+                            isValid: function() {}
+                        };
+                        $scope.$apply(function() {
+                            line = $compile('<c6-line annotation="annotation"></c6-line>')($scope);
+                        });
+                        scope = line.children().scope();
+                    });
+
+                    describe('when mp3 is too long', function() {
+                        beforeEach(function() {
+                            spyOn(scope.annotation, 'isValid').andReturn(false);
+                            scope.$apply(function() {
+                                scope.invalid = true;
+                            });
+                        });
+
+                        it('should set errorMessage to Dialogue too long!...', function() {
+                            expect(scope.errorMessage).toBe('Dialogue too long! Max time is 2 seconds')
+                        });
+                    });
+
+                    describe('when there are remaining characters', function() {
+                        beforeEach(function() {
+                            spyOn(scope.annotation, 'isValid').andReturn(true);
+                        });
+
+                        it('should set errorMessage to xx Characters remaining', function() {
+                            expect(scope.errorMessage).toBe('11 Characters Remaining');
+                        });
+                    });
+
+                    describe('when max characters has been reached', function() {
+                        beforeEach(function() {
+                            spyOn(scope.annotation, 'isValid').andReturn(true);
+                            scope.$apply(function() {
+                                scope.annotation.text = 'This is 15 char';
+                            });
+                        });
+                        it('should set errorMessage to "No more space!..."', function() {
+                            expect(scope.errorMessage).toBe('No more space! Max characters: 15');
+                        });
+                    });
+                });
+
+                describe('isSavable', function() {
+                    var line,
+                        scope;
+                    beforeEach(function() {
+                        $scope.annotation = {
+                            text: 'Hey!',
+                            isValid: function() {}
+                        };
+                        $scope.$apply(function() {
+                            line = $compile('<c6-line annotation="annotation"></c6-line>')($scope);
+                        });
+                        scope = line.children().scope();
+                    });
+
+                    describe('when there is no text', function() {
+                        beforeEach(function() {
+                            spyOn(scope.annotation, 'isValid').andReturn(true);
+                            scope.$apply(function() {
+                                scope.annotation.text = '';
+                            });
+                        });
+                        it('should be unsavable', function() {
+                            expect(scope.isSavable).toBe(false);
+                        });
+                    });
+
+                    describe('when there is text and the mp3 is valid', function() {
+                        beforeEach(function() {
+                            spyOn(scope.annotation, 'isValid').andReturn(true);
+                            scope.$digest();
+                        });
+                        it('should be savable', function() {
+                            expect(scope.isSavable).toBe(true);
+                        });
+                    });
+
+                    describe('when the mp3 is not valid', function() {
+                        beforeEach(function() {
+                            spyOn(scope.annotation, 'isValid').andReturn(false);
+                            scope.$digest();
+                        });
+                        it('should not be savable', function() {
+                            expect(scope.isSavable).toBe(false);
+                        });
+                    });
+                });
+
+                describe('isListenable', function() {
+                    var line,
+                        scope;
+                    beforeEach(function() {
+                        $scope.annotation = {
+                            text: 'Hey!',
+                            isValid: function() {}
+                        };
+                        $scope.$apply(function() {
+                            line = $compile('<c6-line annotation="annotation"></c6-line>')($scope);
+                        });
+                        scope = line.children().scope();
+                    });
+
+                    describe('when there is no text', function() {
+                        beforeEach(function() {
+                            scope.$apply(function() {
+                                scope.annotation.text = '';
+                            });
+                        });
+                        it('should not be listenable', function() {
+                            expect(scope.isListenable).toBe(false);
+                        });
+                    });
+
+                    describe('when there is text and the mp3 is fetched', function() {
+                        it('should be listenable', function() {
+                            expect(scope.isListenable).toBe(true);
+                        });
+                    });
+
+                    describe('when the mp3 is fetching', function() {
+                        beforeEach(function() {
+                            scope.$apply(function() {
+                                scope.fetching = true;
+                            });
+                        });
+                        it('should not be listenable', function() {
+                            expect(scope.isListenable).toBe(false);
+                        });
+                    });
+                });
+
+                describe('isEmpty', function() {
+                    var line,
+                        scope;
+                    beforeEach(function() {
+                        $scope.annotation = {
+                            text: 'Hey!',
+                            isValid: function() {}
+                        };
+                        $scope.$apply(function() {
+                            line = $compile('<c6-line annotation="annotation"></c6-line>')($scope);
+                        });
+                        scope = line.children().scope();
+                    });
+
+                    describe('when there is no text', function() {
+                        beforeEach(function() {
+                            scope.$apply(function() {
+                                scope.annotation.text = '';
+                            });
+                        });
+                        it('should be empty', function() {
+                            expect(scope.isEmpty).toBe(true);
+                        });
+                    });
+
+                    describe('when there is text', function() {
+                        it('should not be empty', function() {
+                            expect(scope.isEmpty).toBe(false);
+                        });
                     });
                 });
             });
