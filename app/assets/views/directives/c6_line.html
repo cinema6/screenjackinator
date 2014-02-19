@@ -7,7 +7,7 @@
 	    	Remove the style attr on the <small>, and just show and hide the entire element when appopriate. 
 				Show: When user's input greater than the set character limit (not displayed to the user)
 				Hide: When user's input is less than or equal to the character limit
-				
+
 				* Remove the function where the user cannot type when they are over the character limit.
 		-->
 	    <small ng-class="{'tts__remaining-charas--error': invalid}" class="tts__warning" style="display:none;">
@@ -15,9 +15,9 @@
 	    	Careful, long dialogue can break audio time limit.
 	    </small>
 
-	    <button name="listen" ng-click="$event.stopPropagation(); listen();" ng-disabled="!isListenable" ng-class="{'tts__listen-btn--loading': fetching, 'tts__listen-btn--playing': listenIsPlaying, 'tts__listen-btn--disabled': isEmpty}" class="tts__listen-btn"><span class="ir">Listen</span></button>
+	    <button name="listen" ng-click="$event.stopPropagation(); listen();" ng-disabled="!isListenable" ng-class="{'tts__listen-btn--loading': fetching, 'tts__listen-btn--playing': listening, 'tts__listen-btn--disabled': isEmpty}" class="tts__listen-btn"><span class="ir">Listen</span></button>
 		<div class="tts__listen-spinner" ng-show="fetching">&nbsp;</div>
-	    	<div ng-class="{'tts__listen-popup--hidden': !listenIsPlaying}" class="tts__listen-popup">
+	    	<div ng-class="{'tts__listen-popup--hidden': !listening}" class="tts__listen-popup">
 	    		<div class="listen-meter__back">
 	    			<!-- 'Active Meter'
 						The width on this should be set dynamically to show a progression. If the mp3 is 10 seconds long, and the current time is 3 seconds, the width should be 30%, etc etc.
@@ -44,7 +44,7 @@
 	    		-->
 	    		<div class="listen-meter__timestamps">
 	    			<span class="tts__listen-current">{{audioTimeRemaining}}</span>
-	    			
+
 	    			<!-- .tts__listen-limit should display a timestamp telling the user the total amount of time the mp3 can be. aka. 3 seconds = 0:03 -->
 	    			<span class="tts__listen-limit">Limit: #:##</span>
 	    		</div>
