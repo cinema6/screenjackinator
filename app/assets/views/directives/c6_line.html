@@ -1,8 +1,19 @@
-<span ng-style="{visibility: (editing ? 'hidden' : 'visible')}">{{annotation.text}}</span>
-<form ng-show="editing" ng-class="{'line__invalid': invalid}">
-    <input type="text" ng-model="annotation.text">
-    <button name="listen" ng-click="$event.stopPropagation(); listen();" ng-disabled="fetching">Listen</button>
-    <div class="line__loading" ng-show="fetching">Loading...</div>
-    <button name="save" ng-click="$event.stopPropagation(); saveChanges();">Save</button>
-    <button name="cancel" ng-click="$event.stopPropagation(); discardChanges();">X</button>
-</form>
+<div class="tts__box">
+	<span class="tts__text" ng-style="{display: (editing ? 'none' : 'inline')}">&ldquo;{{annotation.text}}&rdquo;</span>
+	<form ng-show="editing">
+	    <input placeholder="Type your dialogue here." type="text" ng-model="annotation.text" class="tts__input" onclick="this.select();">
+	    <small ng-class="{'tts__remaining-charas--error': !valid}" class="tts__remaining-charas">{{errorMessage}}</small>
+	    <button name="listen" ng-click="$event.stopPropagation(); listen();" ng-disabled="!isListenable" ng-class="{'tts__listen-btn--loading': fetching, 'tts__listen-btn--playing': listening, 'tts__listen-btn--disabled': !annotation.text}" class="tts__listen-btn"><span class="ir">Listen</span></button>
+		<div class="tts__listen-spinner" ng-show="fetching">&nbsp;</div>
+	    	<div ng-class="{'tts__listen-popup--hidden': !listening}" class="tts__listen-popup">
+	    		<span class="tts__listen-timestamp">{{audioTimeRemaining | c6timestamp}}</span>
+	    		<img class="tts__listen-soundwave" src="assets/img/placeholder-soundwave.png">
+	    		<div class="tts__listen-arrow">&nbsp;</div>
+	    	</div>
+	    <button name="save" ng-disabled="!valid" ng-click="$event.stopPropagation(); saveChanges();" ng-class="{'tts__save-btn--disabled': !valid}" class="tts__save-btn">Save</button>
+	    <button name="cancel" ng-click="$event.stopPropagation(); discardChanges();" class="tts__cancel-btn"><span class="ir">Cancel</span></button>
+	</form>
+</div>
+<button ng-hide="disablenext" class="tts__arrow tts__next-arrow" ng-click="$event.stopPropagation(); next();" title="Next"><span class="ir">Next</span></button>
+<button ng-hide="disableprev" class="tts__arrow tts__prev-arrow" ng-click="$event.stopPropagation(); prev();" title="Go Back"><span class="ir">Go Back</span></button>
+

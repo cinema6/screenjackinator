@@ -1,24 +1,31 @@
 <!-- The video will move to this plane as soon as the experience is started -->
-<div class="video__player--active">
-    <video c6-video id="video" c6-src="src"></video>
+<div class="video__group">
+    <div c6-resize="{height:548}" class="video__stage">
+        <video c6-video class="video__player" id="video" c6-src="src"></video>
+        <ul class="video__annotations">
+            <li ng-repeat="annotation in Ctrl.bubbles">
+                <c6-bubble annotation="annotation"
+                    show="Ctrl.annotationIsActive(annotation)"
+                    editable="!readOnly">
+                </c6-bubble>
+            </li>
+            <li ng-show="!readOnly"
+                class="tts__group"
+                ng-repeat="annotation in Ctrl.lines">
+                <c6-line annotation="annotation"
+                    editable="'true'"
+                    show="Ctrl.annotationIsActive(annotation)"
+                    disableprev="$first"
+                    disablenext="$last">
+                </c6-line>
+            </li>
+        </ul>
+    </div>
 </div>
 <div class="controls__container">
+    <div class="controls__timestamps">
+        <span class="controls__start-time">{{videoTime | c6timestamp}}</span>
+        <span class="controls__end-time">{{videoRemainingTime | c6timestamp}}</span>
+    </div>
     <c6-controls controller="Ctrl.controlsController" delegate="Ctrl.controlsDelegate" nodes="Ctrl.controlsNodes"></c6-controls>
 </div>
-<ul class="video__annotations">
-    <li ng-repeat="annotation in Ctrl.bubbles">
-        <c6-bubble annotation="annotation"
-            show="Ctrl.annotationIsActive(annotation)"
-            editable="!readOnly">
-        </c6-bubble>
-    </li>
-    <li ng-show="!readOnly"
-        class="line__wrapper"
-        ng-repeat="annotation in Ctrl.lines">
-        <c6-line annotation="annotation"
-            class="line__item"
-            editable="'true'"
-            show="Ctrl.annotationIsActive(annotation)">
-        </c6-line>
-    </li>
-</ul>

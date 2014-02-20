@@ -1,20 +1,106 @@
 <section class="experience__group" id="experience">
-    <section ng-if="ExperienceCtrl.showWelcome" ng-include="'assets/views/partials/welcome.html'"></section>
-    <section ng-if="ExperienceCtrl.showWizard" ng-controller="WizardController" ng-include="'assets/views/partials/wizard.html'"></section>
-    <nav class="sidebar__group">
-        <ul>
-            <li ng-repeat="annotation in ExperienceCtrl.annotations">
-                <a href="" ng-click="ExperienceCtrl.jumpTo(annotation)">{{annotation.text}}</a>
-                <button ng-click="ExperienceCtrl.preview(annotation)">Preview</button>
-            </li>
-        </ul>
-        <button ng-click="ExperienceCtrl.startWizard()">Help</button>
-    </nav>
+    <!--<section ng-if="ExperienceCtrl.showWelcome" ng-include="'assets/views/partials/welcome.html'"></section>
+    <section ng-if="ExperienceCtrl.showWizard" ng-controller="WizardController" ng-include="'assets/views/partials/wizard.html'"></section>-->
+    
+    <!-- save & loading directive or partial -->
+    <!--<section class="alert__group">
+        <div c6-vertical-center resize class="alert__box">
+            <img class="alert__img" src="assets/img/alerts__spinner.png">
+            <span class="alert__text">Loading</span>
+        </div>
+    </section>-->
+    <!-- end save & loading -->
+
+    <!-- appbar directive start-->
+    <section class="appbar__group">
+        <input class="appbar__title" type="text" name="project-title" id="project-title" placeholder="My Screenjack Title" ng-model="AppCtrl.experience.title">
+            <button class="appbar__save-title-btn" title="OK" id="project-title-okbtn">OK</button>
+        <button class="appbar__toggle appbar__stats" title="Stats" id="stats-toggle"><span class="ir">Stats</span></button>
+            <ul class="appbar__dropdown stats__menu stats__menu--hide" id="stats-menu">
+                <li class="appbar__stats-graph">
+                    <h2 class="appbar__dropdown-hdr">Recent Watches</h2>
+                    <img src="assets/img/placeholder-graph.png">
+                </li>
+                <li class="stats__total"><span class="stats__number">#,###,###</span> <span class="stats__stacked-text">Total Watches</span></li>
+                <li class="stats__substat"><span class="stats__number">#:##</span> Average Watch Time</li>
+                <li class="stats__substat"><span class="stats__number">###</span> Shares</li>
+                <li class="stats__more-stats"><a class="stats__link" href="#">View More Video Stats</a><img class="stats__next-arrow" src="assets/img/stats__link-arrow.png"></li>
+            </ul>
+        <button class="appbar__toggle appbar__settings" title="Settings" id="settings-toggle"><span class="ir">Settings</span></button>
+            <ul class="appbar__dropdown settings__menu settings__menu--hide" id="settings-menu">
+                <li class="settings__quality">
+                    <h2 class="appbar__dropdown-hdr">Video Quality</h2>
+                    <button class="settings__quality-btn">480p</button>
+                    <button class="settings__quality-btn settings__quality-btn--active">720p</button>
+                    <button class="settings__quality-btn">1080p</button>
+                    <div class="settings__hd-label">HD</div>
+                </li>
+                <li class="settings__privacy">
+                    <h2 class="appbar__dropdown-hdr">Privacy</h2>
+                    <img src="assets/img/placeholder-privacy.png">
+                </li>
+                <li class="settings__description">
+                    <h2 class="appbar__dropdown-hdr">Description</h2>
+                    <textarea class="settings__desc-input" name="description" placeholder="Tell use what your project is about." rows="4" ng-model="AppCtrl.experience.summary"></textarea>
+                </li>
+                <li><button class="settings__btn settings__save-btn">Save Settings</button></li>
+                <li><button class="settings__btn settings__delete-btn">Delete Project</button></li>
+            </ul>
+        <button class="appbar__button appbar__preview-btn" title="Preview">Preview</button>
+        <button class="appbar__button appbar__savepub-btn" title="Save &amp; Publish">Save &amp; Publish</button>
+    </section>
+    <!-- appbar directive end-->
+
     <c6-screenjack-player
-        class="video__group"
-        c6-vertical-center="top"
-        resize
+        class="stage__group"
         src="{{AppCtrl.videoSrc}}"
         annotations="ExperienceCtrl.annotations">
     </c6-screenjack-player>
 </section>
+
+
+
+<!-- these scripts should be moved somewhere more approperiate, and intergated with angular if possible -->
+<script>
+    var toggleTitleOk = function () {
+        var input$ = $('#project-title'),
+            okBtn$ = $('#project-title-okbtn'),
+            okFocusClass = 'appbar__save-title-btn--focus'; 
+
+        // Show OK Button
+        input$.click(function() {
+            if (!okBtn$.hasClass(okFocusClass)) {
+                okBtn$.addClass(okFocusClass);
+            };
+        });
+
+        // Hide OK Button
+        $(document).mouseup(function(e) {
+            if (!input$.is(e.target) && okBtn$.hasClass(okFocusClass)) {
+                okBtn$.toggleClass(okFocusClass);
+            };
+        });
+    }(); 
+
+    var toggleSettingsMenu = function() {
+        var icon$ = $('#settings-toggle'),
+            menu$ = $('#settings-menu');
+
+        // Show Settings Menu & Change icon class
+        icon$.click(function() {
+            menu$.toggleClass('settings__menu--hide');
+            icon$.toggleClass('appbar__settings--active');
+        });
+    }();
+
+    var toggleStatsMenu = function() {
+        var icon$ = $('#stats-toggle'),
+            menu$ = $('#stats-menu');
+
+        // Show Settings Menu & Change icon class
+        icon$.click(function() {
+            menu$.toggleClass('stats__menu--hide');
+            icon$.toggleClass('appbar__stats--active');
+        });
+    }();
+</script>
