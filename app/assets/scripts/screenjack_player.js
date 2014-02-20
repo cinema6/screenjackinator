@@ -226,12 +226,10 @@
                     }, ['annotation.text', 'valid']);
 
                     c(scope, 'isListenable', function() {
-                        return scope && scope.annotation && ('text' in scope.annotation) && scope.annotation.text.length !== 0 && !scope.fetching;
+                        if(!scope.annotation) { return false; }
+                        
+                        return scope.annotation.text.length !== 0 && !scope.fetching;
                     }, ['annotation.text', 'fetching']);
-
-                    c(scope, 'isEmpty', function() {
-                        return scope && scope.annotation && ('text' in scope.annotation) && scope.annotation.text.length === 0;
-                    }, ['annotation.text']);
 
                     function setAudioTimer() {
                         scope.$apply(function() {
