@@ -207,25 +207,23 @@
                         c = c6computed(scope);
 
                     scope.fetching = false;
-                    scope.invalid = false;
+                    scope.valid = true;
                     scope.listening = false;
                     scope.audioTimeRemaining = '00:00';
                     scope.errorMessage = '';
 
                     c(scope, 'errorMessage', function() {
-                        var remaining;
-                        if(scope && scope.annotation && scope.invalid) {
+                        if(!scope.annotation) { return ''; }
+
+                        var remaining = scope.annotation.maxChars - scope.annotation.text.length;
+
+                        if(!scope.valid) {
                             return 'Dialogue too long! Max time is ' + scope.annotation.duration + ' seconds';
                         }
-                        if(scope && scope.annotation && ('text' in scope.annotation) ) {
-                            remaining = scope.annotation.maxChars - scope.annotation.text.length;
-                            return remaining === 0 ? ('No more space! Max characters: ' + scope.annotation.maxChars) : remaining + ' Characters Remaining';
+                        if(remaining < 1) {
+                            return 'Warning, this UI will be changing in the next PR';
                         }
-                    }, ['annotation.text', 'invalid']);
-
-                    c(scope, 'isSavable', function() {
-                        return scope && scope.annotation && ('text' in scope.annotation) && (scope.annotation.text.length !== 0) && scope.annotation.isValid();
-                    }, ['annotation.text', 'annotation.isValid()']);
+                    }, ['annotation.text', 'valid']);
 
                     c(scope, 'isListenable', function() {
                         return scope && scope.annotation && ('text' in scope.annotation) && scope.annotation.text.length !== 0 && !scope.fetching;
@@ -266,9 +264,9 @@
                             scope.fetching = true;
                             scope.annotation.getMP3().then(function() {
                                 scope.fetching = false;
-                                scope.invalid = !scope.annotation.isValid();
+                                scope.valid = scope.annotation.isValid();
                                 scope.annotation._voiceBox.addEventListener('timeupdate', setAudioTimer);
-                                if(!scope.invalid) {
+                                if(scope.valid) {
                                     scope.listening = true;
                                     scope.annotation.speak().then(function() {
                                         scope.listening = false;
@@ -284,16 +282,16 @@
 
                     scope.discardChanges = function() {
                         scope.annotation.text = preEditText;
-                        scope.invalid = false;
+                        scope.valid = true;
                         scope.editing = false;
                     };
 
                     scope.saveChanges = function() {
                         scope.annotation.getMP3()
                             .then(function() {
-                                var _invalid = !scope.annotation.isValid();
-                                scope.invalid = _invalid;
-                                scope.editing = _invalid;
+                                var _valid = scope.annotation.isValid();
+                                scope.valid = _valid;
+                                scope.editing = !_valid;
                             });
                     };
 

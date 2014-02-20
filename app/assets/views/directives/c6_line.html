@@ -15,7 +15,7 @@
 	    	Careful, long dialogue can break audio time limit.
 	    </small>
 
-	    <button name="listen" ng-click="$event.stopPropagation(); listen();" ng-disabled="!isListenable" ng-class="{'tts__listen-btn--loading': fetching, 'tts__listen-btn--playing': listening, 'tts__listen-btn--disabled': isEmpty}" class="tts__listen-btn"><span class="ir">Listen</span></button>
+	    <button name="listen" ng-click="$event.stopPropagation(); listen();" ng-disabled="!isListenable" ng-class="{'tts__listen-btn--loading': fetching, 'tts__listen-btn--playing': listening, 'tts__listen-btn--disabled': !annotation.text}" class="tts__listen-btn"><span class="ir">Listen</span></button>
 		<div class="tts__listen-spinner" ng-show="fetching">&nbsp;</div>
 	    	<div ng-class="{'tts__listen-popup--hidden': !listening}" class="tts__listen-popup">
 	    		<div class="listen-meter__back">
@@ -52,7 +52,7 @@
 	    		<div class="tts__listen-arrow">&nbsp;</div>
 	    	</div>
 
-	    <button name="save" ng-disabled="!isSavable" ng-click="$event.stopPropagation(); saveChanges();" ng-class="{'tts__save-btn--disabled': !isSavable}" class="tts__save-btn">Save</button>
+	    <button name="save" ng-disabled="!valid" ng-click="$event.stopPropagation(); saveChanges();" ng-class="{'tts__save-btn--disabled': !valid}" class="tts__save-btn">Save</button>
 	    <button name="cancel" ng-click="$event.stopPropagation(); discardChanges();" class="tts__cancel-btn"><span class="ir">Cancel</span></button>
 	</form>
 </div>
