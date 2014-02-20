@@ -1,16 +1,16 @@
 <div class="tts__box">
 	<span class="tts__text" ng-style="{display: (editing ? 'none' : 'inline')}">&ldquo;{{annotation.text}}&rdquo;</span>
 	<form ng-show="editing">
-	    <input placeholder="Type your dialogue here." type="text" ng-model="annotation.text" maxlength="{{annotation.maxChars}}" class="tts__input" onclick="this.select();">
-	    <small ng-class="{'tts__remaining-charas--error': invalid}" class="tts__remaining-charas">{{errorMessage}}</small>
-	    <button name="listen" ng-click="$event.stopPropagation(); listen();" ng-disabled="!isListenable" ng-class="{'tts__listen-btn--loading': fetching, 'tts__listen-btn--playing': listening, 'tts__listen-btn--disabled': isEmpty}" class="tts__listen-btn"><span class="ir">Listen</span></button>
+	    <input placeholder="Type your dialogue here." type="text" ng-model="annotation.text" class="tts__input" onclick="this.select();">
+	    <small ng-class="{'tts__remaining-charas--error': !valid}" class="tts__remaining-charas">{{errorMessage}}</small>
+	    <button name="listen" ng-click="$event.stopPropagation(); listen();" ng-disabled="!isListenable" ng-class="{'tts__listen-btn--loading': fetching, 'tts__listen-btn--playing': listening, 'tts__listen-btn--disabled': !annotation.text}" class="tts__listen-btn"><span class="ir">Listen</span></button>
 		<div class="tts__listen-spinner" ng-show="fetching">&nbsp;</div>
 	    	<div ng-class="{'tts__listen-popup--hidden': !listening}" class="tts__listen-popup">
-	    		<span class="tts__listen-timestamp">{{audioTimeRemaining}}</span>
+	    		<span class="tts__listen-timestamp">{{audioTimeRemaining | c6timestamp}}</span>
 	    		<img class="tts__listen-soundwave" src="assets/img/placeholder-soundwave.png">
 	    		<div class="tts__listen-arrow">&nbsp;</div>
 	    	</div>
-	    <button name="save" ng-disabled="!isSavable" ng-click="$event.stopPropagation(); saveChanges();" ng-class="{'tts__save-btn--disabled': !isSavable}" class="tts__save-btn">Save</button>
+	    <button name="save" ng-disabled="!valid" ng-click="$event.stopPropagation(); saveChanges();" ng-class="{'tts__save-btn--disabled': !valid}" class="tts__save-btn">Save</button>
 	    <button name="cancel" ng-click="$event.stopPropagation(); discardChanges();" class="tts__cancel-btn"><span class="ir">Cancel</span></button>
 	</form>
 </div>

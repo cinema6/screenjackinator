@@ -11,7 +11,8 @@
                         this.jumpTo(node.annotation);
                     }.bind(this)
                 },
-                c = c6Computed($scope);
+                c = c6Computed($scope),
+                self = this;
 
             this.controlsNodes = [];
 
@@ -29,28 +30,8 @@
             }
 
             function updateTimestamp(time, duration) {
-                var currTime = convertTimestamp(parseInt(time, 10)),
-                    remainTime = convertTimestamp(parseInt(duration - time, 10));
-
-                if($scope.videoTime !== currTime) {
-                    $scope.videoTime = currTime;
-                }
-                if($scope.videoRemainingTime !== remainTime) {
-                    $scope.videoRemainingTime = remainTime;
-                }
-            }
-
-            // TODO: move into a filter
-            function convertTimestamp(timestamp) {
-                var minutes, seconds,
-                    pad = function(digit) {
-                        return digit < 10 ? '0' + digit : '' + digit;
-                    };
-
-                minutes = parseInt(timestamp / 60, 10);
-                seconds = timestamp - (60 * minutes);
-
-                return pad(minutes) + ':' + pad(seconds);
+                $scope.videoTime = time;
+                $scope.videoRemainingTime = duration - time;
             }
 
             function syncVoiceTrackService(video) {
@@ -86,7 +67,7 @@
                 video = c6Video;
                 updateTimestamp(video.player.currentTime, video.player.duration);
 
-                c(this, 'controlsNodes', function() {
+                c(self, 'controlsNodes', function() {
                     var nodes = [];
 
                     if (!$scope.annotations || !video) {
@@ -106,7 +87,7 @@
                 }, ['annotations']);
 
                 syncVoiceTrackService(c6Video);
-            }.bind(this));
+            });
 
             $scope.$on('c6Bubble:show', function(event, annotation) {
                 if (!video || !annotation.sfx) { return; }
@@ -135,20 +116,20 @@
 
             $scope.$on('c6Line:next', function(event, annotation) {
                 if($scope.annotations[annotation.id+1]) {
-                    this.jumpTo($scope.annotations[annotation.id+1]);
+                    self.jumpTo($scope.annotations[annotation.id+1]);
                 }
-            }.bind(this));
+            });
 
             $scope.$on('c6Line:prev', function(event, annotation) {
                 if($scope.annotations[annotation.id-1]) {
-                    this.jumpTo($scope.annotations[annotation.id-1]);
+                    self.jumpTo($scope.annotations[annotation.id-1]);
                 }
-            }.bind(this));
+            });
 
             $scope.$on('c6Line:stopListening', function(event, annotation) {
                 VoiceTrackService.tick(annotation.timestamp);
                 pauseVoices();
-            }.bind(this));
+            });
 
             this.controlsController = controlsController;
             this.controlsDelegate = controlsDelegate;
@@ -226,25 +207,23 @@
                         c = c6computed(scope);
 
                     scope.fetching = false;
-                    scope.invalid = false;
+                    scope.valid = true;
                     scope.listening = false;
                     scope.audioTimeRemaining = '00:00';
                     scope.errorMessage = '';
 
                     c(scope, 'errorMessage', function() {
-                        var remaining;
-                        if(scope && scope.annotation && scope.invalid) {
+                        if(!scope.annotation) { return ''; }
+
+                        var remaining = scope.annotation.maxChars - scope.annotation.text.length;
+
+                        if(!scope.valid) {
                             return 'Dialogue too long! Max time is ' + scope.annotation.duration + ' seconds';
                         }
-                        if(scope && scope.annotation && ('text' in scope.annotation) ) {
-                            remaining = scope.annotation.maxChars - scope.annotation.text.length;
-                            return remaining === 0 ? ('No more space! Max characters: ' + scope.annotation.maxChars) : remaining + ' Characters Remaining';
+                        if(remaining < 1) {
+                            return 'Warning, this UI will be changing in the next PR';
                         }
-                    }, ['annotation.text', 'invalid']);
-
-                    c(scope, 'isSavable', function() {
-                        return scope && scope.annotation && ('text' in scope.annotation) && (scope.annotation.text.length !== 0) && scope.annotation.isValid();
-                    }, ['annotation.text', 'annotation.isValid()']);
+                    }, ['annotation.text', 'valid']);
 
                     c(scope, 'isListenable', function() {
                         return scope && scope.annotation && ('text' in scope.annotation) && scope.annotation.text.length !== 0 && !scope.fetching;
@@ -254,22 +233,9 @@
                         return scope && scope.annotation && ('text' in scope.annotation) && scope.annotation.text.length === 0;
                     }, ['annotation.text']);
 
-                    // TODO: move into a filter
-                    function convertTimestamp(timestamp) {
-                        var minutes, seconds,
-                            pad = function(digit) {
-                                return digit < 10 ? '0' + digit : '' + digit;
-                            };
-
-                        minutes = parseInt(timestamp / 60, 10);
-                        seconds = timestamp - (60 * minutes);
-
-                        return pad(minutes) + ':' + pad(seconds);
-                    }
-
                     function setAudioTimer() {
                         scope.$apply(function() {
-                            scope.audioTimeRemaining = convertTimestamp(parseInt(scope.annotation._voiceBox.currentTime, 10));
+                            scope.audioTimeRemaining = scope.annotation._voiceBox.currentTime;
                         });
                     }
 
@@ -298,9 +264,9 @@
                             scope.fetching = true;
                             scope.annotation.getMP3().then(function() {
                                 scope.fetching = false;
-                                scope.invalid = !scope.annotation.isValid();
+                                scope.valid = scope.annotation.isValid();
                                 scope.annotation._voiceBox.addEventListener('timeupdate', setAudioTimer);
-                                if(!scope.invalid) {
+                                if(scope.valid) {
                                     scope.listening = true;
                                     scope.annotation.speak().then(function() {
                                         scope.listening = false;
@@ -316,16 +282,16 @@
 
                     scope.discardChanges = function() {
                         scope.annotation.text = preEditText;
-                        scope.invalid = false;
+                        scope.valid = true;
                         scope.editing = false;
                     };
 
                     scope.saveChanges = function() {
                         scope.annotation.getMP3()
                             .then(function() {
-                                var _invalid = !scope.annotation.isValid();
-                                scope.invalid = _invalid;
-                                scope.editing = _invalid;
+                                var _valid = scope.annotation.isValid();
+                                scope.valid = _valid;
+                                scope.editing = !_valid;
                             });
                     };
 
@@ -354,11 +320,11 @@
 
                         preEditText = editing ? text : null;
 
-                        if(editing && !wasEditing) {
+                        if(editing) {
                             $document.bind('click', outsideElementClick);
                         }
 
-                        if(wasEditing && !editing) {
+                        if(wasEditing) {
                             if(!scope.annotation.isVirgin()) {
                                 element.addClass('modified-class');
                             }
@@ -452,5 +418,21 @@
                     }, true);
                 }
             };
-        }]);
+        }])
+
+        .filter('c6timestamp', function() {
+            return function(timestamp) {
+                var minutes, seconds,
+                    pad = function(digit) {
+                        return digit < 10 ? '0' + digit : '' + digit;
+                    };
+
+                timestamp = parseInt(timestamp, 10);
+
+                minutes = parseInt(timestamp / 60, 10);
+                seconds = timestamp - (60 * minutes);
+
+                return pad(minutes) + ':' + pad(seconds);
+            };
+        });
 }());
