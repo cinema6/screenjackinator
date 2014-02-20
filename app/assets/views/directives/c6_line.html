@@ -2,14 +2,6 @@
 	<span class="tts__text" ng-style="{display: (editing ? 'none' : 'inline')}">&ldquo;{{annotation.text}}&rdquo;</span>
 	<form ng-show="editing">
 	    <input placeholder="Type your dialogue here." type="text" ng-model="annotation.text" class="tts__input" onclick="this.select();">
-
-	    <!-- 'New Warning':
-	    	Remove the style attr on the <small>, and just show and hide the entire element when appopriate. 
-				Show: When user's input greater than the set character limit (not displayed to the user)
-				Hide: When user's input is less than or equal to the character limit
-
-				* Remove the function where the user cannot type when they are over the character limit.
-		-->
 	    <small ng-show="annotation.text.length > annotation.maxChars" class="tts__warning">
 	    	<img class="tts__warning-icon" src="assets/img/error-icon.png">
 	    	Careful, long dialogue can break audio time limit.
@@ -46,7 +38,7 @@
 	    			<span class="tts__listen-current">{{audioTimeRemaining | c6timestamp }}</span>
 
 	    			<!-- .tts__listen-limit should display a timestamp telling the user the total amount of time the mp3 can be. aka. 3 seconds = 0:03 -->
-	    			<span class="tts__listen-limit">Limit: #:##</span>
+	    			<span class="tts__listen-limit">Limit: {{annotation.duration | c6timestamp }}</span>
 	    		</div>
 	    		<div class="listen-meter__error" style="display:none;">Error: Over Limit by # sec</div>
 	    		<div class="tts__listen-arrow">&nbsp;</div>
