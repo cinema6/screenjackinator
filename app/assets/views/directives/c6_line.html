@@ -2,6 +2,11 @@
 	<span class="tts__text" ng-style="{display: (editing ? 'none' : 'inline')}">&ldquo;{{annotation.text}}&rdquo;</span>
 	<form ng-show="editing">
 	    <input placeholder="Type your dialogue here." type="text" ng-model="annotation.text" class="tts__input" onclick="this.select();">
+	    <!-- Limit Warning & Error
+			Text reads as such:
+				Warning - "Careful, long dialogue can break audio time limit."
+				Error - "Error: Dialogue over limit by # second(s)"
+		-->
 	    <small ng-show="annotation.text.length > annotation.maxChars" class="tts__warning">
 	    	<img class="tts__warning-icon" src="assets/img/error-icon.png">
 	    	Careful, long dialogue can break audio time limit.
