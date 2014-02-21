@@ -210,24 +210,27 @@
                     scope.valid = true;
                     scope.listening = false;
                     scope.audioTimeRemaining = '00:00';
-                    scope.errorMessage = '';
 
-                    c(scope, 'errorMessage', function() {
+                    c(scope, 'warningMessage', function() {
                         if(!scope.annotation) { return ''; }
 
                         var remaining = scope.annotation.maxChars - scope.annotation.text.length;
 
                         if(!scope.valid) {
-                            return 'Dialogue too long! Max time is ' + scope.annotation.duration + ' seconds';
+                            return 'Error: Dialogue over limit by ' + parseInt(scope.annotation._voiceBox.duration - scope.annotation.duration, 10) + ' second(s)';
                         }
                         if(remaining < 1) {
-                            return 'Warning, this UI will be changing in the next PR';
+                            return 'Careful, long dialogue can break audio time limit.';
                         }
+                    }, ['annotation.text', 'valid']);
+
+                    c(scope, 'showWarning', function() {
+                        if(!scope.annotation) { return false; }
+                        return scope.annotation.text.length > scope.annotation.maxChars || !scope.valid;
                     }, ['annotation.text', 'valid']);
 
                     c(scope, 'isListenable', function() {
                         if(!scope.annotation) { return false; }
-
                         return scope.annotation.text.length !== 0 && !scope.fetching;
                     }, ['annotation.text', 'fetching']);
 
@@ -264,12 +267,10 @@
                                 scope.fetching = false;
                                 scope.valid = scope.annotation.isValid();
                                 scope.annotation._voiceBox.addEventListener('timeupdate', setAudioTimer);
-                                if(scope.valid) {
-                                    scope.listening = true;
-                                    scope.annotation.speak().then(function() {
-                                        scope.listening = false;
-                                    });
-                                }
+                                scope.listening = true;
+                                scope.annotation.speak().then(function() {
+                                    scope.listening = false;
+                                });
                             });
                         } else {
                             scope.listening = false;
@@ -302,6 +303,10 @@
 
                         scope.enterEdit();
                         scope.$digest();
+                    });
+
+                    scope.$watch('annotation.text', function(){
+                        if(!scope.valid) { scope.valid = true; }
                     });
 
                     scope.$watch('show', function(show) {

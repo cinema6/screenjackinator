@@ -474,8 +474,8 @@
                                 expect(scope.valid).toBe(false);
                             });
 
-                            it('should not speak the line', function() {
-                                expect($scope.annotation.speak).not.toHaveBeenCalled();
+                            it('should still speak the line', function() {
+                                expect($scope.annotation.speak).toHaveBeenCalled();
                             });
                         });
 
@@ -595,7 +595,7 @@
                     });
                 });
 
-                xdescribe('errorMessage', function() {
+                describe('warningMessage', function() {
                     var line,
                         scope;
                     beforeEach(function() {
@@ -603,7 +603,10 @@
                             text: 'Hey!',
                             duration: 2,
                             maxChars: 15,
-                            isValid: function() {}
+                            isValid: function() {},
+                            _voiceBox: {
+                                duration: 2
+                            }
                         };
                         $scope.$apply(function() {
                             line = $compile('<c6-line annotation="annotation"></c6-line>')($scope);
@@ -616,11 +619,15 @@
                             spyOn(scope.annotation, 'isValid').andReturn(false);
                             scope.$apply(function() {
                                 scope.valid = false;
+                                scope.annotation._voiceBox.duration = 4;
                             });
                         });
 
-                        it('should set errorMessage to Dialogue too long!...', function() {
-                            expect(scope.errorMessage).toBe('Dialogue too long! Max time is 2 seconds')
+                        it('should set warningMessage to Dialogue too long!...', function() {
+                            expect(scope.warningMessage).toBe('Error: Dialogue over limit by 2 second(s)');
+                        });
+                        it('should show error', function() {
+                            expect(line.find('small').hasClass('ng-hide')).toBe(false);
                         });
                     });
 
@@ -629,20 +636,23 @@
                             spyOn(scope.annotation, 'isValid').andReturn(true);
                         });
 
-                        it('should set errorMessage to xx Characters remaining', function() {
-                            expect(scope.errorMessage).toBe('11 Characters Remaining');
+                        it('should not show the warning', function() {
+                            expect(line.find('small').hasClass('ng-hide')).toBe(true);
                         });
                     });
 
-                    describe('when max characters has been reached', function() {
+                    describe('when text is longer than max characters', function() {
                         beforeEach(function() {
                             spyOn(scope.annotation, 'isValid').andReturn(true);
                             scope.$apply(function() {
-                                scope.annotation.text = 'This is 15 char';
+                                scope.annotation.text = 'This is over the character limit';
                             });
                         });
-                        it('should set errorMessage to "No more space!..."', function() {
-                            expect(scope.errorMessage).toBe('No more space! Max characters: 15');
+                        it('should set warning to "Careful, long dialogue..."', function() {
+                            expect(scope.warningMessage).toBe('Careful, long dialogue can break audio time limit.');
+                        });
+                        it('should show warning', function() {
+                            expect(line.find('small').hasClass('ng-hide')).toBe(false);
                         });
                     });
                 });

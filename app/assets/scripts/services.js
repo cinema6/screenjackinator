@@ -273,7 +273,8 @@
                     .then(play);
             };
             _private.Annotation.prototype.isValid = function() {
-                return (this.text.length <= this.maxChars) && ( (this._voiceBox.duration <= this.duration) ? true : (this.type !== 'tts') );
+                // return (this.text.length <= this.maxChars) && ( (this._voiceBox.duration <= this.duration) ? true : (this.type !== 'tts') );
+                return (this._voiceBox.duration <= this.duration) ? true : (this.type !== 'tts');
             };
 
             /***************************************
