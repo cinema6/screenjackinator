@@ -31,7 +31,7 @@
 
             function updateTimestamp(time, duration) {
                 $scope.videoTime = time;
-                $scope.videoRemainingTime = duration - time;
+                $scope.videoRemainingTime = (duration - time);
             }
 
             function syncVoiceTrackService(video) {
@@ -227,7 +227,7 @@
 
                     c(scope, 'isListenable', function() {
                         if(!scope.annotation) { return false; }
-                        
+
                         return scope.annotation.text.length !== 0 && !scope.fetching;
                     }, ['annotation.text', 'fetching']);
 

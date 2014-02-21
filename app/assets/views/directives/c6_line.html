@@ -2,18 +2,52 @@
 	<span class="tts__text" ng-style="{display: (editing ? 'none' : 'inline')}">&ldquo;{{annotation.text}}&rdquo;</span>
 	<form ng-show="editing">
 	    <input placeholder="Type your dialogue here." type="text" ng-model="annotation.text" class="tts__input" onclick="this.select();">
-	    <small ng-class="{'tts__remaining-charas--error': !valid}" class="tts__remaining-charas">{{errorMessage}}</small>
+	    <small ng-show="annotation.text.length > annotation.maxChars" class="tts__warning">
+	    	<img class="tts__warning-icon" src="assets/img/error-icon.png">
+	    	Careful, long dialogue can break audio time limit.
+	    </small>
+
 	    <button name="listen" ng-click="$event.stopPropagation(); listen();" ng-disabled="!isListenable" ng-class="{'tts__listen-btn--loading': fetching, 'tts__listen-btn--playing': listening, 'tts__listen-btn--disabled': !annotation.text}" class="tts__listen-btn"><span class="ir">Listen</span></button>
 		<div class="tts__listen-spinner" ng-show="fetching">&nbsp;</div>
 	    	<div ng-class="{'tts__listen-popup--hidden': !listening}" class="tts__listen-popup">
-	    		<span class="tts__listen-timestamp">{{audioTimeRemaining | c6timestamp}}</span>
-	    		<img class="tts__listen-soundwave" src="assets/img/placeholder-soundwave.png">
+	    		<div class="listen-meter__back">
+	    			<!-- 'Active Meter'
+						The width on this should be set dynamically to show a progression. If the mp3 is 10 seconds long, and the current time is 3 seconds, the width should be 30%, etc etc.
+
+						IF there is an error: The width should never reach 100%. Instead it will stop at 100% - (Width of .listen-meter__limit-back). Ex - If the Error Meter is 15% of the total meter, this bar shouldn't get wider than 85%.
+	    			-->
+	    			<div class="listen-meter__active">&nbsp;</div>
+
+	    			<!-- 'Error Meter'
+	    				Remove the style attr on .listen-meter__limit-back.
+	    					Show: When an error is thrown.
+	    					Progression Styles: Dynamic width fo this element is based on the amount of time OVER the time limit for the mp3.
+	    					'Active Error Meter': Functions the same as the active meter, just within the confines of the Error Meter
+	    			-->
+	    			<div class="listen-meter__limit-back" style="display:none;">
+	    				<div class="listen-meter__limit-active">&nbsp;</div>
+	    			</div>
+	    		</div>
+
+	    		<!-- Timestamps and displaying the Error:
+					.listen-meter__timestamps and .listen-meter__error should toggle based on whether or not there is an error. Show timestamps if it's fine, show error if it's not.
+
+					Make sure to remove the style sttr on error element.
+	    		-->
+	    		<div class="listen-meter__timestamps">
+	    			<span class="tts__listen-current">{{audioTimeRemaining | c6timestamp }}</span>
+
+	    			<!-- .tts__listen-limit should display a timestamp telling the user the total amount of time the mp3 can be. aka. 3 seconds = 0:03 -->
+	    			<span class="tts__listen-limit">Limit: {{annotation.duration | c6timestamp }}</span>
+	    		</div>
+	    		<div class="listen-meter__error" style="display:none;">Error: Over Limit by # sec</div>
 	    		<div class="tts__listen-arrow">&nbsp;</div>
 	    	</div>
 	    <button name="save" ng-disabled="!valid" ng-click="$event.stopPropagation(); saveChanges();" ng-class="{'tts__save-btn--disabled': !valid}" class="tts__save-btn">Save</button>
 	    <button name="cancel" ng-click="$event.stopPropagation(); discardChanges();" class="tts__cancel-btn"><span class="ir">Cancel</span></button>
 	</form>
 </div>
+
 <button ng-hide="disablenext" class="tts__arrow tts__next-arrow" ng-click="$event.stopPropagation(); next();" title="Next"><span class="ir">Next</span></button>
 <button ng-hide="disableprev" class="tts__arrow tts__prev-arrow" ng-click="$event.stopPropagation(); prev();" title="Go Back"><span class="ir">Go Back</span></button>
 
