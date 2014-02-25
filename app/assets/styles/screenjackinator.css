@@ -4,21 +4,6 @@
     body {
         margin:0; background-color: #000; font-family: 'MuseoSans', Arial, Helvetica, sans-serif;
     }
-    a {
-        text-decoration: none;
-    }
-    .ir {
-        background-color: transparent;
-        border: 0; width:0; height:0;
-        overflow: hidden; display: block; position: absolute;
-    }
-    ::-moz-selection {
-        background: #b3ff3e; text-shadow: none; color:#000;
-    }
-    ::selection {
-        background: #b3ff3e; text-shadow: none; color:#000;
-    }
-
     @font-face {
         font-family: 'MuseoSans';
         src: url('museosans-300-webfont.eot');
@@ -49,9 +34,35 @@
         font-weight: 100;
         font-style: italic;
     }
-
+    a {
+        text-decoration: none;
+    }
+    ::-moz-selection {
+        background: #e4b3ff; text-shadow: none; color:#000;
+    }
+    ::selection {
+        background: #e4b3ff; text-shadow: none; color:#000;
+    }
     .experience__group {
-        position: absolute; top: 0; bottom: 0; left: 0; right: 0;
+        position: absolute; top: 0; bottom: 0; left: 0; right: 0; font-size: 1em;
+    }
+    .ir {
+        background-color: transparent;
+        border: 0; width:0; height:0;
+        overflow: hidden; display: block; position: absolute;
+    }
+
+/*  ==========================================================================
+    copy classes
+    ========================================================================== */
+    .tk--hdr {
+        font-family: 'MuseoSans', Arial, Helvetica, sans-serif; font-weight: 300;
+    }
+        .tk--copy {
+            font-family: 'MuseoSans', Arial, Helvetica, sans-serif; font-weight: 100;
+        }
+    .underline {
+        text-decoration: underline;
     }
 
 /*  ==========================================================================
@@ -61,162 +72,35 @@
         position: absolute; top: 0; width: 100%; height: 3.375em; z-index: 2; background-color: #f1efed;
     }
         .appbar__title {
-            position: absolute; font-size: 0.875em; width: 23.57143em; height: 2.143em; left: 1em; top: 0.714em;
-            font-family: 'MuseoSans', Arial, Helvetica, sans-serif; font-weight: 100; font-style: normal;
-            background: url(../img/input__edit-icon--default.png) #e5e3e1 no-repeat 0.714em center;
-            border: 1px dashed #828180; padding-left: 2.42857em; color: #72706f;
+            position: absolute; width: 23.57143em; height: 2.143em; left: 1em; top: 0.714em;
+            font-size: 0.875em; padding-left: 2.42857em;
+            background: url(../img/title_edit-icon--default.png) #e5e3e1 no-repeat 0.714em center;
+            color: #72706f; border: 1px dashed #828180;  
         }
             .appbar__title:focus {
-                background: url(../img/input__edit-icon--focus.png) #d3dfc3 no-repeat 0.714em center;
-                border: 1px dashed #568e20; color: #4e7712;
+                background: url(../img/title_edit-icon--focus.png) #d3dfc3 no-repeat 0.714em center;
+                color: #4e7712; border: 1px dashed #568e20;
             }
             .appbar__save-title-btn {
                 display: none;
             }
                 .appbar__save-title-btn--focus {
-                    position: absolute; display: block; font-size: 0.5625em; border: 0; padding: 0; 
-                    background-color: #74ad21; width: 3.11em; height: 2.667em; top: 1.667em; left: 38.44em;
-                    font-family: 'MuseoSans', Arial, Helvetica, sans-serif; font-weight: 300; color: #fff;
-                    text-transform: uppercase; letter-spacing: 0.05em; border-radius: 3px; cursor: pointer;
-                }
-            .appbar__toggle {
-                position: absolute; font-size: 1em; width: 3.375em; height: 3.375em;
-                border: 0; padding: 0; cursor: pointer;
-            }
-                .appbar__stats {
-                    background: url(../img/stats-btn.png) no-repeat left center; left: 23.9375em;
-                }
-                    .appbar__stats--active {
-                        background: url(../img/stats-btn.png) no-repeat right center; left: 23.9375em;
-                    }
-                .appbar__settings {
-                    background: url(../img/settings-btn.png) no-repeat left center; left: 27.5em;
-                }
-                    .appbar__settings--active {
-                        background: url(../img/settings-btn.png) no-repeat right center; left: 27.5em;
-                    }
-            .appbar__dropdown {
-                position: absolute; top: 3.375em; margin: 0; padding: 1em 1.625em;
-                border-bottom-right-radius: 3px; border-bottom-left-radius: 3px;
-                background-color: #757473; list-style: none;
-            }
-                /* css arrow */
-                .appbar__dropdown:after {
-                    position: absolute; bottom: 100%; left: 7.5%; height: 0; width: 0;
-                    border: solid transparent; content: " "; pointer-events: none;
-                    border-color: rgba(117, 116, 115, 0); border-bottom-color: #757473;
-                    border-width: 7px; margin-left: -7px;
-                }
-                .appbar__dropdown-hdr {
-                    font-size: 0.75em; font-weight: 300; text-transform: uppercase; color: #9ccd47; margin: 0 0 0.625em 0;
-                }
-
-                /* settings dropdown */
-                .settings__menu {
-                    left:27.5em;
-                }
-                .settings__menu--hide {
-                    display: none;
-                }
-                    .settings__quality, .settings__privacy {
-                        margin-bottom: 1.25em; 
-                    }
-                    .settings__quality-btn {
-                        font-size: 0.875em; padding: 0.71428em 0; width: 7em;
-                        background-color: #acaba9; color: #fff;
-                        border-radius: 3px; border: 0;
-                        font-family: 'MuseoSans', Arial, Helvetica, sans-serif; font-weight: 300;
-                        cursor: pointer; margin-right: 0.42857em;
-                    }
-                        .settings__quality-btn:last-of-type {
-                            margin-right: 0;
-                        }
-                        .settings__quality-btn--active {
-                            background-color: #9ccd47; cursor: default;
-                        }
-                        .settings__hd-label {
-                            position: absolute; font-size: 0.5em; top: 4.75em; right: 2.5em; padding: 0.25em 0.5em;
-                            border-radius: 3px; background: #e0dfdf; font-style: italic; color: #5d5d5d;
-                        }
-
-                    .settings__desc-input {
-                        font-size: 0.875em; padding: 0.5em; width: 94%; margin-bottom: 1em;
-                        background-color: #7c7b7a; border: 1px dashed #bfbebc; border-radius: 3px; color: #fff;
-                        font-family: 'MuseoSans', Arial, Helvetica, sans-serif; font-weight: 100; 
-                    }
-                        .settings__desc-input:focus {
-                            border: 1px dashed #bfbebc;
-                        }
-
-                    .settings__btn {
-                        font-size: 0.875em; border: 0; border-radius: 3px; text-transform: uppercase; width: 13.714em; height: 3em;
-                        font-family: 'MuseoSans', Arial, Helvetica, sans-serif; font-weight: 300;
-                        cursor: pointer; margin: 0 0 0.64285em 4.357em;
-                    }
-                        .settings__save-btn {
-                            background-color: #9ccd47; color: #fff; 
-                        }
-                        .settings__delete-btn {
-                            background-color: #f1efed; color: #74ad21;
-                        }
-                .appbar__button {
-                    position: absolute; font-size: 0.75em; top: 0.833em; top: 10px; padding: 0.75em 0; border: 0;
-                    font-family: 'MuseoSans', Arial, Helvetica, sans-serif; font-weight: 300; color: #fff;
-                    text-transform: uppercase; letter-spacing: 0.05em; border-radius: 3px; cursor: pointer;
-                }
-                    .appbar__preview-btn {
-                        right: 12.5em; width: 8.33em; background-color: #afaca9;
-                    }
-                    .appbar__savepub-btn {
-                        right: 0.875em; width: 10.833em; background-color: #9ac352;
-                    }
-
-                /* stats dropdown */
-                .stats__menu {
-                   left: 23.9375em; 
-                }
-                .stats__menu--hide {
-                    display: none;
-                }
-                    .stats__number {
-                        color: #9ccd47;
-                    }
-                    .stats__total {
-                        font-size: 2em; font-weight: 300; color: #fff; text-align: center; padding: 0.125em 0;
-                        border-top: 1px solid #a1a09e; border-bottom: 1px solid #a1a09e; margin: 12px 0 8px;
-                    }
-                        .stats__stacked-text {
-                            font-size: 0.375em; text-transform: uppercase; line-height: 1.25em; font-weight: 300;
-                            display: inline-block; width: 5em; text-align: center;
-                        }
-                    .stats__substat {
-                        font-size: 0.875em; font-weight: 300; color: #fff; text-align: center;
-                    }
-                    .stats__more-stats {
-                        text-align: center; margin: 0 0 -0.5em 0;   
-                    }
-                        .stats__link {
-                            font-size: 0.625em; text-transform: uppercase; color: #9ccd47; text-decoration: underline;
-                        }
-                        .stats__next-arrow {
-                            margin-left: 0.25em;
-                        }
-
-
-    @media screen and (max-width: 762px){
-        .appbar__title {
-            width: 16.5em;
+                    position: absolute; width: 3.11em; height: 2.667em; top: 1.667em; left: 38.44em;
+                    display: block; font-size: 0.5625em; padding: 0; cursor: pointer;
+                    background-color: #74ad21; color: #fff; border: 0; border-radius: 3px; 
+                    text-transform: uppercase; letter-spacing: 0.05em; 
+                }     
+        .appbar__button {
+            position: absolute; top: 0.833em; padding: 0.75em 0; cursor: pointer;
+            font-size: 0.75em; color: #fff; border: 0; border-radius: 3px;
+            text-transform: uppercase; letter-spacing: 0.05em;
         }
-            .appbar__save-title-btn--focus {
-                left: 27.5em;
+            .appbar__preview-btn {
+                right: 12.5em; width: 8.33em; background-color: #afaca9;
             }
-        .appbar__stats {
-            left: 17.8125em;
-        }
-        .appbar__settings {
-            left: 21.375em;
-        }
-    }
+            .appbar__savepub-btn {
+                right: 0.875em; width: 10.833em; background-color: #9fcf38;
+            } 
 
 /*  ==========================================================================
     stage styles
@@ -230,12 +114,11 @@
         .video__stage {
             position: absolute; top: 50%; left: 50%;
         }
-
         .video__player {
             width: 100%;
         }
         .video__annotations {
-            position: absolute; top: 0; height: 100%; width: 100%;
+            position: absolute; height: 100%; width: 100%; top: 0;
             margin: 0; padding: 0; list-style-type: none;
         }
 
@@ -243,67 +126,57 @@
     annotation styles
     ========================================================================== */
     .tts__group {
-        position: absolute; bottom: 0; width: 100%; text-align: center; 
+        position: absolute; bottom: 0; width: 100%; text-align: center; font-size: 1em;
     }
         .tts__arrow {
-            position: absolute; font-size: 0.5em; width: 8.25em; height: 8.25em; bottom: 3.5em; cursor: pointer; padding: 0; border: 0;
+            position: absolute; height: 4.125em; width: 5.5em; bottom: 2.375em;
+            font-size: 1em; padding: 0; border: 0; border-radius: 3px; cursor: pointer;
         }
             .tts__next-arrow {
-                left: 89%; background: url(../img/bubble-nav__next.png) no-repeat center center; border-radius: 3px;
-                background-color: #f9f7f5;
+                left: 89%; background: url(../img/arrow__next-icon.png) #f9f7f5 no-repeat center center; 
             }
             .tts__prev-arrow {
-                right: 89%; background: url(../img/bubble-nav__prev.png) no-repeat center center; border-radius: 3px;
-                background-color: #f9f7f5;
+                right: 89%; background: url(../img/arrow__prev-icon.png) #f9f7f5 no-repeat center center;
             }
 
         .tts__box {
-            position: absolute; font-size: 1.5em; left: 14%; width: 72%; padding: 1.25em 0; bottom: 0.41667em;
-            background: url(../img/tts__edit-icon.png) rgba(14, 81, 5, 0.46) no-repeat 0.375em 0.375em; 
+            position: absolute; width: 72%; left: 14%; bottom: 1em; 
+            font-size: 1.5em; padding: 1.25em 0; background-color: rgba(19, 97, 8, 0.53);
             border: 1px dashed rgba(99, 148, 28, 0.8); border-radius: 3px; 
         }
             /* play mode */
             .tts__text {
-                color: #dff0c1; font-weight: 100; cursor: pointer;
+                color: #dff0c1; cursor: pointer;
+            }
+            .tts__icon {
+                margin: 0 0.2em -0.0833em -1.41667em;
             }
 
             /* edit mode */
             .tts__input {
-                color: #fff; font-weight: 100; background: none; border: 0;
-                font-size: 1em; font-family: 'MuseoSans', Arial, Helvetica, sans-serif; font-weight: 100; font-style: normal;
-                width: 100%; text-align: center;
+                width: 100%; font-size: 1em; font-weight: 100; text-align: center;
+                color: #fff; background: none; border: 0;
             }
-            .tts__remaining-charas {
-                position: absolute; font-size: 0.41667em; bottom: 0; left: 50%; margin-left: -6.9em;
-                color: #6e9c25; text-transform: uppercase; opacity: 0.8;
+
+            .tts__preview-btn {
+                position: absolute; height: 3.667em; width: 4.33em; right: 0.778em; top: 50%; margin-top: -1.8335em;
+                font-size: 0.75em; border: 0; border-radius: 3px; cursor: pointer;
+                background: url(../img/listen__preview-icon.png) #599e0e no-repeat center center;  
             }
-                .tts__remaining-charas--error {
-                    color: #fc2b09; font-weight: 300;
+                .tts__preview-btn--playing {
+                    background: url(../img/listen__stop-icon.png) #599e0e no-repeat center center;
                 }
-            .tts__warning {
-                position: absolute; font-size: 0.41667em; bottom: 0.4em; left: 50%; margin-left: -16.1em;
-                color: #333333; font-style: italic; font-weight: 300; text-transform: uppercase; 
-                background-color: #f4d10c; border-radius: 3px; padding: 0.2em 0.8em 0.2em 0.6em;
-            }
-                .tts__warning-icon {
-                    margin: 0 0.3em -0.3em 0;
+                .tts__preview-btn--disabled {
+                    background: url(../img/listen__disabled-icon.png) rgba(113, 169, 26, 0.09) no-repeat center center 
                 }
-            .tts__listen-btn {
-                position: absolute; font-size: 0.75em; right: 0.778em; top: 50%; margin-top: -1.8335em;
-                height: 3.667em; width: 3.667em; border: 0; border-radius: 3px;
-                background: url(../img/tts__listen-btn--default.png) #71a91a no-repeat center center; cursor: pointer; 
-            }
-                .tts__listen-btn--disabled {
-                    opacity: 0.12;
-                }
-                .tts__listen-btn--loading {
+                .tts__preview-btn--loading {
                     background: rgba(113, 169, 26, 0.23); cursor: default;
                 }
                     /* spinner animation */
-                    .tts__listen-spinner {
-                        position: absolute; right: 1.5em; top: 50%; margin-top: -0.541667em; height: 1.0833em; width: 1.0833em; 
+                    .tts__preview-spinner {
+                        height: 1.4444em; width: 1.4444em; margin-left: 0.8889em;
                         background: url(../img/tts__spinner.png) no-repeat center center;
-                        animation:spin 1.35s infinite linear; -webkit-animation:spin 1.35s infinite linear;
+                        animation:spin 1s infinite linear; -webkit-animation:spin 1s infinite linear;
                     }
                         @keyframes spin {
                             from {transform:rotate(0deg);}
@@ -314,84 +187,45 @@
                             to {-webkit-transform:rotate(360deg);}
                         }
 
-                .tts__listen-btn--playing {
-                    background: url(../img/tts__listen-btn--stop.png) #71a91a no-repeat center center;
-                }
-                .tts__listen-popup {
-                    position: absolute; width: 9.375em; height: 1.5em; right: 0; bottom: -3em;
-                    font-size: 0.667em; padding: 0.5em; background: #f9f7f5; border-radius: 3px;
-                }
-                    .tts__listen-popup--hidden {
-                        display:none;
-                    }
-                    .tts__listen-arrow {
-                        position:absolute; height: 0.3125em; width: 0.625em; right: 2.625em; top: -0.20833em;
-                        background: url(../img/tts__listen-arrow.png) no-repeat center center; 
-                    }
-                    .listen-meter__back {
-                        position: relative; width: 9.375em; height: 0.6875em; 
-                        background-color: #bab9b7; border-radius: 3px; overflow: hidden;
-                    }
-                        .listen-meter__active {
-                            width: 85%; /* remove style once its dynamically set */
-                            height: 100%; background-color: #a8cc3a; border-right: #9c9b98 1px solid;
-                        }
-                        .listen-meter__limit-back {
-                            position: absolute; height: 100%; width: 15%; top: 0; right: 0;
-                            background: url(../img/warning-tile.png) repeat; border-left: #959492 1px solid;
-                        }
-                            .listen-meter__limit-active {
-                                width: 50%; /* remove style once its dynamically set */
-                                height: 100%; background: url(../img/warning-tile.png) repeat #ec301c;
-                            }
-                    
-                    .listen-meter__timestamps {
-                        font-size: 0.625em; margin-top: 0.2em; text-transform: uppercase;
-                    }
-                        .tts__listen-current {
-                            float: left; color: #64821b;
-                        }
-                        .tts__listen-limit {
-                            float: right; color: #5e5e5e; font-style: italic;
-                        }
-
-                    .listen-meter__error {
-                        font-size: 0.625em; margin-top: 0.2em; text-transform: uppercase;
-                        color: #c21301; font-style: italic;
-                    }
-
-            .tts__save-btn {
-                position: absolute; font-size: 0.625em; left: 50%; bottom: -4em; 
-                margin-left: -4.1875em; padding: 0.85em 3em; border: 0; border-radius: 3px;
-                font-family: 'MuseoSans', Arial, Helvetica, sans-serif; font-weight: 300; color: #fff;
-                text-transform: uppercase; letter-spacing: 0.05em; cursor: pointer; background-color: #a6cb34;
+            .tts__btn-group {
+                position: absolute; bottom: -2.41667em; left: 50%; margin-left: -6.8334em; 
             }
-                .tts__save-btn--disabled {
-                    opacity: 0.2;
+                .tts__btn {
+                    height: 3.2857em; font-size: 0.5833em; padding: 0; margin: 0 0.2857em; 
+                    border: 0; border-radius: 3px; cursor: pointer;
+                    color: #fff; text-transform: uppercase; letter-spacing: 0.05em;
                 }
-            .tts__cancel-btn {
-                position: absolute; font-size: 0.75em; right: 0; top: -1em; height: 0.5em; width: 3.556em; border: 0;
-                background: url(../img/tts__cancel-btn.png) no-repeat center center; cursor: pointer;
+                    .tts__save {
+                        width: 11.571em;  background-color: #94cb1f;
+                    }
+                        .tts__save--success {
+                            background: url(../img/tts__save-check.png) #4e8711 no-repeat 25% 50%; font-style: italic;
+                        }
+                        .tts__save--disabled {
+                            color: #739d51; background-color: #4e8711;
+                        }
+                    .tts__cancel {
+                        width: 9.429em; background-color: #afaca9;
+                    }
+
+            .tts__popup {
+                position: absolute; top: -3.8571em; left: 50%; 
+                font-size: 0.5833em; line-height: 1em; border-radius: 3px;
             }
-
-    .line__invalid {
-        background-color: red; /* this is styling to put on the form */
-    }
-
-    @media screen and (max-width: 768px) {
-        .tts__arrow {
-            bottom: 3em;
-        }
-        .tts__box {
-            padding: 0.75em 0; bottom: 0.75em;
-        }
-        .tts__save-btn {
-            bottom: -3.5em;
-        }
-        .tts__listen-btn {
-            right: 0.19em;
-        }
-    }
+                .tts__popup:after {
+                    position: absolute; top: 100%; left: 50%; height: 0; width: 0;
+                    border: solid transparent; border-width: 6px; margin-left: -6px;
+                    content: " "; pointer-events: none;
+                    border-color: rgba(249, 247, 245, 0); border-top-color: #F9F7F5;
+                }
+                .tts__popup--error {
+                    color: #cc2a0a; background: url(../img/msg__error-icon.png) #F9F7F5 no-repeat scroll 1.142em 50%;
+                    margin-left: -15.0714em; padding: 0.857em 1.2857em 0.857em 2.857em;
+                }
+                .tts__popup--warning {
+                    color: #757575; background: url(../img/msg__warning-icon.png) #F9F7F5 no-repeat scroll 1.142em 50%;
+                    margin-left: -14.357em; padding: 0.857em 1.2857em 0.857em 3.2857em;
+                }
 
 /*  ==========================================================================
     controls styles (overwrites styles in c6ui/src/controls)
@@ -402,7 +236,7 @@
         /* ---- play/pause styles ---- */
         .controls__btnPlayPause {
             width: 7.625em; height: 3em; left: 50%; top: 2.375em; margin-left: -3.8125em;
-            background: #9ccd47; box-shadow: none;
+            background: #94cb1f; box-shadow: none;
         }
             .controls__btnPlay-icon {
                 background: url(../img/icon_play.svg) no-repeat center center; background-size: 10%; opacity: 1;
