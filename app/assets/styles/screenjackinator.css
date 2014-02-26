@@ -121,10 +121,10 @@
             position: absolute; top: 50%; left: 50%;
         }
         .video__player {
-            width: 100%;
+            position: absolute; width: 100%; top:12%;
         }
         .video__annotations {
-            position: absolute; height: 100%; width: 100%; top: 0;
+            position: absolute; height: 88%; width: 100%; top: 0;
             margin: 0; padding: 0; list-style-type: none;
         }
 
