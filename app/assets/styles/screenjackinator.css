@@ -183,19 +183,23 @@
                     background: rgba(113, 169, 26, 0.23); cursor: default;
                 }
                     /* spinner animation */
+                    .tts__preview-spinner.ng-hide {
+                        animation: none; -webkit-animation: none;
+                    }
+
                     .tts__preview-spinner {
                         height: 1.4444em; width: 1.4444em; margin-left: 0.8889em;
                         background: url(../img/tts__spinner.png) no-repeat center center;
-                        animation:spin 1s infinite linear; -webkit-animation:spin 1s infinite linear;
+                        animation:spin 1s infinite linear;/* -webkit-animation:spin 1s infinite linear;*/
                     }
                         @keyframes spin {
-                            from {transform:rotate(0deg);}
-                            to {transform:rotate(360deg);}
+                            from {transform:rotateZ(0deg);}
+                            to {transform:rotateZ(360deg);}
                         }
-                        @-webkit-keyframes spin {
-                            from {-webkit-transform:rotate(0deg);}
-                            to {-webkit-transform:rotate(360deg);}
-                        }
+                        /*@-webkit-keyframes spin {
+                            from {-webkit-transform:rotateZ(0deg);}
+                            to {-webkit-transform:rotateZ(360deg);}
+                        }*/
 
             .tts__btn-group {
                 position: absolute; bottom: -2.41667em; left: 50%; margin-left: -6.8334em; 
