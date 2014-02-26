@@ -482,7 +482,6 @@
     /* ---- timestamps (not in original c6ui) ---- */
     .controls__timestamps {
         position: absolute; font-size: 0.625em; bottom: 5.875em; left: 0.375em; right: 0.375em; z-index: 3; height: 8px;
-        background: url(../img/timeline__markers-tile.png) repeat-x top center;
     }
         .controls__start-time {
             position: absolute; color: #64821b; left: 0; line-height: 1; background-color: #f9f7f5; padding-right: 0.5em;
