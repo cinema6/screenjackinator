@@ -100,7 +100,13 @@
             }
             .appbar__savepub-btn {
                 right: 0.875em; width: 10.833em; background-color: #9fcf38;
-            } 
+            }
+
+    @media screen and (max-width: 642px) {
+        .appbar__title {
+            width: 20.5714em;
+        }
+    }
 
 /*  ==========================================================================
     stage styles
@@ -140,10 +146,14 @@
             }
 
         .tts__box {
-            position: absolute; width: 46%; left: 14%; bottom: 1em; 
+            position: absolute; width: 46%; left: 15%; bottom: 1em; 
             font-size: 1.5em; padding: 1.25em 12%; background-color: rgba(19, 97, 8, 0.53);
             border: 1px dashed rgba(99, 148, 28, 0.8); border-radius: 3px; 
         }
+            .tts__box--preview {
+                background: url(../img/tts__waveform-tile.png) rgba(19, 97, 8, 0.53) repeat-x center center;
+            }
+
             /* play mode */
             .tts__text {
                 color: #dff0c1; cursor: pointer;
@@ -159,7 +169,7 @@
             }
 
             .tts__preview-btn {
-                position: absolute; height: 3.667em; width: 4.33em; right: 0.778em; top: 50%; margin-top: -1.8335em;
+                position: absolute; height: 3.667em; width: 4.3334em; right: 0.778em; top: 50%; margin-top: -1.8335em;
                 font-size: 0.75em; border: 0; border-radius: 3px; cursor: pointer;
                 background: url(../img/listen__preview-icon.png) #599e0e no-repeat center center;  
             }
@@ -226,6 +236,61 @@
                     color: #757575; background: url(../img/msg__warning-icon.png) #F9F7F5 no-repeat scroll 1.142em 50%;
                     margin-left: -14.357em; padding: 0.857em 1.2857em 0.857em 3.2857em;
                 }
+
+    /* ipad horizontal */
+    @media screen and (max-width: 1024px) {
+        .tts__box { 
+            padding: 1em 12%;
+        }
+        .tts__preview-btn {
+            height: 3.5556em; margin-top: -1.7778em; right: 0.8em;
+        }
+        .tts__arrow {
+            height: 4em; width: 4.875em;
+        }
+            .tts__next-arrow {
+                left: 88%;
+            }
+            .tts__prev-arrow {
+                right: 88%;
+            }
+
+    }
+    /* ipad portrait & small tablets horizontal */
+    @media screen and (max-width: 800px) {
+        .tts__box {
+            font-size: 1.25em;
+        }
+            .tts__icon {
+                margin: 0 0.2em -0.15em -1.4em; width: 0.9em; height: 0.9em;
+            }
+        .tts__preview-btn {
+            height: 4em; margin-top: -2em; right: 0.4em;
+        }
+        .tts__arrow {
+            height: 3.75em; width: 4.25em; bottom: 1.5625em;
+        }
+    }
+    /* small tablets portrait */
+    @media screen and (max-width: 600px) {
+        .tts__box {
+            padding: 0.75em 12%; min-width: 13.8em;
+        }
+        .tts__preview-btn {
+            height: 3.46667em; width: 4.06667em; margin-top: -1.7333em; right: 0.2667em;
+            background-size: 42px auto;
+        }
+        .tts__arrow {
+            height: 3.25em; width: 3.875em;
+            background-size: 20px auto;
+        }
+            .tts__next-arrow {
+                left: 87%;
+            }
+            .tts__prev-arrow {
+                right: 87%;
+            }
+    }
 
 /*  ==========================================================================
     controls styles (overwrites styles in c6ui/src/controls)
