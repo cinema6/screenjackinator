@@ -62,6 +62,7 @@
     }
     .sprite {
         background-image: url(../img/tts__sprite.svg); background-repeat: no-repeat;
+        background-size: 77px auto;
     }
 
     @media screen and (min-width: 0\0) {
@@ -185,7 +186,7 @@
             font-size: 1em; padding: 0; border: 0; border-radius: 3px; cursor: pointer;
         }
             .tts__next-icon, .tts__prev-icon {
-                height: 40%; width: 31%; margin: 0 auto; background-size: 300%;
+                height: 40%; width: 37%; margin: 0 auto;
             }
             .tts__next-arrow {
                 left: 89%; 
@@ -213,8 +214,8 @@
                 color: #dff0c1; cursor: pointer;
             }
             .tts__icon {
-                display: inline-block; height: 1.125em; width: 0.875em; margin: 0 0.2em 0 -1.41667em;
-                background-position: 0 100%; background-size: 313%;
+                display: inline-block; height: 1.125em; width: 1em; margin: 0 0.2em 0 -1.41667em;
+                background-position: 0 100%;
             }
 
             /* edit mode */
@@ -233,17 +234,17 @@
                 }
                 .tts__preview-icon {
                     width: 45%; height: 40%; margin: 0 auto;
-                    background-position: 97% 50%; background-size: 300%;
+                    background-position: 100% 50%;
                 }
                     .tts__preview-btn--playing .tts__preview-icon {
-                        background-position: 98% 100%; background-size: 280%;
+                        background-position: 100% 100%; background-size: 74px;
                     }
                 .tts__preview-btn--disabled {
                     background-color: rgba(113, 169, 26, 0.09); cursor: default;
                     color: rgba(99,148,28,0.3);
                 }
                     .tts__preview-btn--disabled .tts__preview-icon {
-                        background-position: 97% 0; background-size: 300%;
+                        background-position: 100% 0;
                     }
                 .tts__preview-btn--loading {
                     background: rgba(113, 169, 26, 0.23); cursor: default;
@@ -316,22 +317,28 @@
         .tts__box { 
             padding: 1em 12%;
         }
-        .tts__preview-btn {
-            top: 0.4em; bottom: 0.4em; right: 0.4em;
-        }
-        .tts__arrow {
-            height: 4em; width: 4.875em; bottom: 2.125em;
-        }
-            .tts__next-arrow {
-                left: 88%;
+            .tts__icon {
+                background-size: 61px; 
             }
-            .tts__prev-arrow {
-                right: 88%;
+            .tts__preview-btn {
+                top: 0.4em; bottom: 0.4em; right: 0.4em;
             }
+            .tts__arrow {
+                height: 4em; width: 4.875em; bottom: 2.125em;
+            }
+                .tts__next-arrow {
+                    left: 88%;
+                }
+                .tts__prev-arrow {
+                    right: 88%;
+                }
 
     }
     /* ipad portrait & small tablets horizontal */
     @media screen and (max-width: 800px) {
+        .sprite {
+            background-size: 51px;
+        }
         .tts__box {
             font-size: 1.125em;
         }
@@ -339,13 +346,16 @@
                 margin: 0 0.2em -0.15em -1.4em; width: 0.8889em; height: 1.111em;
             }
         .tts__preview-btn {
-             right: 0.4em;
+            right: 0.4em;
         }
         .tts__arrow {
             height: 3em; width: 3.375em; bottom: 1.5625em;
         }
             .tts__next-icon, .tts__prev-icon {
-                height: 35%;
+                height: 35%; 
+            }
+            .tts__preview-btn--playing .tts__preview-icon {
+                background-size:51px;
             }
     }
     /* small tablets portrait */
@@ -354,8 +364,7 @@
             padding: 0.75em 12%;
         }
         .tts__preview-btn {
-            width: 4.06667em; top: 0.2667em; bottom: 0.2667em; right: 0.2667em;
-            background-size: 42px auto;
+            top: 0.2667em; bottom: 0.2667em; right: 0.2667em;
         }
         .tts__arrow {
             bottom: 1.3125em;
