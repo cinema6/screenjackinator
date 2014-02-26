@@ -1,7 +1,7 @@
 <div class="tts__box">
 <!-- add .tts__box--preview to div when listening/previewing the mp3 -->
 	<span class="tts__text tk--copy" ng-style="{display: (editing ? 'none' : 'inline')}">
-		<img class="tts__icon" src="assets/img/tts__edit-icon.png">
+		<div class="tts__icon sprite">&nbsp;</div>
 		{{annotation.text}}
 	</span>
 
@@ -13,7 +13,9 @@
 	    </small>
 
 	    <button name="listen" ng-click="$event.stopPropagation(); listen();" ng-disabled="!isListenable" ng-class="{'tts__preview-btn--loading': fetching, 'tts__preview-btn--playing': listening, 'tts__preview-btn--disabled': !annotation.text}" class="tts__preview-btn">
-	    	<span class="ir">Preview</span>
+	    	<div class="tts__preview-icon sprite">&nbsp;</div>
+	    	<span class="tts__preview-label tk--hdr">Preview</span>
+	    	<!-- when the button is listening, change <span>'s 'Preview' text to 'Stop' -->
 	    	<div class="tts__preview-spinner" ng-show="fetching">&nbsp;</div>
 	    </button>
 		
@@ -26,6 +28,14 @@
 	</form>
 </div>
 
-<button ng-hide="disablenext" class="tts__arrow tts__next-arrow" ng-click="$event.stopPropagation(); next();" title="Next"><span class="ir">Next</span></button>
-<button ng-hide="disableprev" class="tts__arrow tts__prev-arrow" ng-click="$event.stopPropagation(); prev();" title="Go Back"><span class="ir">Go Back</span></button>
+<button ng-hide="disablenext" class="tts__arrow tts__next-arrow" ng-click="$event.stopPropagation(); next();" title="Next">
+	<div class="tts__next-icon sprite">
+		<span class="ir">Next</span>
+	</div>
+</button>
+<button ng-hide="disableprev" class="tts__arrow tts__prev-arrow" ng-click="$event.stopPropagation(); prev();" title="Go Back">
+	<div class="tts__prev-icon sprite">
+		<span class="ir">Previous</span>
+	</div>
+</button>
 
