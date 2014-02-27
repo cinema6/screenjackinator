@@ -429,7 +429,7 @@
                             });
 
                             it('should add playing css class', function() {
-                                expect(listen.hasClass('tts__listen-btn--playing')).toBe(true);
+                                expect(listen.hasClass('tts__preview-btn--playing')).toBe(true);
                             });
 
                             it('should not indicate invalid mp3', function() {
@@ -529,7 +529,7 @@
                     });
 
                     it('should display the text', function() {
-                        expect(line.find('span')[0].innerHTML).toBe('“Hey!”');
+                        expect(line.find('span')[0].innerHTML).toContain('Hey!');
                     });
 
                     it('should bind the text to a textfield', function() {
