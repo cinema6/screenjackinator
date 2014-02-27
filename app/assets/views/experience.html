@@ -1,21 +1,25 @@
 <section class="experience__group" id="experience">
-    <!--<section ng-if="ExperienceCtrl.showWelcome" ng-include="'assets/views/partials/welcome.html'"></section>
-    <section ng-if="ExperienceCtrl.showWizard" ng-controller="WizardController" ng-include="'assets/views/partials/wizard.html'"></section>-->
+    <div class="threshold--450px">
+        <!--<section ng-if="ExperienceCtrl.showWelcome" ng-include="'assets/views/partials/welcome.html'"></section>
+        <section ng-if="ExperienceCtrl.showWizard" ng-controller="WizardController" ng-include="'assets/views/partials/wizard.html'"></section>-->
 
-    <!-- appbar directive start-->
-    <section class="appbar__group">
-        <input class="appbar__title" type="text" name="project-title" id="project-title" placeholder="My Screenjack Title" ng-model="AppCtrl.experience.title">
-            <button class="appbar__save-title-btn" title="OK" id="project-title-okbtn">OK</button>
-        <button class="appbar__button appbar__preview-btn" title="Preview">Preview</button>
-        <button class="appbar__button appbar__savepub-btn" title="Save &amp; Publish">Save &amp; Publish</button>
-    </section>
-    <!-- appbar directive end-->
+        <!-- appbar directive start-->
+        <section class="appbar__group">
+            <input class="appbar__title tk--copy" type="text" name="project-title" id="project-title" placeholder="My Screenjack Title" ng-model="AppCtrl.experience.title">
+                <button class="appbar__save-title-btn tk--hdr" title="OK" id="project-title-okbtn">OK</button>
+            <div class="appbar__btn-group">
+                <button class="appbar__button appbar__preview-btn tk--hdr" title="Preview">Preview</button>
+                <button class="appbar__button appbar__savepub-btn tk--hdr" title="Save &amp; Publish">Save &amp; Publish</button>
+            </div>
+        </section>
+        <!-- appbar directive end-->
 
-    <c6-screenjack-player
-        class="stage__group"
-        src="{{AppCtrl.videoSrc}}"
-        annotations="ExperienceCtrl.annotations">
-    </c6-screenjack-player>
+        <c6-screenjack-player
+            class="stage__group"
+            src="{{AppCtrl.videoSrc}}"
+            annotations="ExperienceCtrl.annotations">
+        </c6-screenjack-player>
+    </div>
 </section>
 
 <!-- these scripts should be moved somewhere more appropriate, and intergated with angular if possible -->
