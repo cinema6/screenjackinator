@@ -12,10 +12,9 @@
             index.get();
         });
 
-        it('should include the necessary stylesheet', function() {
-            expect(index.customStylesheet.getAttribute('href').then(function(href) {
-                return !!href.match(/assets\/collateral\/styles\/antique\/antique\.css/);
-            })).toBe(true);
+        it('should load an experience', function() {
+            expect(ptor.isElementPresent(by.name('experience'))).toBe(true);
         });
+
     });
 }());

@@ -1,7 +1,7 @@
 (function() {
     'use strict';
 
-    describe('the landing page', function() {
+    xdescribe('the landing page', function() {
         var ptor = protractor.getInstance(),
             LandingPage = require('./pages/LandingPage.js')(ptor),
             IndexPage = require('./pages/IndexPage.js'),
