@@ -3,14 +3,6 @@ module.exports = function(ptor) {
 
     var IndexPage = require('./IndexPage.js');
 
-    // TO DO:
-    // decide how to handle the 'this.testVariable'
-    // should these be set in the Page Objects (like this.expVideo)
-    // or in the test file itself?
-    // For experiences if we want to set them in this file
-    // but still ask for specific experiences then we'll
-    // have to pass an id to the constructor (new ExperiencePage(1))
-
     function ExperiencePage(id) {
         var self = this;
 
@@ -45,19 +37,4 @@ module.exports = function(ptor) {
 
     return ExperiencePage;
 
-    // var LandingPage = require('./LandingPage.js')(ptor);
-
-    // function ExperiencePage() {
-    //     this.section = $('ui-view section#experience');
-    //     this.video = $('ui-view section#experience #video');
-
-    //     this.get = function() {
-    //         var landingPage = new LandingPage();
-
-    //         landingPage.get();
-    //         landingPage.playBtn.click();
-    //     };
-    // }
-
-    // return ExperiencePage;
 };
